@@ -52,6 +52,22 @@ body { font-family:'Jost',sans-serif; background:var(--bg); color:var(--ink); mi
 }
 .logo-bloom { font-size: 28px; }
 .header-tag { font-size: 12px; color: #e8b8cc; letter-spacing: .06em; font-weight: 400; }
+.header-right { display: flex; align-items: center; gap: 12px; }
+.usage-pill {
+  font-size: 11px; font-weight: 600; padding: 5px 12px;
+  border-radius: 50px; border: 1.5px solid rgba(255,255,255,.25);
+  color: #fff; background: rgba(255,255,255,.1); cursor: default;
+  white-space: nowrap;
+}
+.usage-pill.warn { border-color: #ffd966; color: #ffd966; }
+.usage-pill.pro  { border-color: #ffd966; color: #ffd966; background: rgba(212,160,23,.2); }
+.btn-upgrade {
+  font-size: 12px; font-weight: 600; padding: 7px 16px;
+  border-radius: 50px; border: 1.5px solid #ffd966;
+  color: #ffd966; background: transparent; cursor: pointer;
+  font-family: inherit; transition: all .15s; white-space: nowrap;
+}
+.btn-upgrade:hover { background: #ffd966; color: #0d2a4a; }
 
 /* ── Hero banner ── */
 .hero {
@@ -87,8 +103,6 @@ body { font-family:'Jost',sans-serif; background:var(--bg); color:var(--ink); mi
 
 /* ── Main ── */
 .main { max-width: 920px; margin: 0 auto; padding: 2.5rem 1.5rem 5rem; }
-
-/* ── API key bar removed — using backend ── */
 
 /* ── Tabs ── */
 .tabs {
@@ -160,7 +174,7 @@ input[type=text], select, textarea {
 }
 input:focus, select:focus, textarea:focus {
   border-color: var(--petal2);
-  box-shadow: 0 0 0 3px rgba(212,84,122,.12);
+  box-shadow: 0 0 0 3px rgba(46,125,196,.12);
   background: var(--white);
 }
 textarea { resize: vertical; min-height: 90px; }
@@ -283,12 +297,8 @@ textarea { resize: vertical; min-height: 90px; }
   margin-bottom: 1.5rem; font-weight: 600;
 }
 
-/* =====================
-   PLANT CARDS
-   Photos on top. White body below. One consistent style.
-   ===================== */
+/* ── Plant cards ── */
 .plants-grid { display: flex; flex-direction: column; gap: 28px; }
-
 .plant-card {
   background: var(--white);
   border: 1.5px solid var(--border2);
@@ -298,57 +308,34 @@ textarea { resize: vertical; min-height: 90px; }
   overflow: hidden;
 }
 .plant-card:hover { box-shadow: var(--sh-md); transform: translateY(-2px); }
-
-/* Photos — always on top, always a fixed height row */
 .plant-photos {
-  width: 100%;
-  height: 220px;
-  display: flex;
-  flex-direction: row;
-  gap: 2px;
-  background: var(--bg2);
-  flex-shrink: 0;
+  width: 100%; height: 220px;
+  display: flex; flex-direction: row; gap: 2px;
+  background: var(--bg2); flex-shrink: 0;
 }
 .plant-photos img {
-  flex: 1;
-  min-width: 0;
-  height: 100%;
-  object-fit: cover;
-  display: block;
+  flex: 1; min-width: 0; height: 100%; object-fit: cover; display: block;
 }
 .plant-photos .no-photo {
-  flex: 1;
-  display: flex; align-items: center; justify-content: center;
-  background: var(--bg2); color: var(--stone);
-  font-size: 13px; font-style: italic;
+  flex: 1; display: flex; align-items: center; justify-content: center;
+  background: var(--bg2); color: var(--stone); font-size: 13px; font-style: italic;
 }
-
-/* Card body — always below photos, always white */
-.card-body {
-  background: var(--white);
-  padding: 1.5rem 1.75rem;
-}
+.card-body { background: var(--white); padding: 1.5rem 1.75rem; }
 .plant-name {
   font-family:'Cormorant Garamond',serif;
-  font-size: 26px; color: var(--bloom);
-  font-weight: 600; line-height: 1.2; margin-bottom: 4px;
+  font-size: 26px; color: var(--bloom); font-weight: 600; line-height: 1.2; margin-bottom: 4px;
 }
-.plant-sci {
-  font-size: 13px; color: var(--stone);
-  font-style: italic; margin-bottom: 16px;
-}
+.plant-sci { font-size: 13px; color: var(--stone); font-style: italic; margin-bottom: 16px; }
 .season-badge {
   display: inline-flex; align-items: center; gap: 6px;
   padding: 5px 14px; border-radius: 50px;
   background: var(--gold-lt); border: 1px solid var(--gold);
-  font-size: 12px; font-weight: 600; color: #7a4e00;
-  margin-bottom: 14px;
+  font-size: 12px; font-weight: 600; color: #7a4e00; margin-bottom: 14px;
 }
 .plant-tags { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 16px; }
 .ptag {
   font-size: 12px; padding: 4px 12px; border-radius: 50px;
-  background: var(--bg); color: var(--ink2);
-  border: 1px solid var(--border); font-weight: 500;
+  background: var(--bg); color: var(--ink2); border: 1px solid var(--border); font-weight: 500;
 }
 .plant-desc {
   font-size: 14px; color: var(--ink2); line-height: 1.75;
@@ -457,8 +444,7 @@ textarea { resize: vertical; min-height: 90px; }
 .btn-pdf {
   padding: 12px 22px; font-size: 14px; font-weight: 600;
   border-radius: 50px; cursor: pointer; font-family: inherit;
-  background: var(--gold); color: #fff;
-  border: 1.5px solid var(--gold);
+  background: var(--gold); color: #fff; border: 1.5px solid var(--gold);
   transition: all .15s;
 }
 .btn-pdf:hover { background: #b88c10; border-color: #b88c10; }
@@ -471,7 +457,6 @@ textarea { resize: vertical; min-height: 90px; }
 }
 .planner-hero h2 { font-family:'Cormorant Garamond',serif; font-size: 26px; margin-bottom: 6px; }
 .planner-hero p  { font-size: 13px; color: #b8d8f4; }
-
 .planner-empty {
   background: var(--white); border: 2px dashed var(--border);
   border-radius: var(--r-xl); padding: 3rem 2rem;
@@ -480,11 +465,8 @@ textarea { resize: vertical; min-height: 90px; }
 .pe-icon { font-size: 48px; margin-bottom: 14px; }
 .pe-title { font-family:'Cormorant Garamond',serif; font-size: 22px; color: var(--bloom); margin-bottom: 8px; }
 .pe-sub { font-size: 14px; line-height: 1.6; max-width: 340px; margin: 0 auto; }
-
 .planner-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: 18px;
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 18px;
 }
 .planner-card {
   background: var(--white); border: 1.5px solid var(--border2);
@@ -494,21 +476,15 @@ textarea { resize: vertical; min-height: 90px; }
 }
 .planner-card:hover { box-shadow: var(--sh-md); transform: translateY(-2px); }
 .planner-card .pc-photo {
-  width: 100%; height: 160px;
-  object-fit: cover; display: block;
-  background: var(--bg2);
+  width: 100%; height: 160px; object-fit: cover; display: block; background: var(--bg2);
 }
 .planner-card .pc-photo-placeholder {
-  width: 100%; height: 160px;
-  background: var(--bg2); display: flex;
-  align-items: center; justify-content: center;
-  color: var(--stone); font-size: 13px; font-style: italic;
+  width: 100%; height: 160px; background: var(--bg2); display: flex;
+  align-items: center; justify-content: center; color: var(--stone); font-size: 13px; font-style: italic;
 }
 .planner-card .pc-body { padding: 1rem 1.25rem; }
 .planner-card .pc-name {
-  font-family:'Cormorant Garamond',serif;
-  font-size: 18px; color: var(--bloom); font-weight: 600;
-  margin-bottom: 2px;
+  font-family:'Cormorant Garamond',serif; font-size: 18px; color: var(--bloom); font-weight: 600; margin-bottom: 2px;
 }
 .planner-card .pc-sci { font-size: 12px; color: var(--stone); font-style: italic; margin-bottom: 10px; }
 .planner-card .pc-tags { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 12px; }
@@ -528,16 +504,13 @@ textarea { resize: vertical; min-height: 90px; }
   font-family: inherit; transition: all .15s;
 }
 .planner-card .pc-remove:hover { background: #fef0f0; border-color: #f5a0a0; color: #8b1a1a; }
-
 .planner-badge {
   display: inline-flex; align-items: center; justify-content: center;
-  background: var(--gold); color: #fff;
-  font-size: 10px; font-weight: 700;
-  width: 18px; height: 18px; border-radius: 50%;
-  margin-left: 6px; vertical-align: middle;
+  background: var(--gold); color: #fff; font-size: 10px; font-weight: 700;
+  width: 18px; height: 18px; border-radius: 50%; margin-left: 6px; vertical-align: middle;
 }
 
-/* ── Add to Garden button on result cards ── */
+/* ── Add to Garden button ── */
 .add-to-garden-btn {
   display: inline-flex; align-items: center; gap: 6px;
   padding: 7px 16px; font-size: 12px; font-weight: 600;
@@ -548,14 +521,78 @@ textarea { resize: vertical; min-height: 90px; }
 .add-to-garden-btn:hover { background: var(--gold); color: #fff; }
 .add-to-garden-btn.added { background: var(--sage-lt); border-color: var(--sage); color: var(--sage); cursor: default; }
 
-/* =====================
-   MOBILE — responsive
-   ===================== */
+/* ── Pro upgrade modal ── */
+.modal-overlay {
+  position: fixed; inset: 0; background: rgba(13,42,74,.7);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 1000; padding: 1rem; animation: fadeIn .2s ease;
+}
+.modal-overlay.hidden { display: none; }
+@keyframes fadeIn { from{opacity:0} to{opacity:1} }
+.modal {
+  background: var(--white); border-radius: var(--r-xl);
+  padding: 2.5rem; max-width: 480px; width: 100%;
+  box-shadow: 0 20px 60px rgba(13,42,74,.3);
+  animation: slideUp .25s ease;
+}
+@keyframes slideUp { from{transform:translateY(20px);opacity:0} to{transform:none;opacity:1} }
+.modal-close {
+  float: right; background: none; border: none; font-size: 20px;
+  cursor: pointer; color: var(--stone); line-height: 1; padding: 0;
+}
+.modal-title {
+  font-family:'Cormorant Garamond',serif; font-size: 28px;
+  color: var(--bloom); font-weight: 600; margin-bottom: 6px;
+}
+.modal-sub { font-size: 14px; color: var(--stone); margin-bottom: 1.5rem; }
+.pro-features { list-style: none; margin-bottom: 1.75rem; }
+.pro-features li {
+  font-size: 14px; color: var(--ink2); padding: 8px 0;
+  border-bottom: 1px solid var(--border2); display: flex; align-items: center; gap: 10px;
+}
+.pro-features li:last-child { border-bottom: none; }
+.pro-features .fi { font-size: 18px; }
+.pro-price {
+  text-align: center; margin-bottom: 1.5rem;
+  font-size: 13px; color: var(--stone);
+}
+.pro-price strong { font-size: 32px; color: var(--bloom); font-weight: 600; }
+.btn-pro {
+  width: 100%; padding: 14px; font-size: 15px; font-weight: 600;
+  border-radius: 50px; cursor: pointer; font-family: inherit;
+  background: linear-gradient(135deg, #d4a017, #f0c040);
+  color: #0d2a4a; border: none; transition: all .15s;
+}
+.btn-pro:hover { background: linear-gradient(135deg, #b88c10, #d4a017); }
+.modal-note { font-size: 11px; color: var(--stone); text-align: center; margin-top: 10px; }
+
+/* ── Usage limit banner ── */
+.limit-banner {
+  background: linear-gradient(135deg, #fef8dc, #fff3cd);
+  border: 1.5px solid var(--gold); border-radius: var(--r-lg);
+  padding: 1.25rem 1.5rem; margin-bottom: 1.5rem;
+  display: flex; align-items: center; gap: 14px;
+}
+.limit-banner .lb-icon { font-size: 28px; flex-shrink: 0; }
+.limit-banner .lb-text { flex: 1; }
+.limit-banner .lb-title { font-size: 14px; font-weight: 600; color: #7a4e00; margin-bottom: 3px; }
+.limit-banner .lb-sub { font-size: 12px; color: var(--rust); }
+
+/* ── Footer ── */
+.footer {
+  text-align: center; padding: 2rem 1rem;
+  font-size: 12px; color: var(--stone);
+  border-top: 1px solid var(--border2);
+}
+
+/* ── Mobile ── */
 @media (max-width: 680px) {
   .header { padding: 0 1rem; height: 56px; }
   .logo { font-size: 18px; }
   .logo-bloom { font-size: 20px; }
   .header-tag { display: none; }
+  .usage-pill { font-size: 10px; padding: 4px 9px; }
+  .btn-upgrade { font-size: 11px; padding: 5px 12px; }
 
   .hero { padding: 2rem 1rem 1.75rem; }
   .hero-title { font-size: 34px; }
@@ -583,13 +620,11 @@ textarea { resize: vertical; min-height: 90px; }
   .style-chip .si { font-size: 22px; }
 
   .chip { padding: 7px 12px; font-size: 12px; }
-
   .two-col { grid-template-columns: 1fr; gap: 12px; }
 
   .plant-photos { height: 180px; }
   .card-body { padding: 1.1rem 1.25rem; }
   .plant-name { font-size: 20px; }
-
   .plants-grid { gap: 18px; }
 
   .btn { padding: 10px 18px; font-size: 13px; }
@@ -611,6 +646,9 @@ textarea { resize: vertical; min-height: 90px; }
 
   .summary-pills { gap: 6px; }
   .s-pill { font-size: 11px; padding: 4px 10px; }
+
+  .modal { padding: 1.75rem; }
+  .modal-title { font-size: 22px; }
 }
 
 @media (max-width: 400px) {
@@ -624,9 +662,33 @@ textarea { resize: vertical; min-height: 90px; }
 </head>
 <body>
 
+<!-- Pro upgrade modal -->
+<div class="modal-overlay hidden" id="pro-modal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeProModal()">✕</button>
+    <div class="modal-title">🌟 BloomWise Pro</div>
+    <div class="modal-sub">Unlock unlimited plant intelligence</div>
+    <ul class="pro-features">
+      <li><span class="fi">♾️</span> Unlimited recommendations & lookups</li>
+      <li><span class="fi">🌱</span> Persistent garden planner (synced across devices)</li>
+      <li><span class="fi">📸</span> High-quality botanical photos via Perenual</li>
+      <li><span class="fi">📄</span> PDF export for recommendations & garden plans</li>
+      <li><span class="fi">🗺️</span> Precise hardiness zone detection</li>
+      <li><span class="fi">⚡</span> Priority AI responses</li>
+    </ul>
+    <div class="pro-price"><strong>$4.99</strong> / month</div>
+    <button class="btn-pro" onclick="startCheckout()">✨ Upgrade to Pro</button>
+    <div class="modal-note">Cancel anytime · Secure payment via Stripe</div>
+  </div>
+</div>
+
 <header class="header">
   <div class="logo"><span class="logo-bloom">🌸</span> BloomWise</div>
-  <div class="header-tag">AI-Powered Plant Advisor</div>
+  <div class="header-right">
+    <div class="usage-pill" id="usage-pill" style="display:none;"></div>
+    <button class="btn-upgrade" id="upgrade-btn" onclick="openProModal()" style="display:none;">✨ Go Pro</button>
+    <div class="header-tag">AI-Powered Plant Advisor</div>
+  </div>
 </header>
 
 <div class="hero">
@@ -636,14 +698,13 @@ textarea { resize: vertical; min-height: 90px; }
 
 <main class="main">
 
-
   <div class="tabs">
     <button class="tab active" onclick="switchTab('rec')">🌻 Get Recommendations</button>
     <button class="tab" onclick="switchTab('lookup')">🔍 Plant Lookup</button>
     <button class="tab" onclick="switchTab('planner')">🌱 My Garden <span id="planner-count" class="planner-badge" style="display:none;"></span></button>
   </div>
 
-  <!-- RECOMMENDATIONS -->
+  <!-- RECOMMENDATIONS TAB -->
   <div class="tab-panel active" id="tab-rec">
     <div id="tracker-wrap"></div>
 
@@ -901,7 +962,7 @@ textarea { resize: vertical; min-height: 90px; }
       <button class="btn btn-primary" style="margin-top:1.25rem;" onclick="switchTab('rec')">🌻 Get Recommendations</button>
     </div>
     <div id="planner-grid" class="planner-grid"></div>
-    <div id="planner-actions" style="display:none;" class="nav-row" style="margin-top:1.5rem;">
+    <div id="planner-actions" style="display:none;" class="nav-row">
       <button class="btn btn-ghost" onclick="clearGarden()">🗑 Clear garden</button>
       <button class="btn btn-pdf" onclick="exportGardenPDF()">⬇ Save garden PDF</button>
     </div>
@@ -914,208 +975,283 @@ textarea { resize: vertical; min-height: 90px; }
 </footer>
 
 <script>
-const S={climate:[],sun:'',soil:'',water:'',wrestrict:[],style:'',color:[],priority:[],zone:'',season:''};
-
-// ── Backend config ────────────────────────────────────────
-// Since the frontend is served by the same server as the API,
-// BACKEND is an empty string — calls go to the same origin automatically.
-// This works on Railway, locally, and anywhere you deploy it.
+// ── State ─────────────────────────────────────────────────
+const S = { climate:[], sun:'', soil:'', water:'', wrestrict:[], style:'', color:[], priority:[], zone:'', season:'' };
 const BACKEND = '';
 
-async function apiCall(endpoint, body) {
-  const res = await fetch(BACKEND + endpoint, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(body)
-  });
+// ── User identity (persistent anonymous ID) ───────────────
+function getUserId() {
+  let id = localStorage.getItem('bloomwise-uid');
+  if (!id) {
+    id = 'u-' + Math.random().toString(36).slice(2,10) + Date.now().toString(36);
+    localStorage.setItem('bloomwise-uid', id);
+  }
+  return id;
+}
+const USER_ID = getUserId();
+
+// ── API helper ────────────────────────────────────────────
+async function apiCall(endpoint, body, method='POST') {
+  const opts = {
+    method,
+    headers: { 'Content-Type': 'application/json', 'X-User-ID': USER_ID },
+  };
+  if (body !== undefined) opts.body = JSON.stringify(body);
+  const res = await fetch(BACKEND + endpoint, opts);
   const data = await res.json();
-  if (!res.ok) throw new Error(data.error || `Server error ${res.status}`);
+  if (!res.ok) throw Object.assign(new Error(data.message || data.error || `Server error ${res.status}`), data);
   return data;
 }
 
+// ── Usage / Pro status ────────────────────────────────────
+let userStatus = { used: 0, limit: 3, isPro: false, remaining: 3 };
+
+async function loadUserStatus() {
+  try {
+    userStatus = await apiCall('/user/status', undefined, 'GET');
+    renderUsagePill();
+  } catch(e) { /* fail silently */ }
+}
+
+function renderUsagePill() {
+  const pill = document.getElementById('usage-pill');
+  const btn  = document.getElementById('upgrade-btn');
+  if (!pill) return;
+  if (userStatus.isPro) {
+    pill.textContent = '✨ Pro';
+    pill.className = 'usage-pill pro';
+    pill.style.display = 'inline-flex';
+    btn.style.display = 'none';
+  } else {
+    const rem = userStatus.remaining ?? (userStatus.limit - userStatus.used);
+    pill.textContent = `${rem}/${userStatus.limit} free today`;
+    pill.className = rem <= 1 ? 'usage-pill warn' : 'usage-pill';
+    pill.style.display = 'inline-flex';
+    btn.style.display = rem <= 1 ? 'inline-flex' : 'none';
+  }
+}
+
+function updateUsageFromResponse(usage) {
+  if (!usage) return;
+  userStatus = { ...userStatus, ...usage,
+    remaining: usage.isPro ? Infinity : Math.max(0, usage.limit - usage.used) };
+  renderUsagePill();
+}
+
+// ── Pro modal ─────────────────────────────────────────────
+function openProModal()  { document.getElementById('pro-modal').classList.remove('hidden'); }
+function closeProModal() { document.getElementById('pro-modal').classList.add('hidden'); }
+document.getElementById('pro-modal').addEventListener('click', e => {
+  if (e.target === document.getElementById('pro-modal')) closeProModal();
+});
+
+async function startCheckout() {
+  try {
+    const data = await apiCall('/stripe/checkout', {
+      successUrl: window.location.origin + '/?pro=success',
+      cancelUrl:  window.location.origin + '/?pro=cancel',
+    });
+    if (data.url) window.location.href = data.url;
+    else alert('Could not start checkout. Please try again.');
+  } catch(e) {
+    alert('Checkout error: ' + e.message);
+  }
+}
+
+// Check for ?pro=success in URL
+if (new URLSearchParams(window.location.search).get('pro') === 'success') {
+  setTimeout(() => {
+    loadUserStatus();
+    alert('🎉 Welcome to BloomWise Pro! Your subscription is now active.');
+    history.replaceState({}, '', '/');
+  }, 1500);
+}
+
+// ── Zone detection (client-side lookup table + server fallback) ──
 const ZM={'alaska':3,'anchorage':4,'fairbanks':2,'juneau':7,'maine':5,'vermont':4,'minnesota':4,'wisconsin':4,'michigan':5,'montana':4,'wyoming':4,'idaho':5,'north dakota':3,'south dakota':4,'new york':6,'pennsylvania':6,'ohio':6,'illinois':5,'iowa':5,'nebraska':5,'colorado':5,'utah':6,'nevada':7,'oregon':7,'washington':7,'seattle':8,'portland':8,'spokane':6,'california':9,'los angeles':10,'san francisco':10,'san diego':10,'sacramento':9,'fresno':9,'arizona':9,'phoenix':9,'tucson':9,'albuquerque':7,'new mexico':7,'texas':8,'dallas':7,'houston':9,'austin':8,'san antonio':8,'el paso':7,'florida':10,'miami':11,'orlando':9,'tampa':9,'jacksonville':9,'st petersburg':10,'pensacola':8,'georgia':8,'atlanta':7,'savannah':8,'south carolina':8,'north carolina':7,'charlotte':7,'virginia':7,'dc':7,'washington dc':7,'maryland':7,'delaware':7,'new jersey':7,'connecticut':6,'rhode island':6,'massachusetts':6,'boston':6,'tennessee':7,'nashville':7,'memphis':7,'kentucky':6,'west virginia':6,'louisiana':9,'new orleans':9,'mississippi':8,'alabama':8,'arkansas':7,'missouri':6,'kansas':5,'oklahoma':7,'indiana':5,'hawaii':11,'honolulu':11,'chicago':5,'detroit':5,'cleveland':6,'pittsburgh':6,'philadelphia':7,'baltimore':7};
 const SM={al:8,ak:3,az:9,ar:7,ca:9,co:5,ct:6,de:7,fl:9,ga:8,hi:11,id:5,il:5,in:5,ia:5,ks:5,ky:6,la:9,me:5,md:7,ma:6,mi:5,mn:4,ms:8,mo:6,mt:4,ne:5,nv:7,nh:5,nj:7,nm:7,ny:6,nc:7,nd:3,oh:6,ok:7,or:7,pa:6,ri:6,sc:8,sd:4,tn:7,tx:8,ut:6,vt:4,va:7,wa:7,wv:6,wi:4,wy:4};
 const ZL=['','Zone 1','Zone 2','Zone 3','Zone 4','Zone 5','Zone 6','Zone 7','Zone 8','Zone 9','Zone 10','Zone 11'];
 
-function getZone(v){
-  const l=v.toLowerCase().replace(/[,.]/g,' ').replace(/\s+/g,' ').trim();
-  const z=l.match(/\b(\d{5})\b/);
-  if(z){const n=parseInt(z[1]);if(n>=99500)return'Zone 3–5';if(n>=96700)return'Zone 11';if(n>=90000)return'Zone 9–10';if(n>=85000)return'Zone 9';if(n>=78000)return'Zone 8';if(n>=75000)return'Zone 7–8';if(n>=73000)return'Zone 7';if(n>=33000&&n<=33199)return'Zone 11';if(n>=32000)return'Zone 9–10';if(n>=30000)return'Zone 7–8';if(n>=10000&&n<=14999)return'Zone 6';if(n>=1000&&n<=2999)return'Zone 5–6';if(n>=60000&&n<=62999)return'Zone 5–6';if(n>=77000&&n<=77999)return'Zone 9';if(n>=94000&&n<=94999)return'Zone 9–10';if(n>=97000)return'Zone 7–8';}
-  for(const[k,n]of Object.entries(ZM))if(l.includes(k))return ZL[n];
-  const m=l.match(/\b([a-z]{2})\b/g);
-  if(m)for(const s of m)if(SM[s])return ZL[SM[s]];
+function getZoneLocal(v) {
+  const l = v.toLowerCase().replace(/[,.]/g,' ').replace(/\s+/g,' ').trim();
+  const z = l.match(/\b(\d{5})\b/);
+  if (z) { const n=parseInt(z[1]); if(n>=99500)return'Zone 3–5';if(n>=96700)return'Zone 11';if(n>=90000)return'Zone 9–10';if(n>=85000)return'Zone 9';if(n>=78000)return'Zone 8';if(n>=75000)return'Zone 7–8';if(n>=73000)return'Zone 7';if(n>=33000&&n<=33199)return'Zone 11';if(n>=32000)return'Zone 9–10';if(n>=30000)return'Zone 7–8';if(n>=10000&&n<=14999)return'Zone 6';if(n>=1000&&n<=2999)return'Zone 5–6';if(n>=60000&&n<=62999)return'Zone 5–6';if(n>=77000&&n<=77999)return'Zone 9';if(n>=94000&&n<=94999)return'Zone 9–10';if(n>=97000)return'Zone 7–8'; }
+  for (const [k,n] of Object.entries(ZM)) if (l.includes(k)) return ZL[n];
+  const m = l.match(/\b([a-z]{2})\b/g);
+  if (m) for (const s of m) if (SM[s]) return ZL[SM[s]];
   return null;
 }
 
-let zt=null;
-function onLocationInput(){
+let zt = null;
+function onLocationInput() {
   clearTimeout(zt);
-  const v=document.getElementById('location').value.trim();
-  if(v.length<3){document.getElementById('zone-status').innerHTML='';S.zone='';return;}
-  document.getElementById('zone-status').innerHTML='<div class="detecting"><div class="det-dot"></div>Detecting zone...</div>';
-  zt=setTimeout(()=>{
-    const z=getZone(v);S.zone=z||'';
-    document.getElementById('zone-status').innerHTML=z
-      ?`<div class="zone-badge">🗺 ${z} detected</div>`
-      :`<div class="zone-warn">Zone not found — Claude will infer it from your location name</div>`;
-  },500);
+  const v = document.getElementById('location').value.trim();
+  if (v.length < 3) { document.getElementById('zone-status').innerHTML=''; S.zone=''; return; }
+  document.getElementById('zone-status').innerHTML = '<div class="detecting"><div class="det-dot"></div>Detecting zone...</div>';
+  zt = setTimeout(async () => {
+    // Try local lookup first
+    const local = getZoneLocal(v);
+    if (local) {
+      S.zone = local;
+      document.getElementById('zone-status').innerHTML = `<div class="zone-badge">🗺 ${local} detected</div>`;
+      return;
+    }
+    // Fall back to server-side geocoding
+    try {
+      const data = await apiCall('/zone', { location: v });
+      if (data.zone) {
+        S.zone = data.zone;
+        document.getElementById('zone-status').innerHTML = `<div class="zone-badge">🗺 ${data.zone} detected</div>`;
+      } else {
+        S.zone = '';
+        document.getElementById('zone-status').innerHTML = '<div class="zone-warn">Zone not found — Claude will infer it from your location name</div>';
+      }
+    } catch(e) {
+      S.zone = '';
+      document.getElementById('zone-status').innerHTML = '<div class="zone-warn">Zone not found — Claude will infer it from your location name</div>';
+    }
+  }, 600);
 }
 
-function renderTracker(a){
-  const labels=['Location','Site','Water','Aesthetic'];
-  let h='';
-  labels.forEach((l,i)=>{
-    const c=i<a?'done':i===a?'active':'';
-    const lL=i>0?`<div class="tr-line ${i<=a?'done':''}"></div>`:'';
-    const lR=i<3?`<div class="tr-line ${i<a?'done':''}"></div>`:'';
-    h+=`<div class="tr-step"><div class="tr-row">${lL}<div class="tr-dot ${c}" onclick="goStep(${i})">${i<a?'✓':i+1}</div>${lR}</div><div class="tr-label">${l}</div></div>`;
+// ── Tracker ───────────────────────────────────────────────
+function renderTracker(a) {
+  const labels = ['Location','Site','Water','Aesthetic'];
+  let h = '';
+  labels.forEach((l,i) => {
+    const c = i<a?'done':i===a?'active':'';
+    const lL = i>0 ? `<div class="tr-line ${i<=a?'done':''}"></div>` : '';
+    const lR = i<3 ? `<div class="tr-line ${i<a?'done':''}"></div>` : '';
+    h += `<div class="tr-step"><div class="tr-row">${lL}<div class="tr-dot ${c}" onclick="goStep(${i})">${i<a?'✓':i+1}</div>${lR}</div><div class="tr-label">${l}</div></div>`;
   });
-  document.getElementById('tracker-wrap').innerHTML=`<div class="tracker">${h}</div>`;
+  document.getElementById('tracker-wrap').innerHTML = `<div class="tracker">${h}</div>`;
 }
 
-function goStep(n){
-  document.querySelectorAll('#tab-rec .step-panel').forEach((p,i)=>p.classList.toggle('active',i===n));
+function goStep(n) {
+  document.querySelectorAll('#tab-rec .step-panel').forEach((p,i) => p.classList.toggle('active', i===n));
   renderTracker(Math.min(n,3));
-  window.scrollTo({top:0,behavior:'smooth'});
+  window.scrollTo({ top:0, behavior:'smooth' });
 }
 
-function switchTab(t){
-  const tabs=['rec','lookup','planner'];
-  document.querySelectorAll('.tab').forEach((el,i)=>el.classList.toggle('active',tabs[i]===t));
-  document.querySelectorAll('.tab-panel').forEach((el,i)=>el.classList.toggle('active',['tab-rec','tab-lookup','tab-planner'][i]==='tab-'+t));
-  if(t==='lookup')updateCtx();
-  if(t==='planner')renderPlanner();
+function switchTab(t) {
+  const tabs = ['rec','lookup','planner'];
+  document.querySelectorAll('.tab').forEach((el,i) => el.classList.toggle('active', tabs[i]===t));
+  document.querySelectorAll('.tab-panel').forEach((el,i) => el.classList.toggle('active', ['tab-rec','tab-lookup','tab-planner'][i]==='tab-'+t));
+  if (t==='lookup') updateCtx();
+  if (t==='planner') renderPlanner();
 }
 
-function updateCtx(){
-  const loc=document.getElementById('location').value;
-  const parts=[loc&&'📍 '+loc,S.zone&&'🗺 '+S.zone,S.season&&'📅 '+S.season,S.sun&&'☀️ '+S.sun,S.soil&&'🌱 '+S.soil,S.water&&'💧 '+S.water].filter(Boolean);
-  document.getElementById('ctx-bar').innerHTML=parts.length
-    ?'<span style="font-weight:600;color:var(--bloom);margin-right:4px;">Your site:</span>'+parts.map(p=>`<span class="ctx-pill">${p}</span>`).join('')
-    :'<span>💡 Fill in the Recommendations tab first for personalized scoring</span>';
+function updateCtx() {
+  const loc = document.getElementById('location').value;
+  const parts = [loc&&'📍 '+loc, S.zone&&'🗺 '+S.zone, S.season&&'📅 '+S.season, S.sun&&'☀️ '+S.sun, S.soil&&'🌱 '+S.soil, S.water&&'💧 '+S.water].filter(Boolean);
+  document.getElementById('ctx-bar').innerHTML = parts.length
+    ? '<span style="font-weight:600;color:var(--bloom);margin-right:4px;">Your site:</span>' + parts.map(p=>`<span class="ctx-pill">${p}</span>`).join('')
+    : '<span>💡 Fill in the Recommendations tab first for personalized scoring</span>';
 }
 
-const COLORS=['petal','gold','lav','sage','sky','rust'];
-function schip(el,g,cls){
-  el.parentElement.querySelectorAll('.chip,.opt-card,.style-chip').forEach(c=>{c.className=c.className.replace(new RegExp('\\b('+COLORS.join('|')+')\\b','g'),'').trim();});
+// ── Chip helpers ──────────────────────────────────────────
+const COLORS = ['petal','gold','lav','sage','sky','rust'];
+function schip(el, g, cls) {
+  el.parentElement.querySelectorAll('.chip,.opt-card,.style-chip').forEach(c => {
+    c.className = c.className.replace(new RegExp('\\b('+COLORS.join('|')+')\\b','g'),'').trim();
+  });
   el.classList.add(cls);
-  const label=el.querySelector('.ol');
-  S[g]=(label?label.textContent:el.textContent).trim().replace(/[^\w\s\-\/()]/g,'').replace(/\s+/g,' ').trim();
+  const label = el.querySelector('.ol');
+  S[g] = (label ? label.textContent : el.textContent).trim().replace(/[^\w\s\-\/()]/g,'').replace(/\s+/g,' ').trim();
 }
-function mchip(el,g,cls){
-  const on=COLORS.some(c=>el.classList.contains(c));
-  if(on){el.className=el.className.replace(new RegExp('\\b('+COLORS.join('|')+')\\b','g'),'').trim();}
+function mchip(el, g, cls) {
+  const on = COLORS.some(c => el.classList.contains(c));
+  if (on) { el.className = el.className.replace(new RegExp('\\b('+COLORS.join('|')+')\\b','g'),'').trim(); }
   else el.classList.add(cls);
-  S[g]=[...el.parentElement.querySelectorAll(COLORS.map(c=>'.'+c).join(','))].map(c=>c.textContent.trim().replace(/[^\w\s\-\/()]/g,'').replace(/\s+/g,' ').trim());
+  S[g] = [...el.parentElement.querySelectorAll(COLORS.map(c=>'.'+c).join(','))].map(c => c.textContent.trim().replace(/[^\w\s\-\/()]/g,'').replace(/\s+/g,' ').trim());
 }
 
-function prof(){
-  return{
-    location:document.getElementById('location').value||'Not specified',
-    zone:S.zone||'Unknown — infer from location',
-    season:S.season||'not specified',
-    climate:(S.climate||[]).join(', ')||'not specified',
-    sun:S.sun||'not specified',
-    soil:S.soil||'not specified',
-    ph:document.getElementById('ph').value||'unknown',
-    drainage:document.getElementById('drainage').value||'unknown',
-    microclimate:document.getElementById('microclimate').value||'none',
-    water:S.water||'not specified',
-    wrestrict:(S.wrestrict||[]).join(', ')||'none',
-    rainfall:document.getElementById('rainfall').value||'unknown',
-    irrigation:document.getElementById('irrigation').value||'none',
-    style:S.style||'not specified',
-    colors:(S.color||[]).join(', ')||'no preference',
-    priorities:(S.priority||[]).join(', ')||'none',
-    notes:document.getElementById('notes').value||'none'
+// ── Profile builder ───────────────────────────────────────
+function prof() {
+  return {
+    location:    document.getElementById('location').value || 'Not specified',
+    zone:        S.zone || 'Unknown — infer from location',
+    season:      S.season || 'not specified',
+    climate:     (S.climate||[]).join(', ') || 'not specified',
+    sun:         S.sun || 'not specified',
+    soil:        S.soil || 'not specified',
+    ph:          document.getElementById('ph').value || 'unknown',
+    drainage:    document.getElementById('drainage').value || 'unknown',
+    microclimate:document.getElementById('microclimate').value || 'none',
+    water:       S.water || 'not specified',
+    wrestrict:   (S.wrestrict||[]).join(', ') || 'none',
+    rainfall:    document.getElementById('rainfall').value || 'unknown',
+    irrigation:  document.getElementById('irrigation').value || 'none',
+    style:       S.style || 'not specified',
+    colors:      (S.color||[]).join(', ') || 'no preference',
+    priorities:  (S.priority||[]).join(', ') || 'none',
+    notes:       document.getElementById('notes').value || 'none',
   };
 }
 
-function parseJ(text,type='array'){
-  try{
-    const c=text.replace(/```json|```/gi,'').trim();
-    const s=c.indexOf(type==='array'?'[':'{');
-    const e=type==='array'?c.lastIndexOf(']'):c.lastIndexOf('}');
-    if(s>-1&&e>-1)return JSON.parse(c.slice(s,e+1));
-  }catch(e){}
-  return null;
-}
-
-// claude() now routes through your backend — no API key needed in the browser
-async function claude(prompt, max=1800){
-  const data = await apiCall('/claude', { prompt, max });
-  return data.text || '';
-}
-
-async function wikiPhoto(query){
-  try{
-    const r=await fetch(`https://en.wikipedia.org/w/api.php?action=query&titles=${encodeURIComponent(query)}&prop=pageimages&format=json&pithumbsize=600&origin=*`);
-    const d=await r.json();
-    const pages=d.query?.pages;
-    if(!pages)return null;
-    return Object.values(pages)[0]?.thumbnail?.source||null;
-  }catch(e){return null;}
-}
-
-async function getPhotos(commonName,scientificName){
-  const genus=scientificName.split(' ')[0];
-  const photos=[];
-  const tried=new Set();
-  for(const q of[scientificName,genus,commonName]){
-    if(photos.length>=2)break;
-    if(tried.has(q))continue;
-    tried.add(q);
-    const url=await wikiPhoto(q);
-    if(url&&!photos.includes(url))photos.push(url);
+// ── Photo helpers ─────────────────────────────────────────
+async function getPhotos(commonName, scientificName) {
+  try {
+    const data = await apiCall('/photos', { common: commonName, scientific: scientificName });
+    return data.photos || [];
+  } catch(e) {
+    // Fallback: try Wikipedia directly from browser
+    try {
+      const r = await fetch(`https://en.wikipedia.org/w/api.php?action=query&titles=${encodeURIComponent(scientificName||commonName)}&prop=pageimages&format=json&pithumbsize=600&origin=*`);
+      const d = await r.json();
+      const pages = d.query?.pages;
+      if (pages) {
+        const url = Object.values(pages)[0]?.thumbnail?.source;
+        if (url) return [url];
+      }
+    } catch {}
+    return [];
   }
-  return photos;
 }
 
-function buildPhotos(photos,alt,cls='plant-photos'){
-  if(!photos||photos.length===0)
+function buildPhotos(photos, alt, cls='plant-photos') {
+  if (!photos || photos.length === 0)
     return `<div class="${cls}"><div class="no-photo">No photo available</div></div>`;
-  const imgs=photos.slice(0,2).map(url=>
+  const imgs = photos.slice(0,2).map(url =>
     `<img src="${url}" alt="${alt}" loading="lazy" onerror="this.remove()"/>`
   ).join('');
   return `<div class="${cls}">${imgs}</div>`;
 }
 
-function seasonEmoji(s){
-  const l=(s||'').toLowerCase();
-  if(l.includes('spring'))return'🌸';
-  if(l.includes('fall')||l.includes('autumn'))return'🍂';
-  if(l.includes('summer'))return'☀️';
-  if(l.includes('winter'))return'❄️';
-  return'📅';
+function seasonEmoji(s) {
+  const l = (s||'').toLowerCase();
+  if (l.includes('spring')) return '🌸';
+  if (l.includes('fall')||l.includes('autumn')) return '🍂';
+  if (l.includes('summer')) return '☀️';
+  if (l.includes('winter')) return '❄️';
+  return '📅';
 }
 
-async function generateRecs(){
-  const p=prof();
-  document.getElementById('summary-pills').innerHTML=`<div class="summary-pills">${
-    [p.location,p.zone,p.season,p.sun,p.soil,p.water,p.style]
-    .filter(v=>v&&v!=='not specified'&&!v.toLowerCase().includes('unknown'))
-    .map(v=>`<span class="s-pill">${v}</span>`).join('')
+// ── Recommendations ───────────────────────────────────────
+async function generateRecs() {
+  const p = prof();
+  document.getElementById('summary-pills').innerHTML = `<div class="summary-pills">${
+    [p.location, p.zone, p.season, p.sun, p.soil, p.water, p.style]
+    .filter(v => v && v !== 'not specified' && !v.toLowerCase().includes('unknown'))
+    .map(v => `<span class="s-pill">${v}</span>`).join('')
   }</div>`;
   goStep(4);
-  document.getElementById('results').innerHTML=`<div class="loading"><div class="loader"></div><div class="loading-text">Finding your perfect plants…</div><div class="loading-sub">Analyzing ${p.location} — takes about 10 seconds</div></div>`;
+  document.getElementById('results').innerHTML = `<div class="loading"><div class="loader"></div><div class="loading-text">Finding your perfect plants…</div><div class="loading-sub">Analyzing ${p.location} — takes about 10 seconds</div></div>`;
 
-  try{
-    // Use dedicated backend endpoint — faster and no prompt re-parsing needed
+  try {
     const data = await apiCall('/recommendations', p);
+    updateUsageFromResponse(data.usage);
     const plants = data.plants;
-    if(!plants||!plants.length)throw new Error('No plant data returned — please try again');
+    if (!plants || !plants.length) throw new Error('No plant data returned — please try again');
 
-    document.getElementById('results').innerHTML=`<div class="loading"><div class="loader"></div><div class="loading-text">Loading photos…</div></div>`;
+    document.getElementById('results').innerHTML = `<div class="loading"><div class="loader"></div><div class="loading-text">Loading photos…</div></div>`;
 
-    const cards=await Promise.all(plants.map(async pl=>{
-      const photos=await getPhotos(pl.name,pl.scientific);
-      pl.photo = photos[0]||null;
-      const inGarden = garden.find(g=>g.name===pl.name);
-      const addBtnState = inGarden ? 'added" disabled' : '"';
-      const addBtnText = inGarden ? '✓ In garden' : '+ Add to garden';
+    const cards = await Promise.all(plants.map(async pl => {
+      const photos = await getPhotos(pl.name, pl.scientific);
+      pl.photo = photos[0] || null;
+      const inGarden = garden.find(g => g.name === pl.name);
       return `
         <div class="plant-card">
-          ${buildPhotos(photos,pl.name,'plant-photos')}
+          ${buildPhotos(photos, pl.name, 'plant-photos')}
           <div class="card-body">
             <div class="plant-name">${pl.name}</div>
             <div class="plant-sci">${pl.scientific}</div>
@@ -1128,53 +1264,67 @@ async function generateRecs(){
             </div>
             <div class="plant-desc">${pl.description}</div>
             <button class="add-to-garden-btn ${inGarden?'added':''}" data-name="${pl.name}"
-              onclick='addToGarden(${JSON.stringify(pl)}, this)'>${addBtnText}</button>
+              onclick='addToGarden(${JSON.stringify(pl)}, this)'>${inGarden?'✓ In garden':'+ Add to garden'}</button>
           </div>
         </div>`;
     }));
 
-    document.getElementById('results').innerHTML=`
+    document.getElementById('results').innerHTML = `
       <div class="results-header">Your BloomWise Plant Picks 🌻</div>
       <div class="plants-grid">${cards.join('')}</div>`;
-    document.getElementById('pdf-btn').style.display='inline-flex';
-  }catch(e){
-    document.getElementById('results').innerHTML=`<div class="error-box"><strong>Something went wrong:</strong> ${e.message}</div>`;
+    document.getElementById('pdf-btn').style.display = 'inline-flex';
+
+  } catch(e) {
+    if (e.error === 'daily_limit_reached') {
+      document.getElementById('results').innerHTML = `
+        <div class="limit-banner">
+          <div class="lb-icon">🌿</div>
+          <div class="lb-text">
+            <div class="lb-title">Daily limit reached</div>
+            <div class="lb-sub">${e.message || "You've used all your free recommendations today."}</div>
+          </div>
+          <button class="btn-upgrade" style="flex-shrink:0;" onclick="openProModal()">✨ Go Pro</button>
+        </div>`;
+      openProModal();
+    } else {
+      document.getElementById('results').innerHTML = `<div class="error-box"><strong>Something went wrong:</strong> ${e.message}</div>`;
+    }
   }
 }
 
-async function doLookup(){
-  const plant=document.getElementById('lookup-input').value.trim();
-  if(!plant)return;
+// ── Lookup ────────────────────────────────────────────────
+async function doLookup() {
+  const plant = document.getElementById('lookup-input').value.trim();
+  if (!plant) return;
   updateCtx();
-  const p=prof();
-  const hasCtx=p.location!=='Not specified'||p.sun!=='not specified'||p.soil!=='not specified';
+  const p = prof();
+  const hasCtx = p.location !== 'Not specified' || p.sun !== 'not specified' || p.soil !== 'not specified';
 
-  document.getElementById('lookup-results').innerHTML=`<div class="loading"><div class="loader"></div><div class="loading-text">Researching ${plant}…</div></div>`;
+  document.getElementById('lookup-results').innerHTML = `<div class="loading"><div class="loader"></div><div class="loading-text">Researching ${plant}…</div></div>`;
 
-  try{
-    // Use dedicated backend endpoint
+  try {
     const data = await apiCall('/lookup', { plant, site: hasCtx ? p : null });
+    updateUsageFromResponse(data.usage);
     const d = data.result;
-    if(!d||!d.name)throw new Error('Could not parse — please try again');
+    if (!d || !d.name) throw new Error('Could not parse — please try again');
 
-    const photos=await getPhotos(d.name,d.scientific||d.name);
-    const strip=buildPhotos(photos,d.name,'fit-photos');
-    const vC={green:'verdict-green',yellow:'verdict-yellow',red:'verdict-red'};
-    const vI={green:'🟢',yellow:'🟡',red:'🔴'};
-    const rC={ok:'ok',warn:'warn',bad:'bad',neutral:'neutral'};
-    const rI={ok:'✅',warn:'⚠️',bad:'❌',neutral:'ℹ️'};
-    const reqs=(d.requirements||[]).map(r=>`
-      <div class="req ${rC[r.status]||'neutral'}">
+    const photos = await getPhotos(d.name, d.scientific || d.name);
+    const strip  = buildPhotos(photos, d.name, 'fit-photos');
+    const vC = { green:'verdict-green', yellow:'verdict-yellow', red:'verdict-red' };
+    const vI = { green:'🟢', yellow:'🟡', red:'🔴' };
+    const rI = { ok:'✅', warn:'⚠️', bad:'❌', neutral:'ℹ️' };
+    const reqs = (d.requirements||[]).map(r => `
+      <div class="req ${r.status||'neutral'}">
         <div class="req-label">${rI[r.status]||'ℹ️'} ${r.label}</div>
         <div class="req-val">${r.value}</div>
         <div class="req-note">${r.note}</div>
       </div>`).join('');
-    const specials=d.special_requirements?.length
-      ?`<div class="special-box"><div class="special-title">⭐ Special requirements & watch-outs</div><ul>${d.special_requirements.map(s=>`<li>${s}</li>`).join('')}</ul></div>`:'' ;
-    const tip=d.pro_tip?`<div class="pro-tip"><strong>💡 Pro tip:</strong> ${d.pro_tip}</div>`:'';
-    const noCtx=!hasCtx?`<div style="font-size:12px;color:#7a4e00;padding:9px 14px;background:var(--gold-lt);border-radius:var(--r);border:1px solid var(--gold);margin-bottom:16px;">📋 Add your site profile in the Recommendations tab for personalized ✅ ⚠️ ❌ scoring</div>`:'';
+    const specials = d.special_requirements?.length
+      ? `<div class="special-box"><div class="special-title">⭐ Special requirements & watch-outs</div><ul>${d.special_requirements.map(s=>`<li>${s}</li>`).join('')}</ul></div>` : '';
+    const tip = d.pro_tip ? `<div class="pro-tip"><strong>💡 Pro tip:</strong> ${d.pro_tip}</div>` : '';
+    const noCtx = !hasCtx ? `<div style="font-size:12px;color:#7a4e00;padding:9px 14px;background:var(--gold-lt);border-radius:var(--r);border:1px solid var(--gold);margin-bottom:16px;">📋 Add your site profile in the Recommendations tab for personalized ✅ ⚠️ ❌ scoring</div>` : '';
 
-    document.getElementById('lookup-results').innerHTML=`
+    document.getElementById('lookup-results').innerHTML = `
       <div class="fit-card">
         ${strip}
         <div class="fit-body">
@@ -1188,121 +1338,93 @@ async function doLookup(){
           ${specials}${tip}
         </div>
       </div>`;
-  }catch(e){
-    document.getElementById('lookup-results').innerHTML=`<div class="error-box"><strong>Something went wrong:</strong> ${e.message}</div>`;
+  } catch(e) {
+    if (e.error === 'daily_limit_reached') {
+      document.getElementById('lookup-results').innerHTML = `
+        <div class="limit-banner">
+          <div class="lb-icon">🌿</div>
+          <div class="lb-text">
+            <div class="lb-title">Daily limit reached</div>
+            <div class="lb-sub">${e.message || "You've used all your free lookups today."}</div>
+          </div>
+          <button class="btn-upgrade" style="flex-shrink:0;" onclick="openProModal()">✨ Go Pro</button>
+        </div>`;
+      openProModal();
+    } else {
+      document.getElementById('lookup-results').innerHTML = `<div class="error-box"><strong>Something went wrong:</strong> ${e.message}</div>`;
+    }
   }
 }
 
-// ── Garden Planner — backed by Supabase ─────────────────
-// ┌─────────────────────────────────────────────────────┐
-// │  PASTE YOUR SUPABASE VALUES HERE                    │
-// └─────────────────────────────────────────────────────┘
-const SUPABASE_URL  = 'https://your-project.supabase.co';   // ← replace
-const SUPABASE_ANON = 'your-anon-public-key-here';          // ← replace
-
-function getUserId(){
-  let id = localStorage.getItem('bloomwise-uid');
-  if(!id){
-    id = 'user-' + Math.random().toString(36).slice(2) + Date.now().toString(36);
-    localStorage.setItem('bloomwise-uid', id);
-  }
-  return id;
-}
-const USER_ID = getUserId();
+// ── Garden Planner (PostgreSQL-backed) ────────────────────
 let garden = [];
 
-async function sbFetch(path, options={}){
-  const res = await fetch(SUPABASE_URL + path, {
-    ...options,
-    headers:{
-      'apikey': SUPABASE_ANON,
-      'Authorization': 'Bearer ' + SUPABASE_ANON,
-      'Content-Type': 'application/json',
-      'Prefer': options.prefer || '',
-      ...(options.headers||{})
-    }
-  });
-  if(!res.ok){ const e=await res.json().catch(()=>({})); throw new Error(e.message||'Supabase error '+res.status); }
-  return res.status===204 ? null : res.json();
-}
-
-async function loadGardenFromDB(){
-  try{
-    showPlannerLoading(true);
-    const rows = await sbFetch(`/rest/v1/gardens?user_id=eq.${encodeURIComponent(USER_ID)}&select=plants&limit=1`);
-    garden = rows && rows.length > 0 ? (rows[0].plants||[]) : [];
-  }catch(e){
-    console.warn('Supabase not configured — using localStorage:', e.message);
-    garden = JSON.parse(localStorage.getItem('bloomwise-garden')||'[]');
-  }finally{ showPlannerLoading(false); }
+async function loadGarden() {
+  try {
+    const data = await apiCall('/garden', undefined, 'GET');
+    garden = data.plants || [];
+  } catch(e) {
+    // Fallback to localStorage if DB unavailable
+    garden = JSON.parse(localStorage.getItem('bloomwise-garden') || '[]');
+  }
   updatePlannerBadge();
 }
 
-async function saveGardenToDB(){
+async function saveGarden() {
   localStorage.setItem('bloomwise-garden', JSON.stringify(garden));
-  try{
-    const rows = await sbFetch(`/rest/v1/gardens?user_id=eq.${encodeURIComponent(USER_ID)}&select=id&limit=1`);
-    if(rows && rows.length > 0){
-      await sbFetch(`/rest/v1/gardens?user_id=eq.${encodeURIComponent(USER_ID)}`,
-        {method:'PATCH', prefer:'return=minimal', body:JSON.stringify({plants:garden})});
-    } else {
-      await sbFetch(`/rest/v1/gardens`,
-        {method:'POST', prefer:'return=minimal', body:JSON.stringify({user_id:USER_ID, plants:garden})});
-    }
-  }catch(e){ console.warn('Supabase save failed — saved locally only:', e.message); }
+  try {
+    await apiCall('/garden', { plants: garden });
+  } catch(e) {
+    console.warn('Garden save to DB failed — saved locally only:', e.message);
+  }
   updatePlannerBadge();
 }
 
-function showPlannerLoading(show){
-  const g = document.getElementById('planner-grid');
-  if(show) g.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:2rem;color:var(--stone);">Loading your garden…</div>';
-}
-
-function updatePlannerBadge(){
+function updatePlannerBadge() {
   const badge = document.getElementById('planner-count');
-  if(garden.length>0){ badge.textContent=garden.length; badge.style.display='inline-flex'; }
-  else badge.style.display='none';
+  if (garden.length > 0) { badge.textContent = garden.length; badge.style.display = 'inline-flex'; }
+  else badge.style.display = 'none';
 }
 
-async function addToGarden(plant, btn){
-  if(garden.find(p=>p.name===plant.name)) return;
+async function addToGarden(plant, btn) {
+  if (garden.find(p => p.name === plant.name)) return;
   garden.push(plant);
   btn.classList.add('added');
-  btn.textContent='✓ In garden';
-  btn.disabled=true;
-  await saveGardenToDB();
+  btn.textContent = '✓ In garden';
+  btn.disabled = true;
+  await saveGarden();
 }
 
-async function removeFromGarden(name){
-  garden = garden.filter(p=>p.name!==name);
-  await saveGardenToDB();
+async function removeFromGarden(name) {
+  garden = garden.filter(p => p.name !== name);
+  await saveGarden();
   renderPlanner();
-  document.querySelectorAll('.add-to-garden-btn').forEach(btn=>{
-    if(btn.dataset.name===name){ btn.classList.remove('added'); btn.textContent='+ Add to garden'; btn.disabled=false; }
+  document.querySelectorAll('.add-to-garden-btn').forEach(btn => {
+    if (btn.dataset.name === name) { btn.classList.remove('added'); btn.textContent = '+ Add to garden'; btn.disabled = false; }
   });
 }
 
-async function clearGarden(){
-  if(!confirm('Remove all plants from your garden?')) return;
-  garden=[];
-  await saveGardenToDB();
+async function clearGarden() {
+  if (!confirm('Remove all plants from your garden?')) return;
+  garden = [];
+  await saveGarden();
   renderPlanner();
-  document.querySelectorAll('.add-to-garden-btn').forEach(btn=>{
-    btn.classList.remove('added'); btn.textContent='+ Add to garden'; btn.disabled=false;
+  document.querySelectorAll('.add-to-garden-btn').forEach(btn => {
+    btn.classList.remove('added'); btn.textContent = '+ Add to garden'; btn.disabled = false;
   });
 }
 
-function renderPlanner(){
+function renderPlanner() {
   const empty   = document.getElementById('planner-empty');
   const grid    = document.getElementById('planner-grid');
   const actions = document.getElementById('planner-actions');
-  if(garden.length===0){ empty.style.display='block'; grid.innerHTML=''; actions.style.display='none'; return; }
-  empty.style.display='none'; actions.style.display='flex';
-  grid.innerHTML = garden.map(pl=>{
+  if (garden.length === 0) { empty.style.display='block'; grid.innerHTML=''; actions.style.display='none'; return; }
+  empty.style.display = 'none'; actions.style.display = 'flex';
+  grid.innerHTML = garden.map(pl => {
     const photo = pl.photo
-      ? `<img class="pc-photo" src="${pl.photo}" alt="${pl.name}" onerror="this.outerHTML='<div class=\'pc-photo-placeholder\'>No photo</div>'">`
+      ? `<img class="pc-photo" src="${pl.photo}" alt="${pl.name}" onerror="this.outerHTML='<div class=\\'pc-photo-placeholder\\'>No photo</div>'">`
       : `<div class="pc-photo-placeholder">No photo available</div>`;
-    const safeName = pl.name.replace(/'/g, "\'");
+    const safeName = pl.name.replace(/'/g, "\\'");
     return `<div class="planner-card">
       ${photo}
       <div class="pc-body">
@@ -1320,62 +1442,55 @@ function renderPlanner(){
   }).join('');
 }
 
-// ── PDF Export ───────────────────────────────────────────
-function exportPDF(){
+// ── PDF Export ────────────────────────────────────────────
+function exportPDF() {
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF({ unit:'mm', format:'a4' });
   const W = doc.internal.pageSize.getWidth();
   let y = 20;
 
-  // Header
   doc.setFillColor(13, 42, 74);
   doc.rect(0, 0, W, 28, 'F');
   doc.setTextColor(255, 217, 102);
-  doc.setFontSize(20);
-  doc.setFont('helvetica','bold');
+  doc.setFontSize(20); doc.setFont('helvetica','bold');
   doc.text('BloomWise', 14, 18);
   doc.setTextColor(184, 216, 244);
-  doc.setFontSize(9);
-  doc.setFont('helvetica','normal');
+  doc.setFontSize(9); doc.setFont('helvetica','normal');
   doc.text('AI-Powered Plant Recommendations', 14, 24);
   y = 38;
 
-  // Site summary
   const p = prof();
-  const siteLines = [`Location: ${p.location}  |  Zone: ${p.zone}  |  Season: ${p.season}`,
+  const siteLines = [
+    `Location: ${p.location}  |  Zone: ${p.zone}  |  Season: ${p.season}`,
     `Sun: ${p.sun}  |  Soil: ${p.soil}  |  Water: ${p.water}`,
-    `Style: ${p.style}`].filter(l=>!l.includes('not specified')&&!l.includes('Unknown'));
+    `Style: ${p.style}`
+  ].filter(l => !l.includes('not specified') && !l.includes('Unknown'));
   doc.setFillColor(232, 244, 252);
   doc.roundedRect(10, y, W-20, siteLines.length*6+8, 3, 3, 'F');
-  doc.setTextColor(26, 92, 150);
-  doc.setFontSize(8);
-  siteLines.forEach((line,i)=>{ doc.text(line, 14, y+6+i*6); });
+  doc.setTextColor(26, 92, 150); doc.setFontSize(8);
+  siteLines.forEach((line,i) => { doc.text(line, 14, y+6+i*6); });
   y += siteLines.length*6+16;
 
-  // Plants
   const cards = document.querySelectorAll('.plant-card');
-  doc.setFontSize(14);
-  doc.setFont('helvetica','bold');
+  doc.setFontSize(14); doc.setFont('helvetica','bold');
   doc.setTextColor(26, 92, 150);
   doc.text('Your Plant Picks', 14, y);
   y += 8;
 
-  cards.forEach((card, idx)=>{
-    const name = card.querySelector('.plant-name')?.textContent||'';
-    const sci  = card.querySelector('.plant-sci')?.textContent||'';
-    const season = card.querySelector('.season-badge')?.textContent||'';
-    const tags = [...card.querySelectorAll('.ptag')].map(t=>t.textContent).join('  ');
-    const desc = card.querySelector('.plant-desc')?.textContent||'';
+  cards.forEach((card, idx) => {
+    const name   = card.querySelector('.plant-name')?.textContent || '';
+    const sci    = card.querySelector('.plant-sci')?.textContent || '';
+    const season = card.querySelector('.season-badge')?.textContent || '';
+    const tags   = [...card.querySelectorAll('.ptag')].map(t => t.textContent).join('  ');
+    const desc   = card.querySelector('.plant-desc')?.textContent || '';
 
-    if(y > 250){ doc.addPage(); y = 20; }
+    if (y > 250) { doc.addPage(); y = 20; }
 
-    // Card background
     doc.setFillColor(245, 249, 253);
     doc.roundedRect(10, y, W-20, 42, 3, 3, 'F');
     doc.setDrawColor(200, 221, 240);
     doc.roundedRect(10, y, W-20, 42, 3, 3, 'S');
 
-    // Number circle
     doc.setFillColor(46, 125, 196);
     doc.circle(19, y+8, 5, 'F');
     doc.setTextColor(255,255,255);
@@ -1399,25 +1514,21 @@ function exportPDF(){
     doc.text(tags, 14, y+27);
 
     const descLines = doc.splitTextToSize(desc, W-28);
-    doc.setTextColor(44, 66, 96);
-    doc.setFontSize(8);
+    doc.setTextColor(44, 66, 96); doc.setFontSize(8);
     doc.text(descLines.slice(0,2), 14, y+33);
 
     y += 48;
   });
 
-  // Footer
-  doc.setFillColor(13, 42, 74);
   const pH = doc.internal.pageSize.getHeight();
+  doc.setFillColor(13, 42, 74);
   doc.rect(0, pH-14, W, 14, 'F');
-  doc.setTextColor(122, 174, 204);
-  doc.setFontSize(7);
+  doc.setTextColor(122, 174, 204); doc.setFontSize(7);
   doc.text('Generated by BloomWise · bloomwise.app', W/2, pH-5, {align:'center'});
-
   doc.save('bloomwise-plant-picks.pdf');
 }
 
-function exportGardenPDF(){
+function exportGardenPDF() {
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF({ unit:'mm', format:'a4' });
   const W = doc.internal.pageSize.getWidth();
@@ -1433,8 +1544,8 @@ function exportGardenPDF(){
   doc.text(`${garden.length} plant${garden.length!==1?'s':''} in collection`, 14, 24);
   y = 38;
 
-  garden.forEach((pl, idx)=>{
-    if(y > 250){ doc.addPage(); y = 20; }
+  garden.forEach((pl, idx) => {
+    if (y > 250) { doc.addPage(); y = 20; }
     doc.setFillColor(245, 249, 253);
     doc.roundedRect(10, y, W-20, 38, 3, 3, 'F');
     doc.setDrawColor(200, 221, 240);
@@ -1459,11 +1570,10 @@ function exportGardenPDF(){
     doc.text(`${seasonEmoji(pl.planting_season)} ${pl.planting_season||'Spring or Fall'}`, 27, y+21);
 
     const tags = [pl.sun, pl.water, pl.soil].filter(Boolean).join('  ·  ');
-    doc.setTextColor(60, 80, 100);
-    doc.setFontSize(7.5);
+    doc.setTextColor(60, 80, 100); doc.setFontSize(7.5);
     doc.text(tags, 14, y+28);
 
-    if(pl.description){
+    if (pl.description) {
       const lines = doc.splitTextToSize(pl.description, W-28);
       doc.setTextColor(44, 66, 96); doc.setFontSize(7.5);
       doc.text(lines.slice(0,1), 14, y+34);
@@ -1479,8 +1589,10 @@ function exportGardenPDF(){
   doc.save('bloomwise-my-garden.pdf');
 }
 
+// ── Boot ──────────────────────────────────────────────────
 renderTracker(0);
-loadGardenFromDB(); // loads from Supabase (falls back to localStorage if not configured)
+loadGarden();
+loadUserStatus();
 </script>
 </body>
 </html>
