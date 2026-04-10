@@ -1,0 +1,1486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>BloomWise — AI Plant Advisor</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --petal:    #2e7dc4;
+  --petal2:   #4d9dd8;
+  --petal-lt: #e8f4fc;
+  --bloom:    #1a5c96;
+  --lavender: #5b8dd4;
+  --lav-lt:   #eaf2fd;
+  --gold:     #d4a017;
+  --gold-lt:  #fef8dc;
+  --sage:     #3a7d5a;
+  --sage-lt:  #e4f4ec;
+  --sky:      #1e90c8;
+  --sky-lt:   #dff0fa;
+  --rust:     #c47c18;
+  --rust-lt:  #fef3dc;
+  --bg:       #f5f9fd;
+  --bg2:      #edf5fc;
+  --white:    #ffffff;
+  --ink:      #0f1e2e;
+  --ink2:     #2a4260;
+  --stone:    #6a859e;
+  --border:   #c8ddf0;
+  --border2:  #ddeef8;
+  --r:        10px;
+  --r-lg:     18px;
+  --r-xl:     24px;
+  --sh:       0 2px 16px rgba(30,100,180,.08);
+  --sh-md:    0 6px 32px rgba(30,100,180,.14);
+}
+* { box-sizing:border-box; margin:0; padding:0; }
+body { font-family:'Jost',sans-serif; background:var(--bg); color:var(--ink); min-height:100vh; line-height:1.6; }
+
+/* ── Header ── */
+.header {
+  background: linear-gradient(135deg, #0d2a4a 0%, #1a4d7a 50%, #2268a8 100%);
+  padding: 0 2.5rem;
+  display: flex; align-items: center; justify-content: space-between;
+  height: 72px; position: sticky; top: 0; z-index: 100;
+}
+.logo {
+  font-family:'Cormorant Garamond',serif;
+  font-size: 26px; font-weight: 600; color: #fff;
+  display: flex; align-items: center; gap: 12px; letter-spacing: .02em;
+}
+.logo-bloom { font-size: 28px; }
+.header-tag { font-size: 12px; color: #e8b8cc; letter-spacing: .06em; font-weight: 400; }
+
+/* ── Hero banner ── */
+.hero {
+  background: linear-gradient(135deg, #0d2a4a 0%, #1a5c96 35%, #2e7dc4 65%, #d4a017 100%);
+  padding: 3rem 2.5rem 3rem;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.hero::before {
+  content: '🌻🌼💐🌻🌼💐🌻🌼💐🌻🌼💐';
+  position: absolute; top: 10px; left: 0; right: 0;
+  font-size: 28px; letter-spacing: 8px; opacity: .18;
+  white-space: nowrap;
+}
+.hero::after {
+  content: '💐🌼🌻💐🌼🌻💐🌼🌻💐🌼🌻';
+  position: absolute; bottom: 10px; left: 0; right: 0;
+  font-size: 28px; letter-spacing: 8px; opacity: .18;
+  white-space: nowrap;
+}
+.hero-title {
+  font-family:'Cormorant Garamond',serif;
+  font-size: 52px; font-weight: 600; color: #fff;
+  line-height: 1.1; margin-bottom: 10px;
+  position: relative; z-index: 1;
+}
+.hero-title em { color: #ffd966; font-style: italic; }
+.hero-sub {
+  font-size: 16px; color: #b8d8f4; font-weight: 300;
+  position: relative; z-index: 1;
+}
+
+/* ── Main ── */
+.main { max-width: 920px; margin: 0 auto; padding: 2.5rem 1.5rem 5rem; }
+
+/* ── API key bar removed — using backend ── */
+
+/* ── Tabs ── */
+.tabs {
+  display: flex; gap: 4px;
+  background: var(--white); border: 1.5px solid var(--border);
+  border-radius: 50px; padding: 5px; margin-bottom: 2.5rem;
+  box-shadow: var(--sh);
+}
+.tab {
+  flex: 1; padding: 11px 20px; font-size: 14px; font-weight: 500;
+  font-family: inherit; text-align: center; cursor: pointer;
+  border-radius: 50px; border: none; background: none;
+  color: var(--stone); transition: all .2s;
+}
+.tab:hover { color: var(--petal); }
+.tab.active { background: linear-gradient(135deg, #1a4d7a, #2e7dc4); color: #fff; }
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+
+/* ── Progress tracker ── */
+.tracker { display: flex; align-items: flex-start; margin-bottom: 2.5rem; }
+.tr-step { display: flex; flex-direction: column; align-items: center; flex: 1; }
+.tr-row { display: flex; align-items: center; width: 100%; }
+.tr-dot {
+  width: 36px; height: 36px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 600; flex-shrink: 0; cursor: pointer;
+  transition: all .25s; border: 2px solid var(--border);
+  background: var(--white); color: var(--stone);
+}
+.tr-dot.active { background: linear-gradient(135deg,#1a4d7a,#2e7dc4); border-color: var(--bloom); color: #fff; }
+.tr-dot.done { background: var(--bloom); border-color: var(--bloom); color: #fff; }
+.tr-line { flex: 1; height: 2px; background: var(--border); transition: background .3s; }
+.tr-line.done { background: var(--petal2); }
+.tr-label { font-size: 10px; color: var(--stone); margin-top: 7px; letter-spacing: .04em; font-weight: 500; text-transform: uppercase; }
+
+/* ── Step panels ── */
+.step-panel { display: none; animation: fadeUp .25s ease; }
+.step-panel.active { display: block; }
+@keyframes fadeUp { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:none} }
+
+/* ── Section card ── */
+.section-card {
+  background: var(--white); border: 1.5px solid var(--border2);
+  border-radius: var(--r-xl); padding: 2rem 2.5rem;
+  margin-bottom: 1.5rem; box-shadow: var(--sh);
+}
+.step-title {
+  font-family:'Cormorant Garamond',serif;
+  font-size: 30px; color: var(--bloom);
+  margin-bottom: 6px; font-weight: 600;
+}
+.step-sub { font-size: 14px; color: var(--stone); margin-bottom: 1.75rem; }
+
+/* ── Fields ── */
+.field { margin-bottom: 1.5rem; }
+.field:last-child { margin-bottom: 0; }
+.field-label {
+  display: block; font-size: 11px; font-weight: 600;
+  color: var(--bloom); text-transform: uppercase;
+  letter-spacing: .08em; margin-bottom: 10px;
+}
+input[type=text], select, textarea {
+  width: 100%; border: 1.5px solid var(--border);
+  border-radius: var(--r); padding: 12px 16px;
+  font-size: 14px; font-family: inherit;
+  background: var(--bg); color: var(--ink);
+  outline: none; transition: border-color .2s, box-shadow .2s; appearance: none;
+}
+input:focus, select:focus, textarea:focus {
+  border-color: var(--petal2);
+  box-shadow: 0 0 0 3px rgba(212,84,122,.12);
+  background: var(--white);
+}
+textarea { resize: vertical; min-height: 90px; }
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+@media(max-width:600px) { .two-col { grid-template-columns: 1fr; } }
+
+/* ── Zone badge ── */
+.zone-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 8px 16px; background: var(--petal-lt);
+  border: 1.5px solid var(--petal2); border-radius: 50px;
+  font-size: 13px; color: var(--bloom); font-weight: 600; margin-top: 10px;
+}
+.zone-warn {
+  font-size: 12px; color: var(--gold); margin-top: 8px;
+  padding: 8px 14px; background: var(--gold-lt);
+  border-radius: var(--r); border: 1px solid var(--gold);
+}
+.detecting { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--petal2); margin-top: 8px; }
+.det-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--petal2); animation: pulse 1s infinite; }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.2} }
+
+/* ── Chips ── */
+.chip-row { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip {
+  padding: 8px 16px; font-size: 13px;
+  border: 1.5px solid var(--border); border-radius: 50px;
+  cursor: pointer; background: var(--white); color: var(--stone);
+  transition: all .15s; user-select: none; font-family: inherit;
+}
+.chip:hover { border-color: var(--petal2); color: var(--bloom); background: var(--petal-lt); }
+.chip.petal  { background: var(--petal-lt);  border-color: var(--petal2);  color: var(--bloom);    font-weight: 500; }
+.chip.gold   { background: var(--gold-lt);   border-color: var(--gold);    color: #7a4e00;         font-weight: 500; }
+.chip.lav    { background: var(--lav-lt);    border-color: var(--lavender);color: var(--lavender); font-weight: 500; }
+.chip.sage   { background: var(--sage-lt);   border-color: var(--sage);    color: var(--sage);     font-weight: 500; }
+.chip.sky    { background: var(--sky-lt);    border-color: var(--sky);     color: var(--sky);      font-weight: 500; }
+.chip.rust   { background: var(--rust-lt);   border-color: var(--rust);    color: var(--rust);     font-weight: 500; }
+
+/* ── Style grid ── */
+.style-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 10px; }
+@media(max-width:560px) { .style-grid { grid-template-columns: repeat(2,1fr); } }
+.style-chip {
+  border: 1.5px solid var(--border); border-radius: var(--r-lg);
+  padding: 16px 8px 14px; text-align: center; cursor: pointer;
+  font-size: 12px; font-weight: 500; color: var(--stone);
+  background: var(--white); transition: all .15s; font-family: inherit;
+}
+.style-chip .si { font-size: 26px; display: block; margin-bottom: 8px; }
+.style-chip:hover { border-color: var(--petal2); color: var(--bloom); background: var(--petal-lt); }
+.style-chip.petal { border-color: var(--petal2);  background: var(--petal-lt);  color: var(--bloom);    font-weight: 500; }
+.style-chip.gold  { border-color: var(--gold);    background: var(--gold-lt);   color: #7a4e00;         font-weight: 500; }
+.style-chip.lav   { border-color: var(--lavender);background: var(--lav-lt);    color: var(--lavender); font-weight: 500; }
+.style-chip.sage  { border-color: var(--sage);    background: var(--sage-lt);   color: var(--sage);     font-weight: 500; }
+.style-chip.sky   { border-color: var(--sky);     background: var(--sky-lt);    color: var(--sky);      font-weight: 500; }
+.style-chip.rust  { border-color: var(--rust);    background: var(--rust-lt);   color: var(--rust);     font-weight: 500; }
+
+/* ── Option cards (season / water) ── */
+.option-row { display: flex; gap: 10px; flex-wrap: wrap; }
+.opt-card {
+  flex: 1; min-width: 110px;
+  border: 1.5px solid var(--border); border-radius: var(--r-lg);
+  padding: 18px 10px 14px; text-align: center; cursor: pointer;
+  background: var(--white); transition: all .15s; font-family: inherit;
+}
+.opt-card .oi { font-size: 28px; display: block; margin-bottom: 10px; }
+.opt-card .ol { display: block; font-size: 13px; font-weight: 600; color: var(--ink2); margin-bottom: 4px; }
+.opt-card .on { display: block; font-size: 11px; color: var(--stone); font-weight: 400; }
+.opt-card:hover { border-color: var(--petal2); background: var(--petal-lt); }
+.opt-card.petal { border-color: var(--petal2);  background: var(--petal-lt);  }
+.opt-card.petal .ol { color: var(--bloom); }
+.opt-card.petal .on { color: var(--petal2); }
+.opt-card.gold  { border-color: var(--gold);    background: var(--gold-lt);   }
+.opt-card.gold  .ol { color: #7a4e00; }
+.opt-card.gold  .on { color: var(--gold); }
+.opt-card.lav   { border-color: var(--lavender);background: var(--lav-lt);    }
+.opt-card.lav   .ol { color: var(--lavender); }
+.opt-card.lav   .on { color: var(--lavender); }
+.opt-card.sage  { border-color: var(--sage);    background: var(--sage-lt);   }
+.opt-card.sage  .ol { color: var(--sage); }
+.opt-card.sage  .on { color: var(--sage); }
+.opt-card.sky   { border-color: var(--sky);     background: var(--sky-lt);    }
+.opt-card.sky   .ol { color: var(--sky); }
+.opt-card.sky   .on { color: var(--sky); }
+.opt-card.rust  { border-color: var(--rust);    background: var(--rust-lt);   }
+.opt-card.rust  .ol { color: var(--rust); }
+.opt-card.rust  .on { color: var(--rust); }
+
+/* ── Nav ── */
+.nav-row {
+  display: flex; gap: 12px; align-items: center;
+  margin-top: 2rem; padding-top: 1.75rem; border-top: 1px solid var(--border2);
+}
+.btn {
+  padding: 12px 28px; font-size: 14px; font-weight: 600;
+  border-radius: 50px; cursor: pointer;
+  border: 1.5px solid var(--border); background: var(--white);
+  color: var(--stone); transition: all .15s; font-family: inherit;
+}
+.btn:hover { background: var(--petal-lt); border-color: var(--petal2); color: var(--bloom); }
+.btn-primary {
+  background: linear-gradient(135deg, #1a4d7a, #2e7dc4);
+  color: #fff; border-color: var(--bloom);
+}
+.btn-primary:hover { background: linear-gradient(135deg, #133c60, #2268a8); }
+.btn-ghost { background: transparent; border-color: transparent; color: var(--stone); }
+.btn-ghost:hover { color: var(--bloom); background: var(--petal-lt); border-color: var(--border); }
+.step-counter { font-size: 12px; color: var(--stone); margin-left: auto; font-weight: 500; }
+
+/* ── Summary pills ── */
+.summary-pills { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 2rem; }
+.s-pill {
+  padding: 6px 14px; border-radius: 50px; font-size: 12px; font-weight: 500;
+  background: var(--petal-lt); color: var(--bloom); border: 1px solid var(--petal2);
+}
+
+/* ── Results header ── */
+.results-header {
+  font-family:'Cormorant Garamond',serif;
+  font-size: 30px; color: var(--bloom);
+  margin-bottom: 1.5rem; font-weight: 600;
+}
+
+/* =====================
+   PLANT CARDS
+   Photos on top. White body below. One consistent style.
+   ===================== */
+.plants-grid { display: flex; flex-direction: column; gap: 28px; }
+
+.plant-card {
+  background: var(--white);
+  border: 1.5px solid var(--border2);
+  border-radius: var(--r-xl);
+  box-shadow: var(--sh);
+  transition: box-shadow .2s, transform .2s;
+  overflow: hidden;
+}
+.plant-card:hover { box-shadow: var(--sh-md); transform: translateY(-2px); }
+
+/* Photos — always on top, always a fixed height row */
+.plant-photos {
+  width: 100%;
+  height: 220px;
+  display: flex;
+  flex-direction: row;
+  gap: 2px;
+  background: var(--bg2);
+  flex-shrink: 0;
+}
+.plant-photos img {
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.plant-photos .no-photo {
+  flex: 1;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--bg2); color: var(--stone);
+  font-size: 13px; font-style: italic;
+}
+
+/* Card body — always below photos, always white */
+.card-body {
+  background: var(--white);
+  padding: 1.5rem 1.75rem;
+}
+.plant-name {
+  font-family:'Cormorant Garamond',serif;
+  font-size: 26px; color: var(--bloom);
+  font-weight: 600; line-height: 1.2; margin-bottom: 4px;
+}
+.plant-sci {
+  font-size: 13px; color: var(--stone);
+  font-style: italic; margin-bottom: 16px;
+}
+.season-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 5px 14px; border-radius: 50px;
+  background: var(--gold-lt); border: 1px solid var(--gold);
+  font-size: 12px; font-weight: 600; color: #7a4e00;
+  margin-bottom: 14px;
+}
+.plant-tags { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 16px; }
+.ptag {
+  font-size: 12px; padding: 4px 12px; border-radius: 50px;
+  background: var(--bg); color: var(--ink2);
+  border: 1px solid var(--border); font-weight: 500;
+}
+.plant-desc {
+  font-size: 14px; color: var(--ink2); line-height: 1.75;
+  border-top: 1px solid var(--border2); padding-top: 14px;
+}
+
+/* ── Loading ── */
+.loading { text-align: center; padding: 4rem 1rem; }
+.loader {
+  width: 40px; height: 40px;
+  border: 3px solid var(--petal-lt); border-top-color: var(--petal);
+  border-radius: 50%; animation: spin .8s linear infinite; margin: 0 auto 16px;
+}
+@keyframes spin { to{transform:rotate(360deg)} }
+.loading-text { font-size: 15px; color: var(--bloom); font-weight: 500; }
+.loading-sub { font-size: 13px; color: var(--stone); margin-top: 6px; }
+.error-box {
+  background: #fff8f8; border: 1.5px solid #f5a0a0;
+  border-radius: var(--r); padding: 16px 20px;
+  color: #8b1a1a; font-size: 13px; line-height: 1.6;
+}
+
+/* ── Lookup ── */
+.lookup-hero {
+  background: linear-gradient(135deg, #0d2a4a 0%, #1a5c96 50%, #2e7dc4 100%);
+  border-radius: var(--r-xl); padding: 2.5rem;
+  margin-bottom: 1.25rem; box-shadow: var(--sh-md);
+  position: relative; overflow: hidden;
+}
+.lookup-hero::before {
+  content: '🌻 🌼 💐 🌻 🌼 💐 🌻 🌼';
+  position: absolute; top: 12px; right: 20px;
+  font-size: 18px; opacity: .2; letter-spacing: 4px;
+}
+.lookup-hero h2 {
+  font-family:'Cormorant Garamond',serif;
+  font-size: 26px; color: #fff; margin-bottom: 6px; font-weight: 600;
+}
+.lookup-hero p { font-size: 13px; color: #b8d8f4; margin-bottom: 1.25rem; }
+.lookup-row { display: flex; gap: 10px; }
+.lookup-row input {
+  flex: 1; background: rgba(255,255,255,.14);
+  border: 1.5px solid rgba(255,255,255,.25);
+  color: #fff; border-radius: var(--r);
+  padding: 12px 16px; font-size: 14px; font-family: inherit; outline: none;
+}
+.lookup-row input::placeholder { color: rgba(255,255,255,.45); }
+.lookup-row input:focus { border-color: #ffd966; background: rgba(255,255,255,.2); }
+
+.ctx-bar {
+  background: var(--white); border: 1px solid var(--border);
+  border-radius: var(--r); padding: 11px 16px;
+  font-size: 12px; color: var(--stone);
+  margin-bottom: 2rem; display: flex; flex-wrap: wrap; gap: 7px; align-items: center;
+  box-shadow: var(--sh);
+}
+.ctx-pill {
+  background: var(--petal-lt); border: 1px solid var(--petal2);
+  border-radius: 50px; padding: 3px 11px;
+  font-size: 11px; color: var(--bloom); font-weight: 500;
+}
+
+/* ── Fit card (lookup results) ── */
+.fit-card {
+  background: var(--white); border: 1.5px solid var(--border2);
+  border-radius: var(--r-xl); overflow: hidden;
+  box-shadow: var(--sh); animation: fadeUp .3s ease;
+}
+.fit-photos {
+  width: 100%; height: 220px;
+  display: flex; flex-direction: row; gap: 2px;
+  background: var(--bg2); flex-shrink: 0;
+}
+.fit-photos img { flex: 1; min-width: 0; height: 100%; object-fit: cover; display: block; }
+.fit-photos .no-photo { flex: 1; display: flex; align-items: center; justify-content: center; background: var(--bg2); color: var(--stone); font-size: 13px; font-style: italic; }
+.fit-body { background: var(--white); padding: 1.75rem 2rem; }
+.fit-name { font-family:'Cormorant Garamond',serif; font-size: 26px; color: var(--bloom); font-weight: 600; margin-bottom: 4px; }
+.fit-sci { font-size: 13px; color: var(--stone); font-style: italic; margin-bottom: 14px; }
+.verdict {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 7px 18px; border-radius: 50px;
+  font-size: 13px; font-weight: 600; margin-bottom: 12px;
+}
+.verdict-green  { background: var(--sage-lt); color: var(--sage); border: 1.5px solid var(--sage); }
+.verdict-yellow { background: var(--gold-lt); color: #7a4e00;     border: 1.5px solid var(--gold); }
+.verdict-red    { background: var(--rust-lt); color: var(--rust);  border: 1.5px solid var(--rust); }
+.fit-summary { font-size: 14px; color: var(--ink2); line-height: 1.75; margin-bottom: 18px; }
+.req-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+@media(max-width:500px) { .req-grid { grid-template-columns: 1fr; } }
+.req { border-radius: var(--r); padding: 12px 14px; border: 1px solid; }
+.req-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 4px; display: flex; align-items: center; gap: 5px; }
+.req-val { font-size: 13px; font-weight: 600; margin-bottom: 3px; }
+.req-note { font-size: 11px; line-height: 1.5; opacity: .85; }
+.req.ok      { background: var(--sage-lt); border-color: var(--sage);     color: var(--sage); }
+.req.warn    { background: var(--gold-lt); border-color: var(--gold);     color: #7a4e00; }
+.req.bad     { background: var(--rust-lt); border-color: var(--rust);     color: var(--rust); }
+.req.neutral { background: var(--bg);      border-color: var(--border);   color: var(--ink2); }
+.special-box { background: var(--lav-lt); border: 1.5px solid var(--lavender); border-radius: var(--r); padding: 14px 16px; margin-bottom: 14px; }
+.special-title { font-size: 11px; font-weight: 700; color: var(--lavender); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 8px; }
+.special-box ul { padding-left: 18px; }
+.special-box li { font-size: 12px; color: var(--lavender); line-height: 1.75; }
+.pro-tip { background: var(--petal-lt); border: 1px solid var(--petal2); border-radius: var(--r); padding: 14px 16px; font-size: 13px; color: var(--bloom); line-height: 1.65; }
+.pro-tip strong { font-weight: 700; }
+
+/* ── PDF button ── */
+.btn-pdf {
+  padding: 12px 22px; font-size: 14px; font-weight: 600;
+  border-radius: 50px; cursor: pointer; font-family: inherit;
+  background: var(--gold); color: #fff;
+  border: 1.5px solid var(--gold);
+  transition: all .15s;
+}
+.btn-pdf:hover { background: #b88c10; border-color: #b88c10; }
+
+/* ── Planner ── */
+.planner-hero {
+  background: linear-gradient(135deg, #0d2a4a, #1a5c96);
+  border-radius: var(--r-xl); padding: 2rem 2.5rem;
+  margin-bottom: 1.5rem; color: #fff;
+}
+.planner-hero h2 { font-family:'Cormorant Garamond',serif; font-size: 26px; margin-bottom: 6px; }
+.planner-hero p  { font-size: 13px; color: #b8d8f4; }
+
+.planner-empty {
+  background: var(--white); border: 2px dashed var(--border);
+  border-radius: var(--r-xl); padding: 3rem 2rem;
+  text-align: center; color: var(--stone);
+}
+.pe-icon { font-size: 48px; margin-bottom: 14px; }
+.pe-title { font-family:'Cormorant Garamond',serif; font-size: 22px; color: var(--bloom); margin-bottom: 8px; }
+.pe-sub { font-size: 14px; line-height: 1.6; max-width: 340px; margin: 0 auto; }
+
+.planner-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 18px;
+}
+.planner-card {
+  background: var(--white); border: 1.5px solid var(--border2);
+  border-radius: var(--r-lg); overflow: hidden;
+  box-shadow: var(--sh); transition: box-shadow .2s, transform .2s;
+  animation: fadeUp .3s ease;
+}
+.planner-card:hover { box-shadow: var(--sh-md); transform: translateY(-2px); }
+.planner-card .pc-photo {
+  width: 100%; height: 160px;
+  object-fit: cover; display: block;
+  background: var(--bg2);
+}
+.planner-card .pc-photo-placeholder {
+  width: 100%; height: 160px;
+  background: var(--bg2); display: flex;
+  align-items: center; justify-content: center;
+  color: var(--stone); font-size: 13px; font-style: italic;
+}
+.planner-card .pc-body { padding: 1rem 1.25rem; }
+.planner-card .pc-name {
+  font-family:'Cormorant Garamond',serif;
+  font-size: 18px; color: var(--bloom); font-weight: 600;
+  margin-bottom: 2px;
+}
+.planner-card .pc-sci { font-size: 12px; color: var(--stone); font-style: italic; margin-bottom: 10px; }
+.planner-card .pc-tags { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 12px; }
+.planner-card .pc-tag {
+  font-size: 11px; padding: 3px 9px; border-radius: 50px;
+  background: var(--bg); border: 1px solid var(--border); color: var(--ink2); font-weight: 500;
+}
+.planner-card .pc-season {
+  font-size: 11px; padding: 3px 10px; border-radius: 50px;
+  background: var(--gold-lt); border: 1px solid var(--gold); color: #7a5500;
+  font-weight: 600; margin-bottom: 10px; display: inline-flex; gap: 4px; align-items: center;
+}
+.planner-card .pc-remove {
+  width: 100%; padding: 8px; font-size: 12px; font-weight: 500;
+  border: 1px solid var(--border); border-radius: var(--r);
+  background: none; cursor: pointer; color: var(--stone);
+  font-family: inherit; transition: all .15s;
+}
+.planner-card .pc-remove:hover { background: #fef0f0; border-color: #f5a0a0; color: #8b1a1a; }
+
+.planner-badge {
+  display: inline-flex; align-items: center; justify-content: center;
+  background: var(--gold); color: #fff;
+  font-size: 10px; font-weight: 700;
+  width: 18px; height: 18px; border-radius: 50%;
+  margin-left: 6px; vertical-align: middle;
+}
+
+/* ── Add to Garden button on result cards ── */
+.add-to-garden-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 7px 16px; font-size: 12px; font-weight: 600;
+  border-radius: 50px; cursor: pointer; font-family: inherit;
+  background: var(--gold-lt); border: 1.5px solid var(--gold);
+  color: #7a5500; transition: all .15s; margin-top: 10px;
+}
+.add-to-garden-btn:hover { background: var(--gold); color: #fff; }
+.add-to-garden-btn.added { background: var(--sage-lt); border-color: var(--sage); color: var(--sage); cursor: default; }
+
+/* =====================
+   MOBILE — responsive
+   ===================== */
+@media (max-width: 680px) {
+  .header { padding: 0 1rem; height: 56px; }
+  .logo { font-size: 18px; }
+  .logo-bloom { font-size: 20px; }
+  .header-tag { display: none; }
+
+  .hero { padding: 2rem 1rem 1.75rem; }
+  .hero-title { font-size: 34px; }
+  .hero-sub { font-size: 14px; }
+
+  .main { padding: 1.25rem 1rem 3rem; }
+
+  .tabs { border-radius: 12px; flex-direction: column; gap: 3px; padding: 4px; }
+  .tab { border-radius: 10px; padding: 10px 12px; font-size: 13px; }
+
+  .tracker { margin-bottom: 1.5rem; }
+  .tr-label { font-size: 9px; }
+
+  .section-card { padding: 1.25rem 1.25rem; border-radius: var(--r-lg); }
+  .step-title { font-size: 22px; }
+
+  .option-row { gap: 8px; }
+  .opt-card { min-width: 0; padding: 12px 6px 10px; }
+  .opt-card .oi { font-size: 22px; margin-bottom: 6px; }
+  .opt-card .ol { font-size: 12px; }
+  .opt-card .on { font-size: 10px; }
+
+  .style-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+  .style-chip { padding: 12px 6px 10px; }
+  .style-chip .si { font-size: 22px; }
+
+  .chip { padding: 7px 12px; font-size: 12px; }
+
+  .two-col { grid-template-columns: 1fr; gap: 12px; }
+
+  .plant-photos { height: 180px; }
+  .card-body { padding: 1.1rem 1.25rem; }
+  .plant-name { font-size: 20px; }
+
+  .plants-grid { gap: 18px; }
+
+  .btn { padding: 10px 18px; font-size: 13px; }
+  .nav-row { flex-wrap: wrap; gap: 8px; }
+  .step-counter { width: 100%; text-align: right; margin-left: 0; }
+
+  .lookup-hero { padding: 1.5rem 1.25rem; border-radius: var(--r-lg); }
+  .lookup-hero h2 { font-size: 20px; }
+  .lookup-row { flex-direction: column; }
+  .lookup-row input { width: 100%; }
+
+  .planner-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
+  .planner-hero { padding: 1.5rem; border-radius: var(--r-lg); }
+  .planner-hero h2 { font-size: 20px; }
+
+  .fit-photos { height: 180px; }
+  .fit-body { padding: 1.25rem; }
+  .req-grid { grid-template-columns: 1fr; }
+
+  .summary-pills { gap: 6px; }
+  .s-pill { font-size: 11px; padding: 4px 10px; }
+}
+
+@media (max-width: 400px) {
+  .hero-title { font-size: 28px; }
+  .planner-grid { grid-template-columns: 1fr; }
+  .option-row { flex-wrap: wrap; }
+  .opt-card { flex: 1 1 calc(50% - 4px); }
+}
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body>
+
+<header class="header">
+  <div class="logo"><span class="logo-bloom">🌸</span> BloomWise</div>
+  <div class="header-tag">AI-Powered Plant Advisor</div>
+</header>
+
+<div class="hero">
+  <div class="hero-title">The right plant,<br><em>every time.</em></div>
+  <div class="hero-sub">Tell us about your space — we'll find plants that actually thrive there</div>
+</div>
+
+<main class="main">
+
+
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('rec')">🌻 Get Recommendations</button>
+    <button class="tab" onclick="switchTab('lookup')">🔍 Plant Lookup</button>
+    <button class="tab" onclick="switchTab('planner')">🌱 My Garden <span id="planner-count" class="planner-badge" style="display:none;"></span></button>
+  </div>
+
+  <!-- RECOMMENDATIONS -->
+  <div class="tab-panel active" id="tab-rec">
+    <div id="tracker-wrap"></div>
+
+    <!-- Step 0: Location -->
+    <div class="step-panel active" id="step0">
+      <div class="section-card">
+        <div class="step-title">Location & Climate</div>
+        <div class="step-sub">We'll auto-detect your hardiness zone from your city or zip code</div>
+        <div class="field">
+          <label class="field-label">City or zip code</label>
+          <input type="text" id="location" placeholder="e.g. Tampa, FL  or  33601" oninput="onLocationInput()"/>
+          <div id="zone-status"></div>
+        </div>
+        <div class="field">
+          <label class="field-label">Current season</label>
+          <div class="option-row">
+            <button class="opt-card" onclick="schip(this,'season','petal')"><span class="oi">🌸</span><span class="ol">Spring</span><span class="on">Mar – May</span></button>
+            <button class="opt-card" onclick="schip(this,'season','gold')"><span class="oi">☀️</span><span class="ol">Summer</span><span class="on">Jun – Aug</span></button>
+            <button class="opt-card" onclick="schip(this,'season','rust')"><span class="oi">🍂</span><span class="ol">Fall</span><span class="on">Sep – Nov</span></button>
+            <button class="opt-card" onclick="schip(this,'season','sky')"><span class="oi">❄️</span><span class="ol">Winter</span><span class="on">Dec – Feb</span></button>
+          </div>
+        </div>
+        <div class="field">
+          <label class="field-label">Climate characteristics</label>
+          <div class="chip-row">
+            <div class="chip" onclick="mchip(this,'climate','gold')">☀️ Hot summers</div>
+            <div class="chip" onclick="mchip(this,'climate','sage')">🌤 Mild year-round</div>
+            <div class="chip" onclick="mchip(this,'climate','lav')">❄️ Cold winters</div>
+            <div class="chip" onclick="mchip(this,'climate','sky')">💦 High humidity</div>
+            <div class="chip" onclick="mchip(this,'climate','gold')">🏜 Arid / dry</div>
+            <div class="chip" onclick="mchip(this,'climate','sky')">🌊 Coastal / salty air</div>
+            <div class="chip" onclick="mchip(this,'climate','lav')">🌀 Freeze/thaw cycles</div>
+            <div class="chip" onclick="mchip(this,'climate','gold')">🫒 Mediterranean</div>
+          </div>
+        </div>
+        <div class="nav-row">
+          <button class="btn btn-primary" onclick="goStep(1)">Next →</button>
+          <span class="step-counter">Step 1 of 4</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 1: Site -->
+    <div class="step-panel" id="step1">
+      <div class="section-card">
+        <div class="step-title">Site Conditions</div>
+        <div class="step-sub">Tell us about your specific planting spot</div>
+        <div class="field">
+          <label class="field-label">Sun exposure</label>
+          <div class="chip-row">
+            <div class="chip" onclick="schip(this,'sun','gold')">☀️ Full sun — 6+ hrs</div>
+            <div class="chip" onclick="schip(this,'sun','gold')">🌤 Part sun — 4 to 6 hrs</div>
+            <div class="chip" onclick="schip(this,'sun','sage')">⛅ Part shade — 2 to 4 hrs</div>
+            <div class="chip" onclick="schip(this,'sun','sky')">🌑 Full shade — under 2 hrs</div>
+            <div class="chip" onclick="schip(this,'sun','lav')">🔄 Varies by season</div>
+          </div>
+        </div>
+        <div class="field">
+          <label class="field-label">Soil type</label>
+          <div class="chip-row">
+            <div class="chip" onclick="schip(this,'soil','gold')">Sandy — drains fast</div>
+            <div class="chip" onclick="schip(this,'soil','rust')">Clay — drains slow</div>
+            <div class="chip" onclick="schip(this,'soil','sage')">Loamy — balanced</div>
+            <div class="chip" onclick="schip(this,'soil','sky')">Silty</div>
+            <div class="chip" onclick="schip(this,'soil','lav')">Chalky / alkaline</div>
+            <div class="chip" onclick="schip(this,'soil','petal')">Peaty / acidic</div>
+            <div class="chip" onclick="schip(this,'soil','gold')">Rocky / thin</div>
+            <div class="chip" onclick="schip(this,'soil','sky')">Unknown</div>
+          </div>
+        </div>
+        <div class="two-col">
+          <div class="field">
+            <label class="field-label">Soil pH (if known)</label>
+            <select id="ph">
+              <option value="">Unknown / skip</option>
+              <option>Acidic — below 6.0</option>
+              <option>Slightly acidic — 6.0 to 6.9</option>
+              <option>Neutral — 7.0</option>
+              <option>Slightly alkaline — 7.1 to 7.9</option>
+              <option>Alkaline — 8.0 and above</option>
+            </select>
+          </div>
+          <div class="field">
+            <label class="field-label">Drainage</label>
+            <select id="drainage">
+              <option value="">Unknown / skip</option>
+              <option>Excellent — dries quickly</option>
+              <option>Good — moderate</option>
+              <option>Poor — holds moisture</option>
+              <option>Boggy / waterlogged</option>
+            </select>
+          </div>
+        </div>
+        <div class="field">
+          <label class="field-label">Microclimate notes (optional)</label>
+          <input type="text" id="microclimate" placeholder="e.g. south-facing slope, near concrete wall, exposed to wind..."/>
+        </div>
+        <div class="nav-row">
+          <button class="btn btn-ghost" onclick="goStep(0)">← Back</button>
+          <button class="btn btn-primary" onclick="goStep(2)">Next →</button>
+          <span class="step-counter">Step 2 of 4</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 2: Water -->
+    <div class="step-panel" id="step2">
+      <div class="section-card">
+        <div class="step-title">Water & Restrictions</div>
+        <div class="step-sub">Help us match plants to your real water situation</div>
+        <div class="field">
+          <label class="field-label">Water availability</label>
+          <div class="option-row">
+            <button class="opt-card" onclick="schip(this,'water','rust')"><span class="oi">🌵</span><span class="ol">Low</span><span class="on">Xeric / no supplemental</span></button>
+            <button class="opt-card" onclick="schip(this,'water','sage')"><span class="oi">🪣</span><span class="ol">Moderate</span><span class="on">Occasional deep watering</span></button>
+            <button class="opt-card" onclick="schip(this,'water','sky')"><span class="oi">💦</span><span class="ol">Regular</span><span class="on">Irrigation available</span></button>
+          </div>
+        </div>
+        <div class="field">
+          <label class="field-label">Water goals & restrictions</label>
+          <div class="chip-row">
+            <div class="chip" onclick="mchip(this,'wrestrict','sky')">Drought-tolerant plants only</div>
+            <div class="chip" onclick="mchip(this,'wrestrict','gold')">Avoid irrigation entirely</div>
+            <div class="chip" onclick="mchip(this,'wrestrict','sage')">Drip system installed</div>
+            <div class="chip" onclick="mchip(this,'wrestrict','sage')">Rainwater harvesting</div>
+            <div class="chip" onclick="mchip(this,'wrestrict','rust')">Municipal restrictions</div>
+            <div class="chip" onclick="mchip(this,'wrestrict','lav')">Low maintenance priority</div>
+          </div>
+        </div>
+        <div class="two-col">
+          <div class="field">
+            <label class="field-label">Annual rainfall</label>
+            <select id="rainfall">
+              <option value="">Unknown</option>
+              <option>Arid — under 10 inches</option>
+              <option>Semi-arid — 10 to 20 inches</option>
+              <option>Moderate — 20 to 40 inches</option>
+              <option>Humid — 40 to 60 inches</option>
+              <option>Very wet — 60 inches or more</option>
+            </select>
+          </div>
+          <div class="field">
+            <label class="field-label">Irrigation system</label>
+            <select id="irrigation">
+              <option value="">None / hand water</option>
+              <option>Drip irrigation</option>
+              <option>Sprinkler system</option>
+              <option>Soaker hose</option>
+              <option>Smart / sensor-based</option>
+            </select>
+          </div>
+        </div>
+        <div class="nav-row">
+          <button class="btn btn-ghost" onclick="goStep(1)">← Back</button>
+          <button class="btn btn-primary" onclick="goStep(3)">Next →</button>
+          <span class="step-counter">Step 3 of 4</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 3: Aesthetic -->
+    <div class="step-panel" id="step3">
+      <div class="section-card">
+        <div class="step-title">Aesthetic Goals</div>
+        <div class="step-sub">Help us match the look and feel of your garden vision</div>
+        <div class="field">
+          <label class="field-label">Design style</label>
+          <div class="style-grid">
+            <div class="style-chip" onclick="schip(this,'style','sage')"><span class="si">🌿</span>Naturalistic</div>
+            <div class="style-chip" onclick="schip(this,'style','sky')"><span class="si">✂️</span>Formal</div>
+            <div class="style-chip" onclick="schip(this,'style','gold')"><span class="si">🌵</span>Desert / xeric</div>
+            <div class="style-chip" onclick="schip(this,'style','petal')"><span class="si">🌸</span>Cottage</div>
+            <div class="style-chip" onclick="schip(this,'style','sky')"><span class="si">🎍</span>Japanese / zen</div>
+            <div class="style-chip" onclick="schip(this,'style','gold')"><span class="si">🌾</span>Prairie / meadow</div>
+            <div class="style-chip" onclick="schip(this,'style','rust')"><span class="si">🌴</span>Tropical lush</div>
+            <div class="style-chip" onclick="schip(this,'style','lav')"><span class="si">🏠</span>Modern / minimal</div>
+          </div>
+        </div>
+        <div class="field">
+          <label class="field-label">Color palette</label>
+          <div class="chip-row">
+            <div class="chip" onclick="mchip(this,'color','lav')">💜 Cool blues & purples</div>
+            <div class="chip" onclick="mchip(this,'color','rust')">🧡 Warm oranges & reds</div>
+            <div class="chip" onclick="mchip(this,'color','petal')">🩷 Soft pinks & whites</div>
+            <div class="chip" onclick="mchip(this,'color','gold')">💛 Yellows & golds</div>
+            <div class="chip" onclick="mchip(this,'color','sage')">💚 All green / foliage</div>
+            <div class="chip" onclick="mchip(this,'color','sky')">🌈 Mixed / pollinator palette</div>
+          </div>
+        </div>
+        <div class="field">
+          <label class="field-label">Plant priorities</label>
+          <div class="chip-row">
+            <div class="chip" onclick="mchip(this,'priority','sage')">Natives only</div>
+            <div class="chip" onclick="mchip(this,'priority','gold')">Pollinator-friendly</div>
+            <div class="chip" onclick="mchip(this,'priority','rust')">Edible / food garden</div>
+            <div class="chip" onclick="mchip(this,'priority','sage')">Evergreen year-round</div>
+            <div class="chip" onclick="mchip(this,'priority','sage')">Wildlife habitat</div>
+            <div class="chip" onclick="mchip(this,'priority','lav')">Privacy / screening</div>
+            <div class="chip" onclick="mchip(this,'priority','sky')">Ground cover</div>
+            <div class="chip" onclick="mchip(this,'priority','petal')">Fragrant</div>
+            <div class="chip" onclick="mchip(this,'priority','gold')">Low maintenance</div>
+            <div class="chip" onclick="mchip(this,'priority','sage')">Pet &amp; child safe</div>
+          </div>
+        </div>
+        <div class="field">
+          <label class="field-label">Additional notes</label>
+          <textarea id="notes" placeholder="e.g. replacing a lawn, prefer plants under 3 ft, need fall color, deer pressure, slope erosion control..."></textarea>
+        </div>
+        <div class="nav-row">
+          <button class="btn btn-ghost" onclick="goStep(2)">← Back</button>
+          <button class="btn btn-primary" onclick="generateRecs()">🌻 Get My Plant Picks</button>
+          <span class="step-counter">Step 4 of 4</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 4: Results -->
+    <div class="step-panel" id="step4">
+      <div id="summary-pills"></div>
+      <div id="results"></div>
+      <div class="nav-row" style="margin-top:2rem;padding-top:1.5rem;border-top:1px solid var(--border2);">
+        <button class="btn btn-ghost" onclick="goStep(3)">← Adjust inputs</button>
+        <button class="btn btn-primary" onclick="generateRecs()">🔄 Regenerate</button>
+        <button class="btn btn-pdf" id="pdf-btn" onclick="exportPDF()" style="display:none;">⬇ Save PDF</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- LOOKUP TAB -->
+  <div class="tab-panel" id="tab-lookup">
+    <div class="lookup-hero">
+      <h2>Plant Lookup</h2>
+      <p>Search any plant to see how well it fits your site conditions</p>
+      <div class="lookup-row">
+        <input type="text" id="lookup-input" placeholder="e.g. Lavender, Japanese Maple, Bougainvillea..." onkeydown="if(event.key==='Enter')doLookup()"/>
+        <button class="btn btn-primary" onclick="doLookup()">Look up</button>
+      </div>
+    </div>
+    <div class="ctx-bar" id="ctx-bar">
+      <span>💡 Fill in the Recommendations tab first for personalized scoring</span>
+    </div>
+    <div id="lookup-results"></div>
+  </div>
+
+  <!-- GARDEN PLANNER TAB -->
+  <div class="tab-panel" id="tab-planner">
+    <div class="planner-hero">
+      <h2>🌱 My Garden Planner</h2>
+      <p>Save plants from your recommendations and build your perfect garden collection</p>
+    </div>
+    <div id="planner-empty" class="planner-empty">
+      <div class="pe-icon">🪴</div>
+      <div class="pe-title">Your garden is empty</div>
+      <div class="pe-sub">Generate plant recommendations and click "Add to Garden" to start building your collection</div>
+      <button class="btn btn-primary" style="margin-top:1.25rem;" onclick="switchTab('rec')">🌻 Get Recommendations</button>
+    </div>
+    <div id="planner-grid" class="planner-grid"></div>
+    <div id="planner-actions" style="display:none;" class="nav-row" style="margin-top:1.5rem;">
+      <button class="btn btn-ghost" onclick="clearGarden()">🗑 Clear garden</button>
+      <button class="btn btn-pdf" onclick="exportGardenPDF()">⬇ Save garden PDF</button>
+    </div>
+  </div>
+
+</main>
+
+<footer class="footer">
+  <strong>BloomWise</strong> &nbsp;·&nbsp; AI-Powered Plant Intelligence &nbsp;·&nbsp; Powered by Anthropic Claude
+</footer>
+
+<script>
+const S={climate:[],sun:'',soil:'',water:'',wrestrict:[],style:'',color:[],priority:[],zone:'',season:''};
+
+// ── Backend config ────────────────────────────────────────
+// Since the frontend is served by the same server as the API,
+// BACKEND is an empty string — calls go to the same origin automatically.
+// This works on Railway, locally, and anywhere you deploy it.
+const BACKEND = '';
+
+async function apiCall(endpoint, body) {
+  const res = await fetch(BACKEND + endpoint, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body)
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || `Server error ${res.status}`);
+  return data;
+}
+
+const ZM={'alaska':3,'anchorage':4,'fairbanks':2,'juneau':7,'maine':5,'vermont':4,'minnesota':4,'wisconsin':4,'michigan':5,'montana':4,'wyoming':4,'idaho':5,'north dakota':3,'south dakota':4,'new york':6,'pennsylvania':6,'ohio':6,'illinois':5,'iowa':5,'nebraska':5,'colorado':5,'utah':6,'nevada':7,'oregon':7,'washington':7,'seattle':8,'portland':8,'spokane':6,'california':9,'los angeles':10,'san francisco':10,'san diego':10,'sacramento':9,'fresno':9,'arizona':9,'phoenix':9,'tucson':9,'albuquerque':7,'new mexico':7,'texas':8,'dallas':7,'houston':9,'austin':8,'san antonio':8,'el paso':7,'florida':10,'miami':11,'orlando':9,'tampa':9,'jacksonville':9,'st petersburg':10,'pensacola':8,'georgia':8,'atlanta':7,'savannah':8,'south carolina':8,'north carolina':7,'charlotte':7,'virginia':7,'dc':7,'washington dc':7,'maryland':7,'delaware':7,'new jersey':7,'connecticut':6,'rhode island':6,'massachusetts':6,'boston':6,'tennessee':7,'nashville':7,'memphis':7,'kentucky':6,'west virginia':6,'louisiana':9,'new orleans':9,'mississippi':8,'alabama':8,'arkansas':7,'missouri':6,'kansas':5,'oklahoma':7,'indiana':5,'hawaii':11,'honolulu':11,'chicago':5,'detroit':5,'cleveland':6,'pittsburgh':6,'philadelphia':7,'baltimore':7};
+const SM={al:8,ak:3,az:9,ar:7,ca:9,co:5,ct:6,de:7,fl:9,ga:8,hi:11,id:5,il:5,in:5,ia:5,ks:5,ky:6,la:9,me:5,md:7,ma:6,mi:5,mn:4,ms:8,mo:6,mt:4,ne:5,nv:7,nh:5,nj:7,nm:7,ny:6,nc:7,nd:3,oh:6,ok:7,or:7,pa:6,ri:6,sc:8,sd:4,tn:7,tx:8,ut:6,vt:4,va:7,wa:7,wv:6,wi:4,wy:4};
+const ZL=['','Zone 1','Zone 2','Zone 3','Zone 4','Zone 5','Zone 6','Zone 7','Zone 8','Zone 9','Zone 10','Zone 11'];
+
+function getZone(v){
+  const l=v.toLowerCase().replace(/[,.]/g,' ').replace(/\s+/g,' ').trim();
+  const z=l.match(/\b(\d{5})\b/);
+  if(z){const n=parseInt(z[1]);if(n>=99500)return'Zone 3–5';if(n>=96700)return'Zone 11';if(n>=90000)return'Zone 9–10';if(n>=85000)return'Zone 9';if(n>=78000)return'Zone 8';if(n>=75000)return'Zone 7–8';if(n>=73000)return'Zone 7';if(n>=33000&&n<=33199)return'Zone 11';if(n>=32000)return'Zone 9–10';if(n>=30000)return'Zone 7–8';if(n>=10000&&n<=14999)return'Zone 6';if(n>=1000&&n<=2999)return'Zone 5–6';if(n>=60000&&n<=62999)return'Zone 5–6';if(n>=77000&&n<=77999)return'Zone 9';if(n>=94000&&n<=94999)return'Zone 9–10';if(n>=97000)return'Zone 7–8';}
+  for(const[k,n]of Object.entries(ZM))if(l.includes(k))return ZL[n];
+  const m=l.match(/\b([a-z]{2})\b/g);
+  if(m)for(const s of m)if(SM[s])return ZL[SM[s]];
+  return null;
+}
+
+let zt=null;
+function onLocationInput(){
+  clearTimeout(zt);
+  const v=document.getElementById('location').value.trim();
+  if(v.length<3){document.getElementById('zone-status').innerHTML='';S.zone='';return;}
+  document.getElementById('zone-status').innerHTML='<div class="detecting"><div class="det-dot"></div>Detecting zone...</div>';
+  zt=setTimeout(()=>{
+    const z=getZone(v);S.zone=z||'';
+    document.getElementById('zone-status').innerHTML=z
+      ?`<div class="zone-badge">🗺 ${z} detected</div>`
+      :`<div class="zone-warn">Zone not found — Claude will infer it from your location name</div>`;
+  },500);
+}
+
+function renderTracker(a){
+  const labels=['Location','Site','Water','Aesthetic'];
+  let h='';
+  labels.forEach((l,i)=>{
+    const c=i<a?'done':i===a?'active':'';
+    const lL=i>0?`<div class="tr-line ${i<=a?'done':''}"></div>`:'';
+    const lR=i<3?`<div class="tr-line ${i<a?'done':''}"></div>`:'';
+    h+=`<div class="tr-step"><div class="tr-row">${lL}<div class="tr-dot ${c}" onclick="goStep(${i})">${i<a?'✓':i+1}</div>${lR}</div><div class="tr-label">${l}</div></div>`;
+  });
+  document.getElementById('tracker-wrap').innerHTML=`<div class="tracker">${h}</div>`;
+}
+
+function goStep(n){
+  document.querySelectorAll('#tab-rec .step-panel').forEach((p,i)=>p.classList.toggle('active',i===n));
+  renderTracker(Math.min(n,3));
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function switchTab(t){
+  const tabs=['rec','lookup','planner'];
+  document.querySelectorAll('.tab').forEach((el,i)=>el.classList.toggle('active',tabs[i]===t));
+  document.querySelectorAll('.tab-panel').forEach((el,i)=>el.classList.toggle('active',['tab-rec','tab-lookup','tab-planner'][i]==='tab-'+t));
+  if(t==='lookup')updateCtx();
+  if(t==='planner')renderPlanner();
+}
+
+function updateCtx(){
+  const loc=document.getElementById('location').value;
+  const parts=[loc&&'📍 '+loc,S.zone&&'🗺 '+S.zone,S.season&&'📅 '+S.season,S.sun&&'☀️ '+S.sun,S.soil&&'🌱 '+S.soil,S.water&&'💧 '+S.water].filter(Boolean);
+  document.getElementById('ctx-bar').innerHTML=parts.length
+    ?'<span style="font-weight:600;color:var(--bloom);margin-right:4px;">Your site:</span>'+parts.map(p=>`<span class="ctx-pill">${p}</span>`).join('')
+    :'<span>💡 Fill in the Recommendations tab first for personalized scoring</span>';
+}
+
+const COLORS=['petal','gold','lav','sage','sky','rust'];
+function schip(el,g,cls){
+  el.parentElement.querySelectorAll('.chip,.opt-card,.style-chip').forEach(c=>{c.className=c.className.replace(new RegExp('\\b('+COLORS.join('|')+')\\b','g'),'').trim();});
+  el.classList.add(cls);
+  const label=el.querySelector('.ol');
+  S[g]=(label?label.textContent:el.textContent).trim().replace(/[^\w\s\-\/()]/g,'').replace(/\s+/g,' ').trim();
+}
+function mchip(el,g,cls){
+  const on=COLORS.some(c=>el.classList.contains(c));
+  if(on){el.className=el.className.replace(new RegExp('\\b('+COLORS.join('|')+')\\b','g'),'').trim();}
+  else el.classList.add(cls);
+  S[g]=[...el.parentElement.querySelectorAll(COLORS.map(c=>'.'+c).join(','))].map(c=>c.textContent.trim().replace(/[^\w\s\-\/()]/g,'').replace(/\s+/g,' ').trim());
+}
+
+function prof(){
+  return{
+    location:document.getElementById('location').value||'Not specified',
+    zone:S.zone||'Unknown — infer from location',
+    season:S.season||'not specified',
+    climate:(S.climate||[]).join(', ')||'not specified',
+    sun:S.sun||'not specified',
+    soil:S.soil||'not specified',
+    ph:document.getElementById('ph').value||'unknown',
+    drainage:document.getElementById('drainage').value||'unknown',
+    microclimate:document.getElementById('microclimate').value||'none',
+    water:S.water||'not specified',
+    wrestrict:(S.wrestrict||[]).join(', ')||'none',
+    rainfall:document.getElementById('rainfall').value||'unknown',
+    irrigation:document.getElementById('irrigation').value||'none',
+    style:S.style||'not specified',
+    colors:(S.color||[]).join(', ')||'no preference',
+    priorities:(S.priority||[]).join(', ')||'none',
+    notes:document.getElementById('notes').value||'none'
+  };
+}
+
+function parseJ(text,type='array'){
+  try{
+    const c=text.replace(/```json|```/gi,'').trim();
+    const s=c.indexOf(type==='array'?'[':'{');
+    const e=type==='array'?c.lastIndexOf(']'):c.lastIndexOf('}');
+    if(s>-1&&e>-1)return JSON.parse(c.slice(s,e+1));
+  }catch(e){}
+  return null;
+}
+
+// claude() now routes through your backend — no API key needed in the browser
+async function claude(prompt, max=1800){
+  const data = await apiCall('/claude', { prompt, max });
+  return data.text || '';
+}
+
+async function wikiPhoto(query){
+  try{
+    const r=await fetch(`https://en.wikipedia.org/w/api.php?action=query&titles=${encodeURIComponent(query)}&prop=pageimages&format=json&pithumbsize=600&origin=*`);
+    const d=await r.json();
+    const pages=d.query?.pages;
+    if(!pages)return null;
+    return Object.values(pages)[0]?.thumbnail?.source||null;
+  }catch(e){return null;}
+}
+
+async function getPhotos(commonName,scientificName){
+  const genus=scientificName.split(' ')[0];
+  const photos=[];
+  const tried=new Set();
+  for(const q of[scientificName,genus,commonName]){
+    if(photos.length>=2)break;
+    if(tried.has(q))continue;
+    tried.add(q);
+    const url=await wikiPhoto(q);
+    if(url&&!photos.includes(url))photos.push(url);
+  }
+  return photos;
+}
+
+function buildPhotos(photos,alt,cls='plant-photos'){
+  if(!photos||photos.length===0)
+    return `<div class="${cls}"><div class="no-photo">No photo available</div></div>`;
+  const imgs=photos.slice(0,2).map(url=>
+    `<img src="${url}" alt="${alt}" loading="lazy" onerror="this.remove()"/>`
+  ).join('');
+  return `<div class="${cls}">${imgs}</div>`;
+}
+
+function seasonEmoji(s){
+  const l=(s||'').toLowerCase();
+  if(l.includes('spring'))return'🌸';
+  if(l.includes('fall')||l.includes('autumn'))return'🍂';
+  if(l.includes('summer'))return'☀️';
+  if(l.includes('winter'))return'❄️';
+  return'📅';
+}
+
+async function generateRecs(){
+  const p=prof();
+  document.getElementById('summary-pills').innerHTML=`<div class="summary-pills">${
+    [p.location,p.zone,p.season,p.sun,p.soil,p.water,p.style]
+    .filter(v=>v&&v!=='not specified'&&!v.toLowerCase().includes('unknown'))
+    .map(v=>`<span class="s-pill">${v}</span>`).join('')
+  }</div>`;
+  goStep(4);
+  document.getElementById('results').innerHTML=`<div class="loading"><div class="loader"></div><div class="loading-text">Finding your perfect plants…</div><div class="loading-sub">Analyzing ${p.location} — takes about 10 seconds</div></div>`;
+
+  try{
+    // Use dedicated backend endpoint — faster and no prompt re-parsing needed
+    const data = await apiCall('/recommendations', p);
+    const plants = data.plants;
+    if(!plants||!plants.length)throw new Error('No plant data returned — please try again');
+
+    document.getElementById('results').innerHTML=`<div class="loading"><div class="loader"></div><div class="loading-text">Loading photos…</div></div>`;
+
+    const cards=await Promise.all(plants.map(async pl=>{
+      const photos=await getPhotos(pl.name,pl.scientific);
+      pl.photo = photos[0]||null;
+      const inGarden = garden.find(g=>g.name===pl.name);
+      const addBtnState = inGarden ? 'added" disabled' : '"';
+      const addBtnText = inGarden ? '✓ In garden' : '+ Add to garden';
+      return `
+        <div class="plant-card">
+          ${buildPhotos(photos,pl.name,'plant-photos')}
+          <div class="card-body">
+            <div class="plant-name">${pl.name}</div>
+            <div class="plant-sci">${pl.scientific}</div>
+            <div class="season-badge">${seasonEmoji(pl.planting_season)} Best time to plant: ${pl.planting_season||'Spring or Fall'}</div>
+            <div class="plant-tags">
+              <span class="ptag">☀️ ${pl.sun}</span>
+              <span class="ptag">💧 ${pl.water}</span>
+              <span class="ptag">🌱 ${pl.soil}</span>
+              <span class="ptag">✅ ${pl.fit}</span>
+            </div>
+            <div class="plant-desc">${pl.description}</div>
+            <button class="add-to-garden-btn ${inGarden?'added':''}" data-name="${pl.name}"
+              onclick='addToGarden(${JSON.stringify(pl)}, this)'>${addBtnText}</button>
+          </div>
+        </div>`;
+    }));
+
+    document.getElementById('results').innerHTML=`
+      <div class="results-header">Your BloomWise Plant Picks 🌻</div>
+      <div class="plants-grid">${cards.join('')}</div>`;
+    document.getElementById('pdf-btn').style.display='inline-flex';
+  }catch(e){
+    document.getElementById('results').innerHTML=`<div class="error-box"><strong>Something went wrong:</strong> ${e.message}</div>`;
+  }
+}
+
+async function doLookup(){
+  const plant=document.getElementById('lookup-input').value.trim();
+  if(!plant)return;
+  updateCtx();
+  const p=prof();
+  const hasCtx=p.location!=='Not specified'||p.sun!=='not specified'||p.soil!=='not specified';
+
+  document.getElementById('lookup-results').innerHTML=`<div class="loading"><div class="loader"></div><div class="loading-text">Researching ${plant}…</div></div>`;
+
+  try{
+    // Use dedicated backend endpoint
+    const data = await apiCall('/lookup', { plant, site: hasCtx ? p : null });
+    const d = data.result;
+    if(!d||!d.name)throw new Error('Could not parse — please try again');
+
+    const photos=await getPhotos(d.name,d.scientific||d.name);
+    const strip=buildPhotos(photos,d.name,'fit-photos');
+    const vC={green:'verdict-green',yellow:'verdict-yellow',red:'verdict-red'};
+    const vI={green:'🟢',yellow:'🟡',red:'🔴'};
+    const rC={ok:'ok',warn:'warn',bad:'bad',neutral:'neutral'};
+    const rI={ok:'✅',warn:'⚠️',bad:'❌',neutral:'ℹ️'};
+    const reqs=(d.requirements||[]).map(r=>`
+      <div class="req ${rC[r.status]||'neutral'}">
+        <div class="req-label">${rI[r.status]||'ℹ️'} ${r.label}</div>
+        <div class="req-val">${r.value}</div>
+        <div class="req-note">${r.note}</div>
+      </div>`).join('');
+    const specials=d.special_requirements?.length
+      ?`<div class="special-box"><div class="special-title">⭐ Special requirements & watch-outs</div><ul>${d.special_requirements.map(s=>`<li>${s}</li>`).join('')}</ul></div>`:'' ;
+    const tip=d.pro_tip?`<div class="pro-tip"><strong>💡 Pro tip:</strong> ${d.pro_tip}</div>`:'';
+    const noCtx=!hasCtx?`<div style="font-size:12px;color:#7a4e00;padding:9px 14px;background:var(--gold-lt);border-radius:var(--r);border:1px solid var(--gold);margin-bottom:16px;">📋 Add your site profile in the Recommendations tab for personalized ✅ ⚠️ ❌ scoring</div>`:'';
+
+    document.getElementById('lookup-results').innerHTML=`
+      <div class="fit-card">
+        ${strip}
+        <div class="fit-body">
+          ${noCtx}
+          <div class="fit-name">${d.name}</div>
+          <div class="fit-sci">${d.scientific||''}</div>
+          <div class="verdict ${vC[d.verdict]||'verdict-yellow'}">${vI[d.verdict]||'🟡'} ${d.verdict_label}</div>
+          <div class="season-badge" style="margin-bottom:16px;">${seasonEmoji(d.planting_season)} Best time to plant: ${d.planting_season||'Spring or Fall'}</div>
+          <div class="fit-summary">${d.summary}</div>
+          <div class="req-grid">${reqs}</div>
+          ${specials}${tip}
+        </div>
+      </div>`;
+  }catch(e){
+    document.getElementById('lookup-results').innerHTML=`<div class="error-box"><strong>Something went wrong:</strong> ${e.message}</div>`;
+  }
+}
+
+// ── Garden Planner — backed by Supabase ─────────────────
+// ┌─────────────────────────────────────────────────────┐
+// │  PASTE YOUR SUPABASE VALUES HERE                    │
+// └─────────────────────────────────────────────────────┘
+const SUPABASE_URL  = 'https://your-project.supabase.co';   // ← replace
+const SUPABASE_ANON = 'your-anon-public-key-here';          // ← replace
+
+function getUserId(){
+  let id = localStorage.getItem('bloomwise-uid');
+  if(!id){
+    id = 'user-' + Math.random().toString(36).slice(2) + Date.now().toString(36);
+    localStorage.setItem('bloomwise-uid', id);
+  }
+  return id;
+}
+const USER_ID = getUserId();
+let garden = [];
+
+async function sbFetch(path, options={}){
+  const res = await fetch(SUPABASE_URL + path, {
+    ...options,
+    headers:{
+      'apikey': SUPABASE_ANON,
+      'Authorization': 'Bearer ' + SUPABASE_ANON,
+      'Content-Type': 'application/json',
+      'Prefer': options.prefer || '',
+      ...(options.headers||{})
+    }
+  });
+  if(!res.ok){ const e=await res.json().catch(()=>({})); throw new Error(e.message||'Supabase error '+res.status); }
+  return res.status===204 ? null : res.json();
+}
+
+async function loadGardenFromDB(){
+  try{
+    showPlannerLoading(true);
+    const rows = await sbFetch(`/rest/v1/gardens?user_id=eq.${encodeURIComponent(USER_ID)}&select=plants&limit=1`);
+    garden = rows && rows.length > 0 ? (rows[0].plants||[]) : [];
+  }catch(e){
+    console.warn('Supabase not configured — using localStorage:', e.message);
+    garden = JSON.parse(localStorage.getItem('bloomwise-garden')||'[]');
+  }finally{ showPlannerLoading(false); }
+  updatePlannerBadge();
+}
+
+async function saveGardenToDB(){
+  localStorage.setItem('bloomwise-garden', JSON.stringify(garden));
+  try{
+    const rows = await sbFetch(`/rest/v1/gardens?user_id=eq.${encodeURIComponent(USER_ID)}&select=id&limit=1`);
+    if(rows && rows.length > 0){
+      await sbFetch(`/rest/v1/gardens?user_id=eq.${encodeURIComponent(USER_ID)}`,
+        {method:'PATCH', prefer:'return=minimal', body:JSON.stringify({plants:garden})});
+    } else {
+      await sbFetch(`/rest/v1/gardens`,
+        {method:'POST', prefer:'return=minimal', body:JSON.stringify({user_id:USER_ID, plants:garden})});
+    }
+  }catch(e){ console.warn('Supabase save failed — saved locally only:', e.message); }
+  updatePlannerBadge();
+}
+
+function showPlannerLoading(show){
+  const g = document.getElementById('planner-grid');
+  if(show) g.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:2rem;color:var(--stone);">Loading your garden…</div>';
+}
+
+function updatePlannerBadge(){
+  const badge = document.getElementById('planner-count');
+  if(garden.length>0){ badge.textContent=garden.length; badge.style.display='inline-flex'; }
+  else badge.style.display='none';
+}
+
+async function addToGarden(plant, btn){
+  if(garden.find(p=>p.name===plant.name)) return;
+  garden.push(plant);
+  btn.classList.add('added');
+  btn.textContent='✓ In garden';
+  btn.disabled=true;
+  await saveGardenToDB();
+}
+
+async function removeFromGarden(name){
+  garden = garden.filter(p=>p.name!==name);
+  await saveGardenToDB();
+  renderPlanner();
+  document.querySelectorAll('.add-to-garden-btn').forEach(btn=>{
+    if(btn.dataset.name===name){ btn.classList.remove('added'); btn.textContent='+ Add to garden'; btn.disabled=false; }
+  });
+}
+
+async function clearGarden(){
+  if(!confirm('Remove all plants from your garden?')) return;
+  garden=[];
+  await saveGardenToDB();
+  renderPlanner();
+  document.querySelectorAll('.add-to-garden-btn').forEach(btn=>{
+    btn.classList.remove('added'); btn.textContent='+ Add to garden'; btn.disabled=false;
+  });
+}
+
+function renderPlanner(){
+  const empty   = document.getElementById('planner-empty');
+  const grid    = document.getElementById('planner-grid');
+  const actions = document.getElementById('planner-actions');
+  if(garden.length===0){ empty.style.display='block'; grid.innerHTML=''; actions.style.display='none'; return; }
+  empty.style.display='none'; actions.style.display='flex';
+  grid.innerHTML = garden.map(pl=>{
+    const photo = pl.photo
+      ? `<img class="pc-photo" src="${pl.photo}" alt="${pl.name}" onerror="this.outerHTML='<div class=\'pc-photo-placeholder\'>No photo</div>'">`
+      : `<div class="pc-photo-placeholder">No photo available</div>`;
+    const safeName = pl.name.replace(/'/g, "\'");
+    return `<div class="planner-card">
+      ${photo}
+      <div class="pc-body">
+        <div class="pc-name">${pl.name}</div>
+        <div class="pc-sci">${pl.scientific}</div>
+        <div class="pc-season">${seasonEmoji(pl.planting_season)} ${pl.planting_season||'Spring or Fall'}</div>
+        <div class="pc-tags">
+          <span class="pc-tag">☀️ ${pl.sun}</span>
+          <span class="pc-tag">💧 ${pl.water}</span>
+          <span class="pc-tag">🌱 ${pl.soil}</span>
+        </div>
+        <button class="pc-remove" onclick="removeFromGarden('${safeName}')">Remove from garden</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ── PDF Export ───────────────────────────────────────────
+function exportPDF(){
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ unit:'mm', format:'a4' });
+  const W = doc.internal.pageSize.getWidth();
+  let y = 20;
+
+  // Header
+  doc.setFillColor(13, 42, 74);
+  doc.rect(0, 0, W, 28, 'F');
+  doc.setTextColor(255, 217, 102);
+  doc.setFontSize(20);
+  doc.setFont('helvetica','bold');
+  doc.text('BloomWise', 14, 18);
+  doc.setTextColor(184, 216, 244);
+  doc.setFontSize(9);
+  doc.setFont('helvetica','normal');
+  doc.text('AI-Powered Plant Recommendations', 14, 24);
+  y = 38;
+
+  // Site summary
+  const p = prof();
+  const siteLines = [`Location: ${p.location}  |  Zone: ${p.zone}  |  Season: ${p.season}`,
+    `Sun: ${p.sun}  |  Soil: ${p.soil}  |  Water: ${p.water}`,
+    `Style: ${p.style}`].filter(l=>!l.includes('not specified')&&!l.includes('Unknown'));
+  doc.setFillColor(232, 244, 252);
+  doc.roundedRect(10, y, W-20, siteLines.length*6+8, 3, 3, 'F');
+  doc.setTextColor(26, 92, 150);
+  doc.setFontSize(8);
+  siteLines.forEach((line,i)=>{ doc.text(line, 14, y+6+i*6); });
+  y += siteLines.length*6+16;
+
+  // Plants
+  const cards = document.querySelectorAll('.plant-card');
+  doc.setFontSize(14);
+  doc.setFont('helvetica','bold');
+  doc.setTextColor(26, 92, 150);
+  doc.text('Your Plant Picks', 14, y);
+  y += 8;
+
+  cards.forEach((card, idx)=>{
+    const name = card.querySelector('.plant-name')?.textContent||'';
+    const sci  = card.querySelector('.plant-sci')?.textContent||'';
+    const season = card.querySelector('.season-badge')?.textContent||'';
+    const tags = [...card.querySelectorAll('.ptag')].map(t=>t.textContent).join('  ');
+    const desc = card.querySelector('.plant-desc')?.textContent||'';
+
+    if(y > 250){ doc.addPage(); y = 20; }
+
+    // Card background
+    doc.setFillColor(245, 249, 253);
+    doc.roundedRect(10, y, W-20, 42, 3, 3, 'F');
+    doc.setDrawColor(200, 221, 240);
+    doc.roundedRect(10, y, W-20, 42, 3, 3, 'S');
+
+    // Number circle
+    doc.setFillColor(46, 125, 196);
+    doc.circle(19, y+8, 5, 'F');
+    doc.setTextColor(255,255,255);
+    doc.setFontSize(8); doc.setFont('helvetica','bold');
+    doc.text(String(idx+1), 19, y+10, {align:'center'});
+
+    doc.setTextColor(26, 92, 150);
+    doc.setFontSize(12); doc.setFont('helvetica','bold');
+    doc.text(name, 27, y+9);
+
+    doc.setTextColor(100, 130, 160);
+    doc.setFontSize(8); doc.setFont('helvetica','italic');
+    doc.text(sci, 27, y+15);
+
+    doc.setTextColor(122, 80, 0);
+    doc.setFontSize(7.5); doc.setFont('helvetica','normal');
+    doc.text(season, 27, y+21);
+
+    doc.setTextColor(60, 80, 100);
+    doc.setFontSize(7.5);
+    doc.text(tags, 14, y+27);
+
+    const descLines = doc.splitTextToSize(desc, W-28);
+    doc.setTextColor(44, 66, 96);
+    doc.setFontSize(8);
+    doc.text(descLines.slice(0,2), 14, y+33);
+
+    y += 48;
+  });
+
+  // Footer
+  doc.setFillColor(13, 42, 74);
+  const pH = doc.internal.pageSize.getHeight();
+  doc.rect(0, pH-14, W, 14, 'F');
+  doc.setTextColor(122, 174, 204);
+  doc.setFontSize(7);
+  doc.text('Generated by BloomWise · bloomwise.app', W/2, pH-5, {align:'center'});
+
+  doc.save('bloomwise-plant-picks.pdf');
+}
+
+function exportGardenPDF(){
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ unit:'mm', format:'a4' });
+  const W = doc.internal.pageSize.getWidth();
+  let y = 20;
+
+  doc.setFillColor(13, 42, 74);
+  doc.rect(0, 0, W, 28, 'F');
+  doc.setTextColor(255, 217, 102);
+  doc.setFontSize(20); doc.setFont('helvetica','bold');
+  doc.text('BloomWise — My Garden', 14, 18);
+  doc.setTextColor(184, 216, 244);
+  doc.setFontSize(9); doc.setFont('helvetica','normal');
+  doc.text(`${garden.length} plant${garden.length!==1?'s':''} in collection`, 14, 24);
+  y = 38;
+
+  garden.forEach((pl, idx)=>{
+    if(y > 250){ doc.addPage(); y = 20; }
+    doc.setFillColor(245, 249, 253);
+    doc.roundedRect(10, y, W-20, 38, 3, 3, 'F');
+    doc.setDrawColor(200, 221, 240);
+    doc.roundedRect(10, y, W-20, 38, 3, 3, 'S');
+
+    doc.setFillColor(212, 160, 23);
+    doc.circle(19, y+8, 5, 'F');
+    doc.setTextColor(255,255,255);
+    doc.setFontSize(8); doc.setFont('helvetica','bold');
+    doc.text(String(idx+1), 19, y+10, {align:'center'});
+
+    doc.setTextColor(26, 92, 150);
+    doc.setFontSize(12); doc.setFont('helvetica','bold');
+    doc.text(pl.name, 27, y+9);
+
+    doc.setTextColor(100, 130, 160);
+    doc.setFontSize(8); doc.setFont('helvetica','italic');
+    doc.text(pl.scientific, 27, y+15);
+
+    doc.setTextColor(122, 80, 0);
+    doc.setFontSize(7.5); doc.setFont('helvetica','normal');
+    doc.text(`${seasonEmoji(pl.planting_season)} ${pl.planting_season||'Spring or Fall'}`, 27, y+21);
+
+    const tags = [pl.sun, pl.water, pl.soil].filter(Boolean).join('  ·  ');
+    doc.setTextColor(60, 80, 100);
+    doc.setFontSize(7.5);
+    doc.text(tags, 14, y+28);
+
+    if(pl.description){
+      const lines = doc.splitTextToSize(pl.description, W-28);
+      doc.setTextColor(44, 66, 96); doc.setFontSize(7.5);
+      doc.text(lines.slice(0,1), 14, y+34);
+    }
+    y += 44;
+  });
+
+  const pH = doc.internal.pageSize.getHeight();
+  doc.setFillColor(13, 42, 74);
+  doc.rect(0, pH-14, W, 14, 'F');
+  doc.setTextColor(122, 174, 204); doc.setFontSize(7);
+  doc.text('Generated by BloomWise · bloomwise.app', W/2, pH-5, {align:'center'});
+  doc.save('bloomwise-my-garden.pdf');
+}
+
+renderTracker(0);
+loadGardenFromDB(); // loads from Supabase (falls back to localStorage if not configured)
+</script>
+</body>
+</html>
