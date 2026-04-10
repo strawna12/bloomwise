@@ -1,7 +1,7 @@
 {
-  "name": "plant-intelligence-api",
-  "version": "1.0.0",
-  "description": "Backend API for Plant & Design Intelligence app",
+  "name": "bloomwise",
+  "version": "2.0.0",
+  "description": "BloomWise — AI-Powered Plant Advisor with PostgreSQL, Stripe, and Garden Planner",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
@@ -9,5 +9,9 @@
   },
   "engines": {
     "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "pg": "^8.11.3",
+    "stripe": "^14.21.0"
   }
 }
