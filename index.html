@@ -52,22 +52,6 @@ body { font-family:'Jost',sans-serif; background:var(--bg); color:var(--ink); mi
 }
 .logo-bloom { font-size: 28px; }
 .header-tag { font-size: 12px; color: #e8b8cc; letter-spacing: .06em; font-weight: 400; }
-.header-right { display: flex; align-items: center; gap: 12px; }
-.usage-pill {
-  font-size: 11px; font-weight: 600; padding: 5px 12px;
-  border-radius: 50px; border: 1.5px solid rgba(255,255,255,.25);
-  color: #fff; background: rgba(255,255,255,.1); cursor: default;
-  white-space: nowrap;
-}
-.usage-pill.warn { border-color: #ffd966; color: #ffd966; }
-.usage-pill.pro  { border-color: #ffd966; color: #ffd966; background: rgba(212,160,23,.2); }
-.btn-upgrade {
-  font-size: 12px; font-weight: 600; padding: 7px 16px;
-  border-radius: 50px; border: 1.5px solid #ffd966;
-  color: #ffd966; background: transparent; cursor: pointer;
-  font-family: inherit; transition: all .15s; white-space: nowrap;
-}
-.btn-upgrade:hover { background: #ffd966; color: #0d2a4a; }
 
 /* ── Hero banner ── */
 .hero {
@@ -103,6 +87,8 @@ body { font-family:'Jost',sans-serif; background:var(--bg); color:var(--ink); mi
 
 /* ── Main ── */
 .main { max-width: 920px; margin: 0 auto; padding: 2.5rem 1.5rem 5rem; }
+
+/* ── API key bar removed — using backend ── */
 
 /* ── Tabs ── */
 .tabs {
@@ -174,7 +160,7 @@ input[type=text], select, textarea {
 }
 input:focus, select:focus, textarea:focus {
   border-color: var(--petal2);
-  box-shadow: 0 0 0 3px rgba(46,125,196,.12);
+  box-shadow: 0 0 0 3px rgba(212,84,122,.12);
   background: var(--white);
 }
 textarea { resize: vertical; min-height: 90px; }
@@ -297,8 +283,12 @@ textarea { resize: vertical; min-height: 90px; }
   margin-bottom: 1.5rem; font-weight: 600;
 }
 
-/* ── Plant cards ── */
+/* =====================
+   PLANT CARDS
+   Photos on top. White body below. One consistent style.
+   ===================== */
 .plants-grid { display: flex; flex-direction: column; gap: 28px; }
+
 .plant-card {
   background: var(--white);
   border: 1.5px solid var(--border2);
@@ -308,34 +298,57 @@ textarea { resize: vertical; min-height: 90px; }
   overflow: hidden;
 }
 .plant-card:hover { box-shadow: var(--sh-md); transform: translateY(-2px); }
+
+/* Photos — always on top, always a fixed height row */
 .plant-photos {
-  width: 100%; height: 220px;
-  display: flex; flex-direction: row; gap: 2px;
-  background: var(--bg2); flex-shrink: 0;
+  width: 100%;
+  height: 220px;
+  display: flex;
+  flex-direction: row;
+  gap: 2px;
+  background: var(--bg2);
+  flex-shrink: 0;
 }
 .plant-photos img {
-  flex: 1; min-width: 0; height: 100%; object-fit: cover; display: block;
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  object-fit: cover;
+  display: block;
 }
 .plant-photos .no-photo {
-  flex: 1; display: flex; align-items: center; justify-content: center;
-  background: var(--bg2); color: var(--stone); font-size: 13px; font-style: italic;
+  flex: 1;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--bg2); color: var(--stone);
+  font-size: 13px; font-style: italic;
 }
-.card-body { background: var(--white); padding: 1.5rem 1.75rem; }
+
+/* Card body — always below photos, always white */
+.card-body {
+  background: var(--white);
+  padding: 1.5rem 1.75rem;
+}
 .plant-name {
   font-family:'Cormorant Garamond',serif;
-  font-size: 26px; color: var(--bloom); font-weight: 600; line-height: 1.2; margin-bottom: 4px;
+  font-size: 26px; color: var(--bloom);
+  font-weight: 600; line-height: 1.2; margin-bottom: 4px;
 }
-.plant-sci { font-size: 13px; color: var(--stone); font-style: italic; margin-bottom: 16px; }
+.plant-sci {
+  font-size: 13px; color: var(--stone);
+  font-style: italic; margin-bottom: 16px;
+}
 .season-badge {
   display: inline-flex; align-items: center; gap: 6px;
   padding: 5px 14px; border-radius: 50px;
   background: var(--gold-lt); border: 1px solid var(--gold);
-  font-size: 12px; font-weight: 600; color: #7a4e00; margin-bottom: 14px;
+  font-size: 12px; font-weight: 600; color: #7a4e00;
+  margin-bottom: 14px;
 }
 .plant-tags { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 16px; }
 .ptag {
   font-size: 12px; padding: 4px 12px; border-radius: 50px;
-  background: var(--bg); color: var(--ink2); border: 1px solid var(--border); font-weight: 500;
+  background: var(--bg); color: var(--ink2);
+  border: 1px solid var(--border); font-weight: 500;
 }
 .plant-desc {
   font-size: 14px; color: var(--ink2); line-height: 1.75;
@@ -444,7 +457,8 @@ textarea { resize: vertical; min-height: 90px; }
 .btn-pdf {
   padding: 12px 22px; font-size: 14px; font-weight: 600;
   border-radius: 50px; cursor: pointer; font-family: inherit;
-  background: var(--gold); color: #fff; border: 1.5px solid var(--gold);
+  background: var(--gold); color: #fff;
+  border: 1.5px solid var(--gold);
   transition: all .15s;
 }
 .btn-pdf:hover { background: #b88c10; border-color: #b88c10; }
@@ -457,6 +471,7 @@ textarea { resize: vertical; min-height: 90px; }
 }
 .planner-hero h2 { font-family:'Cormorant Garamond',serif; font-size: 26px; margin-bottom: 6px; }
 .planner-hero p  { font-size: 13px; color: #b8d8f4; }
+
 .planner-empty {
   background: var(--white); border: 2px dashed var(--border);
   border-radius: var(--r-xl); padding: 3rem 2rem;
@@ -465,8 +480,11 @@ textarea { resize: vertical; min-height: 90px; }
 .pe-icon { font-size: 48px; margin-bottom: 14px; }
 .pe-title { font-family:'Cormorant Garamond',serif; font-size: 22px; color: var(--bloom); margin-bottom: 8px; }
 .pe-sub { font-size: 14px; line-height: 1.6; max-width: 340px; margin: 0 auto; }
+
 .planner-grid {
-  display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 18px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 18px;
 }
 .planner-card {
   background: var(--white); border: 1.5px solid var(--border2);
@@ -476,15 +494,21 @@ textarea { resize: vertical; min-height: 90px; }
 }
 .planner-card:hover { box-shadow: var(--sh-md); transform: translateY(-2px); }
 .planner-card .pc-photo {
-  width: 100%; height: 160px; object-fit: cover; display: block; background: var(--bg2);
+  width: 100%; height: 160px;
+  object-fit: cover; display: block;
+  background: var(--bg2);
 }
 .planner-card .pc-photo-placeholder {
-  width: 100%; height: 160px; background: var(--bg2); display: flex;
-  align-items: center; justify-content: center; color: var(--stone); font-size: 13px; font-style: italic;
+  width: 100%; height: 160px;
+  background: var(--bg2); display: flex;
+  align-items: center; justify-content: center;
+  color: var(--stone); font-size: 13px; font-style: italic;
 }
 .planner-card .pc-body { padding: 1rem 1.25rem; }
 .planner-card .pc-name {
-  font-family:'Cormorant Garamond',serif; font-size: 18px; color: var(--bloom); font-weight: 600; margin-bottom: 2px;
+  font-family:'Cormorant Garamond',serif;
+  font-size: 18px; color: var(--bloom); font-weight: 600;
+  margin-bottom: 2px;
 }
 .planner-card .pc-sci { font-size: 12px; color: var(--stone); font-style: italic; margin-bottom: 10px; }
 .planner-card .pc-tags { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 12px; }
@@ -504,13 +528,16 @@ textarea { resize: vertical; min-height: 90px; }
   font-family: inherit; transition: all .15s;
 }
 .planner-card .pc-remove:hover { background: #fef0f0; border-color: #f5a0a0; color: #8b1a1a; }
+
 .planner-badge {
   display: inline-flex; align-items: center; justify-content: center;
-  background: var(--gold); color: #fff; font-size: 10px; font-weight: 700;
-  width: 18px; height: 18px; border-radius: 50%; margin-left: 6px; vertical-align: middle;
+  background: var(--gold); color: #fff;
+  font-size: 10px; font-weight: 700;
+  width: 18px; height: 18px; border-radius: 50%;
+  margin-left: 6px; vertical-align: middle;
 }
 
-/* ── Add to Garden button ── */
+/* ── Add to Garden button on result cards ── */
 .add-to-garden-btn {
   display: inline-flex; align-items: center; gap: 6px;
   padding: 7px 16px; font-size: 12px; font-weight: 600;
@@ -521,78 +548,14 @@ textarea { resize: vertical; min-height: 90px; }
 .add-to-garden-btn:hover { background: var(--gold); color: #fff; }
 .add-to-garden-btn.added { background: var(--sage-lt); border-color: var(--sage); color: var(--sage); cursor: default; }
 
-/* ── Pro upgrade modal ── */
-.modal-overlay {
-  position: fixed; inset: 0; background: rgba(13,42,74,.7);
-  display: flex; align-items: center; justify-content: center;
-  z-index: 1000; padding: 1rem; animation: fadeIn .2s ease;
-}
-.modal-overlay.hidden { display: none; }
-@keyframes fadeIn { from{opacity:0} to{opacity:1} }
-.modal {
-  background: var(--white); border-radius: var(--r-xl);
-  padding: 2.5rem; max-width: 480px; width: 100%;
-  box-shadow: 0 20px 60px rgba(13,42,74,.3);
-  animation: slideUp .25s ease;
-}
-@keyframes slideUp { from{transform:translateY(20px);opacity:0} to{transform:none;opacity:1} }
-.modal-close {
-  float: right; background: none; border: none; font-size: 20px;
-  cursor: pointer; color: var(--stone); line-height: 1; padding: 0;
-}
-.modal-title {
-  font-family:'Cormorant Garamond',serif; font-size: 28px;
-  color: var(--bloom); font-weight: 600; margin-bottom: 6px;
-}
-.modal-sub { font-size: 14px; color: var(--stone); margin-bottom: 1.5rem; }
-.pro-features { list-style: none; margin-bottom: 1.75rem; }
-.pro-features li {
-  font-size: 14px; color: var(--ink2); padding: 8px 0;
-  border-bottom: 1px solid var(--border2); display: flex; align-items: center; gap: 10px;
-}
-.pro-features li:last-child { border-bottom: none; }
-.pro-features .fi { font-size: 18px; }
-.pro-price {
-  text-align: center; margin-bottom: 1.5rem;
-  font-size: 13px; color: var(--stone);
-}
-.pro-price strong { font-size: 32px; color: var(--bloom); font-weight: 600; }
-.btn-pro {
-  width: 100%; padding: 14px; font-size: 15px; font-weight: 600;
-  border-radius: 50px; cursor: pointer; font-family: inherit;
-  background: linear-gradient(135deg, #d4a017, #f0c040);
-  color: #0d2a4a; border: none; transition: all .15s;
-}
-.btn-pro:hover { background: linear-gradient(135deg, #b88c10, #d4a017); }
-.modal-note { font-size: 11px; color: var(--stone); text-align: center; margin-top: 10px; }
-
-/* ── Usage limit banner ── */
-.limit-banner {
-  background: linear-gradient(135deg, #fef8dc, #fff3cd);
-  border: 1.5px solid var(--gold); border-radius: var(--r-lg);
-  padding: 1.25rem 1.5rem; margin-bottom: 1.5rem;
-  display: flex; align-items: center; gap: 14px;
-}
-.limit-banner .lb-icon { font-size: 28px; flex-shrink: 0; }
-.limit-banner .lb-text { flex: 1; }
-.limit-banner .lb-title { font-size: 14px; font-weight: 600; color: #7a4e00; margin-bottom: 3px; }
-.limit-banner .lb-sub { font-size: 12px; color: var(--rust); }
-
-/* ── Footer ── */
-.footer {
-  text-align: center; padding: 2rem 1rem;
-  font-size: 12px; color: var(--stone);
-  border-top: 1px solid var(--border2);
-}
-
-/* ── Mobile ── */
+/* =====================
+   MOBILE — responsive
+   ===================== */
 @media (max-width: 680px) {
   .header { padding: 0 1rem; height: 56px; }
   .logo { font-size: 18px; }
   .logo-bloom { font-size: 20px; }
   .header-tag { display: none; }
-  .usage-pill { font-size: 10px; padding: 4px 9px; }
-  .btn-upgrade { font-size: 11px; padding: 5px 12px; }
 
   .hero { padding: 2rem 1rem 1.75rem; }
   .hero-title { font-size: 34px; }
@@ -620,11 +583,13 @@ textarea { resize: vertical; min-height: 90px; }
   .style-chip .si { font-size: 22px; }
 
   .chip { padding: 7px 12px; font-size: 12px; }
+
   .two-col { grid-template-columns: 1fr; gap: 12px; }
 
   .plant-photos { height: 180px; }
   .card-body { padding: 1.1rem 1.25rem; }
   .plant-name { font-size: 20px; }
+
   .plants-grid { gap: 18px; }
 
   .btn { padding: 10px 18px; font-size: 13px; }
@@ -646,9 +611,6 @@ textarea { resize: vertical; min-height: 90px; }
 
   .summary-pills { gap: 6px; }
   .s-pill { font-size: 11px; padding: 4px 10px; }
-
-  .modal { padding: 1.75rem; }
-  .modal-title { font-size: 22px; }
 }
 
 @media (max-width: 400px) {
@@ -657,38 +619,276 @@ textarea { resize: vertical; min-height: 90px; }
   .option-row { flex-wrap: wrap; }
   .opt-card { flex: 1 1 calc(50% - 4px); }
 }
+
+/* ── Pro badge in header ── */
+.pro-badge {
+  background: linear-gradient(135deg, var(--gold), #f0b429);
+  color: #fff; font-size: 11px; font-weight: 700;
+  padding: 3px 10px; border-radius: 50px;
+  letter-spacing: .05em; margin-left: 10px;
+  display: none;
+}
+.pro-badge.show { display: inline-flex; }
+
+/* ── Free usage bar ── */
+.usage-bar {
+  background: var(--white); border: 1.5px solid var(--border);
+  border-radius: var(--r-lg); padding: 14px 18px;
+  margin-bottom: 1.5rem; display: flex;
+  align-items: center; gap: 14px; flex-wrap: wrap;
+  box-shadow: var(--sh);
+}
+.usage-label { font-size: 13px; color: var(--ink2); font-weight: 500; }
+.usage-track {
+  flex: 1; min-width: 120px; height: 6px;
+  background: var(--border); border-radius: 3px; overflow: hidden;
+}
+.usage-fill {
+  height: 100%; border-radius: 3px;
+  background: linear-gradient(90deg, var(--sage), var(--gold));
+  transition: width .4s ease;
+}
+.usage-fill.full { background: linear-gradient(90deg, var(--gold), var(--rust)); }
+.usage-text { font-size: 12px; color: var(--stone); white-space: nowrap; }
+.btn-upgrade {
+  padding: 8px 18px; font-size: 13px; font-weight: 600;
+  border-radius: 50px; cursor: pointer; font-family: inherit;
+  background: linear-gradient(135deg, var(--gold), #f0b429);
+  color: #fff; border: none; white-space: nowrap;
+  transition: opacity .15s;
+}
+.btn-upgrade:hover { opacity: .88; }
+
+/* ── Upgrade modal (paywall) ── */
+.modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(10, 20, 40, .55);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 1000; padding: 1.5rem;
+  animation: fadeIn .2s ease;
+}
+.modal-box {
+  background: var(--white); border-radius: var(--r-xl);
+  padding: 2.5rem; max-width: 440px; width: 100%;
+  box-shadow: 0 24px 64px rgba(10,20,40,.25);
+  text-align: center;
+}
+.modal-icon { font-size: 52px; margin-bottom: 14px; }
+.modal-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 28px; color: var(--bloom);
+  font-weight: 600; margin-bottom: 8px;
+}
+.modal-sub { font-size: 14px; color: var(--stone); line-height: 1.6; margin-bottom: 1.5rem; }
+.modal-features {
+  text-align: left; background: var(--bg);
+  border-radius: var(--r); padding: 1rem 1.25rem;
+  margin-bottom: 1.5rem;
+}
+.modal-feature {
+  font-size: 13px; color: var(--ink2);
+  padding: 5px 0; display: flex; align-items: center; gap: 10px;
+}
+.modal-feature::before { content: '✓'; color: var(--sage); font-weight: 700; }
+.modal-price {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 36px; color: var(--bloom); font-weight: 600;
+  margin-bottom: 4px;
+}
+.modal-price span { font-size: 16px; color: var(--stone); font-weight: 400; }
+.modal-cta {
+  width: 100%; padding: 14px; font-size: 15px; font-weight: 700;
+  border-radius: 50px; cursor: pointer; font-family: inherit;
+  background: linear-gradient(135deg, var(--gold), #f0b429);
+  color: #fff; border: none; margin-bottom: 10px;
+  transition: opacity .15s;
+}
+.modal-cta:hover { opacity: .88; }
+.modal-cta:disabled { opacity: .6; cursor: not-allowed; }
+.modal-dismiss {
+  font-size: 12px; color: var(--stone); cursor: pointer;
+  background: none; border: none; font-family: inherit;
+  text-decoration: underline;
+}
+
+/* ── Plant ID ── */
+.identify-drop {
+  border: 2.5px dashed var(--border);
+  border-radius: var(--r-xl); padding: 3rem 2rem;
+  cursor: pointer; transition: all .2s;
+  background: var(--bg); position: relative;
+  display: flex; flex-direction: column; align-items: center; gap: 14px;
+}
+.identify-drop:hover, .identify-drop.drag-over {
+  border-color: var(--petal2); background: var(--petal-lt);
+}
+.identify-drop.has-image {
+  padding: 0; border-style: solid; border-color: var(--petal2);
+  background: #000; overflow: hidden;
+}
+.identify-icon { font-size: 52px; line-height: 1; }
+.identify-prompt { font-size: 14px; color: var(--stone); line-height: 1.6; }
+.identify-prompt strong { color: var(--bloom); }
+.identify-preview {
+  width: 100%; max-height: 380px;
+  object-fit: contain; display: block; border-radius: var(--r-lg);
+}
+
+/* ID result card */
+.id-card {
+  background: var(--white); border: 1.5px solid var(--border2);
+  border-radius: var(--r-xl); overflow: hidden; box-shadow: var(--sh);
+  animation: fadeUp .3s ease;
+}
+.id-card-header {
+  background: linear-gradient(135deg, #0d2a4a, #1a5c96);
+  padding: 1.5rem 2rem; color: #fff;
+}
+.id-name { font-family:'Cormorant Garamond',serif; font-size: 30px; font-weight: 600; margin-bottom: 4px; }
+.id-sci  { font-size: 14px; color: #b8d8f4; font-style: italic; margin-bottom: 10px; }
+.id-meta { display: flex; flex-wrap: wrap; gap: 8px; }
+.id-badge {
+  font-size: 11px; font-weight: 600; padding: 4px 12px;
+  border-radius: 50px; background: rgba(255,255,255,.15); color: #fff;
+}
+.id-badge.warn { background: #c47c18; }
+.id-body { padding: 1.5rem 2rem; }
+.id-desc { font-size: 14px; color: var(--ink2); line-height: 1.75; margin-bottom: 1.25rem; }
+.id-specs { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 1.25rem; }
+.id-care {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 1.25rem;
+}
+@media(max-width:500px){ .id-care { grid-template-columns: 1fr; } }
+.id-care-item {
+  background: var(--bg); border: 1px solid var(--border);
+  border-radius: var(--r); padding: 10px 14px;
+}
+.id-care-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--stone); margin-bottom: 3px; }
+.id-care-val   { font-size: 13px; font-weight: 500; color: var(--ink2); }
+.id-flags { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 1.25rem; }
+.id-flag {
+  font-size: 12px; font-weight: 600; padding: 5px 14px; border-radius: 50px;
+  border: 1.5px solid;
+}
+.id-flag.safe    { background: var(--sage-lt); color: var(--sage); border-color: var(--sage); }
+.id-flag.warning { background: var(--rust-lt); color: var(--rust); border-color: var(--rust); }
+.id-flag.neutral { background: var(--bg); color: var(--stone); border-color: var(--border); }
+.id-notes { font-size: 13px; color: var(--ink2); background: var(--gold-lt); border: 1px solid var(--gold); border-radius: var(--r); padding: 12px 16px; line-height: 1.6; }
+.id-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 1.25rem; padding-top: 1.25rem; border-top: 1px solid var(--border2); }
+
+/* ── Plant specs row ── */
+.plant-specs {
+  display: flex; flex-wrap: wrap; gap: 8px;
+  margin: 10px 0 14px;
+}
+.spec-chip {
+  display: flex; flex-direction: column; align-items: center;
+  background: var(--bg); border: 1px solid var(--border);
+  border-radius: var(--r); padding: 7px 12px; min-width: 68px;
+  flex: 1;
+}
+.spec-label {
+  font-size: 9px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: .06em; color: var(--stone); margin-bottom: 3px;
+}
+.spec-val {
+  font-size: 12px; font-weight: 600; color: var(--bloom);
+  text-align: center; line-height: 1.3;
+}
+
+/* ── Shopping list ── */
+.shop-intro {
+  background: var(--white); border: 1.5px solid var(--border2);
+  border-radius: var(--r-lg); padding: 1.25rem 1.5rem;
+  margin-bottom: 1.5rem; font-size: 14px; color: var(--ink2);
+  line-height: 1.7; box-shadow: var(--sh);
+}
+.shop-category { margin-bottom: 1.75rem; }
+.shop-cat-header {
+  display: flex; align-items: center; gap: 10px;
+  margin-bottom: 12px;
+}
+.shop-cat-icon { font-size: 22px; }
+.shop-cat-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 22px; color: var(--bloom); font-weight: 600;
+}
+.shop-items { display: flex; flex-direction: column; gap: 10px; }
+.shop-item {
+  background: var(--white); border: 1.5px solid var(--border2);
+  border-radius: var(--r); padding: 12px 16px;
+  display: flex; align-items: flex-start; gap: 14px;
+  box-shadow: var(--sh);
+}
+.shop-item.optional { border-style: dashed; background: var(--bg); }
+.shop-item-dot {
+  width: 10px; height: 10px; border-radius: 50%;
+  background: var(--sage); flex-shrink: 0; margin-top: 5px;
+}
+.shop-item.optional .shop-item-dot { background: var(--border); }
+.shop-item-body { flex: 1; }
+.shop-item-name { font-size: 14px; font-weight: 600; color: var(--ink); margin-bottom: 2px; }
+.shop-item-detail { font-size: 12px; color: var(--stone); margin-bottom: 4px; }
+.shop-item-tip { font-size: 12px; color: var(--sky); font-style: italic; }
+.shop-item-badge {
+  font-size: 10px; font-weight: 700; padding: 2px 8px;
+  border-radius: 50px; flex-shrink: 0; align-self: flex-start;
+}
+.shop-item-badge.essential { background: var(--sage-lt); color: var(--sage); border: 1px solid var(--sage); }
+.shop-item-badge.optional  { background: var(--bg); color: var(--stone); border: 1px solid var(--border); }
+
+/* ── Nurseries ── */
+.nursery-list { display: flex; flex-direction: column; gap: 12px; }
+.nursery-card {
+  background: var(--white); border: 1.5px solid var(--border2);
+  border-radius: var(--r-lg); padding: 1.1rem 1.4rem;
+  display: flex; align-items: center; gap: 16px;
+  box-shadow: var(--sh); transition: box-shadow .2s, transform .2s;
+}
+.nursery-card:hover { box-shadow: var(--sh-md); transform: translateY(-1px); }
+.nursery-num {
+  width: 36px; height: 36px; border-radius: 50%;
+  background: linear-gradient(135deg, #1a4d7a, #2e7dc4);
+  color: #fff; font-size: 14px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.nursery-body { flex: 1; min-width: 0; }
+.nursery-name { font-size: 15px; font-weight: 600; color: var(--bloom); margin-bottom: 3px; }
+.nursery-address { font-size: 12px; color: var(--stone); }
+.nursery-meta { display: flex; align-items: center; gap: 12px; flex-shrink: 0; flex-wrap: wrap; justify-content: flex-end; }
+.nursery-rating {
+  font-size: 13px; font-weight: 600; color: var(--gold);
+  display: flex; align-items: center; gap: 4px;
+}
+.nursery-open {
+  font-size: 11px; font-weight: 600; padding: 3px 10px;
+  border-radius: 50px;
+}
+.nursery-open.open   { background: var(--sage-lt); color: var(--sage); border: 1px solid var(--sage); }
+.nursery-open.closed { background: var(--rust-lt);  color: var(--rust);  border: 1px solid var(--rust); }
+.nursery-open.unknown { background: var(--bg); color: var(--stone); border: 1px solid var(--border); }
+.nursery-directions {
+  font-size: 12px; color: var(--sky); text-decoration: none;
+  font-weight: 500; white-space: nowrap;
+}
+.nursery-directions:hover { text-decoration: underline; }
+.nursery-missing {
+  background: var(--gold-lt); border: 1.5px solid var(--gold);
+  border-radius: var(--r-lg); padding: 1.5rem; text-align: center;
+  font-size: 14px; color: #7a5500; line-height: 1.6;
+}
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 <body>
 
-<!-- Pro upgrade modal -->
-<div class="modal-overlay hidden" id="pro-modal">
-  <div class="modal">
-    <button class="modal-close" onclick="closeProModal()">✕</button>
-    <div class="modal-title">🌟 BloomWise Pro</div>
-    <div class="modal-sub">Unlock unlimited plant intelligence</div>
-    <ul class="pro-features">
-      <li><span class="fi">♾️</span> Unlimited recommendations & lookups</li>
-      <li><span class="fi">🌱</span> Persistent garden planner (synced across devices)</li>
-      <li><span class="fi">📸</span> High-quality botanical photos via Perenual</li>
-      <li><span class="fi">📄</span> PDF export for recommendations & garden plans</li>
-      <li><span class="fi">🗺️</span> Precise hardiness zone detection</li>
-      <li><span class="fi">⚡</span> Priority AI responses</li>
-    </ul>
-    <div class="pro-price"><strong>$4.99</strong> / month</div>
-    <button class="btn-pro" onclick="startCheckout()">✨ Upgrade to Pro</button>
-    <div class="modal-note">Cancel anytime · Secure payment via Stripe</div>
-  </div>
-</div>
-
 <header class="header">
-  <div class="logo"><span class="logo-bloom">🌸</span> BloomWise</div>
-  <div class="header-right">
-    <div class="usage-pill" id="usage-pill" style="display:none;"></div>
-    <button class="btn-upgrade" id="upgrade-btn" onclick="openProModal()" style="display:none;">✨ Go Pro</button>
-    <div class="header-tag">AI-Powered Plant Advisor</div>
+  <div class="logo">
+    <span class="logo-bloom">🌸</span> BloomWise
+    <span class="pro-badge" id="pro-badge">PRO</span>
   </div>
+  <div class="header-tag">AI-Powered Plant Advisor</div>
 </header>
 
 <div class="hero">
@@ -698,13 +898,46 @@ textarea { resize: vertical; min-height: 90px; }
 
 <main class="main">
 
-  <div class="tabs">
-    <button class="tab active" onclick="switchTab('rec')">🌻 Get Recommendations</button>
-    <button class="tab" onclick="switchTab('lookup')">🔍 Plant Lookup</button>
-    <button class="tab" onclick="switchTab('planner')">🌱 My Garden <span id="planner-count" class="planner-badge" style="display:none;"></span></button>
+  <!-- Usage bar — shows for free users -->
+  <div class="usage-bar" id="usage-bar" style="display:none;">
+    <div class="usage-label">Free plan</div>
+    <div class="usage-track"><div class="usage-fill" id="usage-fill" style="width:0%"></div></div>
+    <div class="usage-text" id="usage-text">0 / 3 today</div>
+    <button class="btn-upgrade" onclick="showUpgradeModal()">⚡ Upgrade to Pro</button>
   </div>
 
-  <!-- RECOMMENDATIONS TAB -->
+  <!-- Upgrade modal -->
+  <div class="modal-overlay" id="upgrade-modal" style="display:none;" onclick="if(event.target===this)hideUpgradeModal()">
+    <div class="modal-box">
+      <div class="modal-icon">🌸</div>
+      <div class="modal-title">Unlock BloomWise Pro</div>
+      <div class="modal-sub">You've used your free recommendations for today. Upgrade for unlimited access to everything BloomWise has to offer.</div>
+      <div class="modal-features">
+        <div class="modal-feature">Unlimited plant recommendations</div>
+        <div class="modal-feature">Unlimited plant lookups</div>
+        <div class="modal-feature">Full garden planner</div>
+        <div class="modal-feature">PDF export</div>
+        <div class="modal-feature">Priority AI responses</div>
+        <div class="modal-feature">Cancel anytime</div>
+      </div>
+      <div class="modal-price">$2.99 <span>/ month</span></div>
+      <button class="modal-cta" id="checkout-btn" onclick="startCheckout()">🌻 Start my Pro plan</button>
+      <br/>
+      <button class="modal-dismiss" onclick="hideUpgradeModal()">Maybe later</button>
+    </div>
+  </div>
+
+
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('rec')">🌻 Recommendations</button>
+    <button class="tab" onclick="switchTab('lookup')">🔍 Plant Lookup</button>
+    <button class="tab" onclick="switchTab('identify')">📸 Identify</button>
+    <button class="tab" onclick="switchTab('planner')">🌱 My Garden <span id="planner-count" class="planner-badge" style="display:none;"></span></button>
+    <button class="tab" onclick="switchTab('shop')">🛒 Shopping List</button>
+    <button class="tab" onclick="switchTab('nurseries')">📍 Nurseries</button>
+  </div>
+
+  <!-- RECOMMENDATIONS -->
   <div class="tab-panel active" id="tab-rec">
     <div id="tracker-wrap"></div>
 
@@ -715,7 +948,7 @@ textarea { resize: vertical; min-height: 90px; }
         <div class="step-sub">We'll auto-detect your hardiness zone from your city or zip code</div>
         <div class="field">
           <label class="field-label">City or zip code</label>
-          <input type="text" id="location" placeholder="e.g. Tampa, FL  or  33601" oninput="onLocationInput()"/>
+          <input type="text" id="location" placeholder="e.g. Tampa FL, London UK, Sydney AU, Toronto CA" oninput="onLocationInput()"/>
           <div id="zone-status"></div>
         </div>
         <div class="field">
@@ -950,6 +1183,30 @@ textarea { resize: vertical; min-height: 90px; }
   </div>
 
   <!-- GARDEN PLANNER TAB -->
+  <!-- PLANT ID TAB -->
+  <div class="tab-panel" id="tab-identify">
+    <div class="lookup-hero" style="margin-bottom:1.5rem;">
+      <h2>📸 Identify a Plant</h2>
+      <p>Take a photo or upload an image — Claude will identify the plant instantly</p>
+    </div>
+    <div class="section-card" style="text-align:center;">
+      <div class="identify-drop" id="identify-drop" onclick="document.getElementById('identify-input').click()" ondragover="event.preventDefault();this.classList.add('drag-over')" ondragleave="this.classList.remove('drag-over')" ondrop="handleIdentifyDrop(event)">
+        <div class="identify-icon" id="identify-icon">📷</div>
+        <div class="identify-prompt" id="identify-prompt">
+          <strong>Take or upload a photo</strong><br>
+          <span>Tap to open camera · Drag &amp; drop an image · or click to browse</span>
+        </div>
+        <img id="identify-preview" class="identify-preview" style="display:none;" alt="Plant preview"/>
+      </div>
+      <input type="file" id="identify-input" accept="image/*" capture="environment" style="display:none;" onchange="handleIdentifyFile(event)"/>
+      <div style="margin-top:1.25rem;display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
+        <button class="btn btn-primary" id="identify-btn" onclick="identifyPlant()" style="display:none;">🔍 Identify this plant</button>
+        <button class="btn btn-ghost" onclick="resetIdentify()" id="identify-reset" style="display:none;">✕ Clear</button>
+      </div>
+    </div>
+    <div id="identify-results" style="margin-top:1.5rem;"></div>
+  </div>
+
   <div class="tab-panel" id="tab-planner">
     <div class="planner-hero">
       <h2>🌱 My Garden Planner</h2>
@@ -962,10 +1219,32 @@ textarea { resize: vertical; min-height: 90px; }
       <button class="btn btn-primary" style="margin-top:1.25rem;" onclick="switchTab('rec')">🌻 Get Recommendations</button>
     </div>
     <div id="planner-grid" class="planner-grid"></div>
-    <div id="planner-actions" style="display:none;" class="nav-row">
+    <div id="planner-actions" style="display:none;" class="nav-row" style="margin-top:1.5rem;">
       <button class="btn btn-ghost" onclick="clearGarden()">🗑 Clear garden</button>
       <button class="btn btn-pdf" onclick="exportGardenPDF()">⬇ Save garden PDF</button>
     </div>
+  </div>
+
+  <!-- SHOPPING LIST TAB -->
+  <div class="tab-panel" id="tab-shop">
+    <div class="lookup-hero">
+      <h2>🛒 Shopping List</h2>
+      <p>Get a personalised list of everything you need — plants, soil, tools, and more</p>
+      <div style="margin-top:1rem;display:flex;gap:10px;flex-wrap:wrap;">
+        <button class="btn btn-primary" id="shop-btn" onclick="generateShoppingList()">Generate my shopping list</button>
+        <div style="font-size:12px;color:#b8d8f4;align-self:center;">Based on your site profile &amp; plant picks</div>
+      </div>
+    </div>
+    <div id="shop-results"></div>
+  </div>
+
+  <!-- NURSERIES TAB -->
+  <div class="tab-panel" id="tab-nurseries">
+    <div class="lookup-hero">
+      <h2>📍 Nearest Nurseries</h2>
+      <p>Find the 10 closest plant nurseries to your location</p>
+    </div>
+    <div id="nursery-results"></div>
   </div>
 
 </main>
@@ -975,283 +1254,321 @@ textarea { resize: vertical; min-height: 90px; }
 </footer>
 
 <script>
-// ── State ─────────────────────────────────────────────────
-const S = { climate:[], sun:'', soil:'', water:'', wrestrict:[], style:'', color:[], priority:[], zone:'', season:'' };
+const S={climate:[],sun:'',soil:'',water:'',wrestrict:[],style:'',color:[],priority:[],zone:'',season:'',country:''};
+
+// ── Backend config ────────────────────────────────────────
+// Since the frontend is served by the same server as the API,
+// BACKEND is an empty string — calls go to the same origin automatically.
+// This works on Railway, locally, and anywhere you deploy it.
 const BACKEND = '';
 
-// ── User identity (persistent anonymous ID) ───────────────
-function getUserId() {
-  let id = localStorage.getItem('bloomwise-uid');
-  if (!id) {
-    id = 'u-' + Math.random().toString(36).slice(2,10) + Date.now().toString(36);
-    localStorage.setItem('bloomwise-uid', id);
-  }
-  return id;
-}
-const USER_ID = getUserId();
+// ── Pro state ─────────────────────────────────────────────
+let IS_PRO = false;
+let USAGE_TODAY = 0;
+const FREE_LIMIT = 3;
 
-// ── API helper ────────────────────────────────────────────
-async function apiCall(endpoint, body, method='POST') {
-  const opts = {
-    method,
-    headers: { 'Content-Type': 'application/json', 'X-User-ID': USER_ID },
-  };
-  if (body !== undefined) opts.body = JSON.stringify(body);
-  const res = await fetch(BACKEND + endpoint, opts);
-  const data = await res.json();
-  if (!res.ok) throw Object.assign(new Error(data.message || data.error || `Server error ${res.status}`), data);
+async function initProStatus() {
+  // Check if we're returning from Stripe checkout
+  const params = new URLSearchParams(window.location.search);
+  const sessionId = params.get('session_id');
+  if (sessionId) {
+    try {
+      const data = await apiCall('/verify-session', { session_id: sessionId, uid: USER_ID });
+      if (data.pro) {
+        IS_PRO = true;
+        window.history.replaceState({}, '', '/');
+      }
+    } catch(e) { console.warn('Session verify failed:', e.message); }
+  }
+
+  // Check pro status from server
+  if (!IS_PRO) {
+    try {
+      const data = await apiCall('/check-pro', { uid: USER_ID });
+      IS_PRO = data.pro || false;
+    } catch(e) { /* offline — assume free */ }
+  }
+
+  updateProUI();
+}
+
+function updateProUI() {
+  document.getElementById('pro-badge').classList.toggle('show', IS_PRO);
+  document.getElementById('usage-bar').style.display = IS_PRO ? 'none' : 'flex';
+  updateUsageBar();
+}
+
+function updateUsageBar() {
+  if (IS_PRO) return;
+  const pct = Math.min((USAGE_TODAY / FREE_LIMIT) * 100, 100);
+  const fill = document.getElementById('usage-fill');
+  fill.style.width = pct + '%';
+  fill.classList.toggle('full', USAGE_TODAY >= FREE_LIMIT);
+  document.getElementById('usage-text').textContent = `${USAGE_TODAY} / ${FREE_LIMIT} today`;
+}
+
+function showUpgradeModal() {
+  document.getElementById('upgrade-modal').style.display = 'flex';
+}
+
+function hideUpgradeModal() {
+  document.getElementById('upgrade-modal').style.display = 'none';
+}
+
+async function startCheckout() {
+  const btn = document.getElementById('checkout-btn');
+  btn.disabled = true;
+  btn.textContent = 'Redirecting to checkout…';
+  try {
+    const data = await apiCall('/create-checkout', { uid: USER_ID });
+    if (data.url) window.location.href = data.url;
+    else throw new Error(data.error || 'No checkout URL returned');
+  } catch(e) {
+    btn.disabled = false;
+    btn.textContent = '🌻 Start my Pro plan';
+    alert('Could not start checkout: ' + e.message);
+  }
+}
+
+async function apiCall(endpoint, body) {
+  const res = await fetch(BACKEND + endpoint, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ ...body, uid: USER_ID })
+  });
+  const text = await res.text();
+  let data;
+  try {
+    data = JSON.parse(text);
+  } catch(e) {
+    // Server returned HTML instead of JSON — likely a routing or config issue
+    console.error('Non-JSON response from', endpoint, ':', text.slice(0, 200));
+    throw new Error(`Server error on ${endpoint} — check Railway logs. (Got HTML instead of JSON)`);
+  }
+  if (res.status === 402) {
+    USAGE_TODAY = data.used || FREE_LIMIT;
+    updateUsageBar();
+    showUpgradeModal();
+    throw new Error('free_limit_reached');
+  }
+  if (!res.ok) throw new Error(data.error || `Server error ${res.status}`);
   return data;
 }
 
-// ── Usage / Pro status ────────────────────────────────────
-let userStatus = { used: 0, limit: 3, isPro: false, remaining: 3 };
-
-async function loadUserStatus() {
-  try {
-    userStatus = await apiCall('/user/status', undefined, 'GET');
-    renderUsagePill();
-  } catch(e) { /* fail silently */ }
-}
-
-function renderUsagePill() {
-  const pill = document.getElementById('usage-pill');
-  const btn  = document.getElementById('upgrade-btn');
-  if (!pill) return;
-  if (userStatus.isPro) {
-    pill.textContent = '✨ Pro';
-    pill.className = 'usage-pill pro';
-    pill.style.display = 'inline-flex';
-    btn.style.display = 'none';
-  } else {
-    const rem = userStatus.remaining ?? (userStatus.limit - userStatus.used);
-    pill.textContent = `${rem}/${userStatus.limit} free today`;
-    pill.className = rem <= 1 ? 'usage-pill warn' : 'usage-pill';
-    pill.style.display = 'inline-flex';
-    btn.style.display = rem <= 1 ? 'inline-flex' : 'none';
-  }
-}
-
-function updateUsageFromResponse(usage) {
-  if (!usage) return;
-  userStatus = { ...userStatus, ...usage,
-    remaining: usage.isPro ? Infinity : Math.max(0, usage.limit - usage.used) };
-  renderUsagePill();
-}
-
-// ── Pro modal ─────────────────────────────────────────────
-function openProModal()  { document.getElementById('pro-modal').classList.remove('hidden'); }
-function closeProModal() { document.getElementById('pro-modal').classList.add('hidden'); }
-document.getElementById('pro-modal').addEventListener('click', e => {
-  if (e.target === document.getElementById('pro-modal')) closeProModal();
-});
-
-async function startCheckout() {
-  try {
-    const data = await apiCall('/stripe/checkout', {
-      successUrl: window.location.origin + '/?pro=success',
-      cancelUrl:  window.location.origin + '/?pro=cancel',
-    });
-    if (data.url) window.location.href = data.url;
-    else alert('Could not start checkout. Please try again.');
-  } catch(e) {
-    alert('Checkout error: ' + e.message);
-  }
-}
-
-// Check for ?pro=success in URL
-if (new URLSearchParams(window.location.search).get('pro') === 'success') {
-  setTimeout(() => {
-    loadUserStatus();
-    alert('🎉 Welcome to BloomWise Pro! Your subscription is now active.');
-    history.replaceState({}, '', '/');
-  }, 1500);
-}
-
-// ── Zone detection (client-side lookup table + server fallback) ──
-const ZM={'alaska':3,'anchorage':4,'fairbanks':2,'juneau':7,'maine':5,'vermont':4,'minnesota':4,'wisconsin':4,'michigan':5,'montana':4,'wyoming':4,'idaho':5,'north dakota':3,'south dakota':4,'new york':6,'pennsylvania':6,'ohio':6,'illinois':5,'iowa':5,'nebraska':5,'colorado':5,'utah':6,'nevada':7,'oregon':7,'washington':7,'seattle':8,'portland':8,'spokane':6,'california':9,'los angeles':10,'san francisco':10,'san diego':10,'sacramento':9,'fresno':9,'arizona':9,'phoenix':9,'tucson':9,'albuquerque':7,'new mexico':7,'texas':8,'dallas':7,'houston':9,'austin':8,'san antonio':8,'el paso':7,'florida':10,'miami':11,'orlando':9,'tampa':9,'jacksonville':9,'st petersburg':10,'pensacola':8,'georgia':8,'atlanta':7,'savannah':8,'south carolina':8,'north carolina':7,'charlotte':7,'virginia':7,'dc':7,'washington dc':7,'maryland':7,'delaware':7,'new jersey':7,'connecticut':6,'rhode island':6,'massachusetts':6,'boston':6,'tennessee':7,'nashville':7,'memphis':7,'kentucky':6,'west virginia':6,'louisiana':9,'new orleans':9,'mississippi':8,'alabama':8,'arkansas':7,'missouri':6,'kansas':5,'oklahoma':7,'indiana':5,'hawaii':11,'honolulu':11,'chicago':5,'detroit':5,'cleveland':6,'pittsburgh':6,'philadelphia':7,'baltimore':7};
-const SM={al:8,ak:3,az:9,ar:7,ca:9,co:5,ct:6,de:7,fl:9,ga:8,hi:11,id:5,il:5,in:5,ia:5,ks:5,ky:6,la:9,me:5,md:7,ma:6,mi:5,mn:4,ms:8,mo:6,mt:4,ne:5,nv:7,nh:5,nj:7,nm:7,ny:6,nc:7,nd:3,oh:6,ok:7,or:7,pa:6,ri:6,sc:8,sd:4,tn:7,tx:8,ut:6,vt:4,va:7,wa:7,wv:6,wi:4,wy:4};
 const ZL=['','Zone 1','Zone 2','Zone 3','Zone 4','Zone 5','Zone 6','Zone 7','Zone 8','Zone 9','Zone 10','Zone 11'];
 
-function getZoneLocal(v) {
-  const l = v.toLowerCase().replace(/[,.]/g,' ').replace(/\s+/g,' ').trim();
-  const z = l.match(/\b(\d{5})\b/);
-  if (z) { const n=parseInt(z[1]); if(n>=99500)return'Zone 3–5';if(n>=96700)return'Zone 11';if(n>=90000)return'Zone 9–10';if(n>=85000)return'Zone 9';if(n>=78000)return'Zone 8';if(n>=75000)return'Zone 7–8';if(n>=73000)return'Zone 7';if(n>=33000&&n<=33199)return'Zone 11';if(n>=32000)return'Zone 9–10';if(n>=30000)return'Zone 7–8';if(n>=10000&&n<=14999)return'Zone 6';if(n>=1000&&n<=2999)return'Zone 5–6';if(n>=60000&&n<=62999)return'Zone 5–6';if(n>=77000&&n<=77999)return'Zone 9';if(n>=94000&&n<=94999)return'Zone 9–10';if(n>=97000)return'Zone 7–8'; }
-  for (const [k,n] of Object.entries(ZM)) if (l.includes(k)) return ZL[n];
-  const m = l.match(/\b([a-z]{2})\b/g);
-  if (m) for (const s of m) if (SM[s]) return ZL[SM[s]];
+// US-only quick lookup for instant feedback while backend call is in flight
+const ZM={'alaska':3,'anchorage':4,'fairbanks':2,'juneau':7,'maine':5,'vermont':4,'minnesota':4,'wisconsin':4,'michigan':5,'montana':4,'wyoming':4,'idaho':5,'north dakota':3,'south dakota':4,'new york':6,'pennsylvania':6,'ohio':6,'illinois':5,'iowa':5,'nebraska':5,'colorado':5,'utah':6,'nevada':7,'oregon':7,'washington':7,'seattle':8,'portland':8,'spokane':6,'california':9,'los angeles':10,'san francisco':10,'san diego':10,'sacramento':9,'fresno':9,'arizona':9,'phoenix':9,'tucson':9,'albuquerque':7,'new mexico':7,'texas':8,'dallas':7,'houston':9,'austin':8,'san antonio':8,'el paso':7,'florida':10,'miami':11,'orlando':9,'tampa':9,'jacksonville':9,'st petersburg':10,'pensacola':8,'georgia':8,'atlanta':7,'savannah':8,'south carolina':8,'north carolina':7,'charlotte':7,'virginia':7,'dc':7,'washington dc':7,'maryland':7,'delaware':7,'new jersey':7,'connecticut':6,'rhode island':6,'massachusetts':6,'boston':6,'tennessee':7,'nashville':7,'memphis':7,'kentucky':6,'west virginia':6,'louisiana':9,'new orleans':9,'mississippi':8,'alabama':8,'arkansas':7,'missouri':6,'kansas':5,'oklahoma':7,'indiana':5,'hawaii':11,'honolulu':11,'chicago':5,'detroit':5,'cleveland':6,'pittsburgh':6,'philadelphia':7,'baltimore':7};
+const SM={al:8,ak:3,az:9,ar:7,ca:9,co:5,ct:6,de:7,fl:9,ga:8,hi:11,id:5,il:5,in:5,ia:5,ks:5,ky:6,la:9,me:5,md:7,ma:6,mi:5,mn:4,ms:8,mo:6,mt:4,ne:5,nv:7,nh:5,nj:7,nm:7,ny:6,nc:7,nd:3,oh:6,ok:7,or:7,pa:6,ri:6,sc:8,sd:4,tn:7,tx:8,ut:6,vt:4,va:7,wa:7,wv:6,wi:4,wy:4};
+
+function quickZoneGuess(v){
+  const l=v.toLowerCase().replace(/[,.]/g,' ').replace(/\s+/g,' ').trim();
+  const z=l.match(/\b(\d{5})\b/);
+  if(z){const n=parseInt(z[1]);if(n>=99500)return'Zone 3–5';if(n>=96700)return'Zone 11';if(n>=90000)return'Zone 9–10';if(n>=85000)return'Zone 9';if(n>=78000)return'Zone 8';if(n>=75000)return'Zone 7–8';if(n>=73000)return'Zone 7';if(n>=33000&&n<=33199)return'Zone 11';if(n>=32000)return'Zone 9–10';if(n>=30000)return'Zone 7–8';if(n>=10000&&n<=14999)return'Zone 6';if(n>=1000&&n<=2999)return'Zone 5–6';if(n>=60000&&n<=62999)return'Zone 5–6';if(n>=77000&&n<=77999)return'Zone 9';if(n>=94000&&n<=94999)return'Zone 9–10';if(n>=97000)return'Zone 7–8';}
+  for(const[k,n]of Object.entries(ZM))if(l.includes(k))return ZL[n];
+  const m=l.match(/\b([a-z]{2})\b/g);
+  if(m)for(const s of m)if(SM[s])return ZL[SM[s]];
   return null;
 }
 
-let zt = null;
-function onLocationInput() {
+let zt=null;
+function onLocationInput(){
   clearTimeout(zt);
-  const v = document.getElementById('location').value.trim();
-  if (v.length < 3) { document.getElementById('zone-status').innerHTML=''; S.zone=''; return; }
-  document.getElementById('zone-status').innerHTML = '<div class="detecting"><div class="det-dot"></div>Detecting zone...</div>';
-  zt = setTimeout(async () => {
-    // Try local lookup first
-    const local = getZoneLocal(v);
-    if (local) {
-      S.zone = local;
-      document.getElementById('zone-status').innerHTML = `<div class="zone-badge">🗺 ${local} detected</div>`;
-      return;
-    }
-    // Fall back to server-side geocoding
-    try {
+  nurseriesLoaded = false; // reset so nurseries reload with new location
+  const v=document.getElementById('location').value.trim();
+  if(v.length<3){document.getElementById('zone-status').innerHTML='';S.zone='';S.country='';return;}
+
+  // Show instant guess from local lookup while backend is working
+  const quick=quickZoneGuess(v);
+  if(quick){
+    S.zone=quick; S.country='US';
+    document.getElementById('zone-status').innerHTML=`<div class="zone-badge">🗺 ${quick} detected</div>`;
+  } else {
+    document.getElementById('zone-status').innerHTML='<div class="detecting"><div class="det-dot"></div>Detecting zone…</div>';
+  }
+
+  // Then get accurate international result from backend after short delay
+  zt=setTimeout(async()=>{
+    try{
       const data = await apiCall('/zone', { location: v });
-      if (data.zone) {
+      if(data.zone){
         S.zone = data.zone;
-        document.getElementById('zone-status').innerHTML = `<div class="zone-badge">🗺 ${data.zone} detected</div>`;
-      } else {
-        S.zone = '';
-        document.getElementById('zone-status').innerHTML = '<div class="zone-warn">Zone not found — Claude will infer it from your location name</div>';
+        S.country = data.country || '';
+        const systemLabel = data.system && data.system !== 'USDA' ? ` (${data.system})` : '';
+        const loc = data.displayName ? ` — ${data.displayName}` : '';
+        document.getElementById('zone-status').innerHTML=
+          `<div class="zone-badge">🗺 ${data.zone}${systemLabel}${loc}</div>`;
+      } else if(!quick){
+        S.zone=''; S.country='';
+        document.getElementById('zone-status').innerHTML=
+          `<div class="zone-warn">📍 Zone not found — Claude will infer it from your location name</div>`;
       }
-    } catch(e) {
-      S.zone = '';
-      document.getElementById('zone-status').innerHTML = '<div class="zone-warn">Zone not found — Claude will infer it from your location name</div>';
+    }catch(e){
+      // Backend unavailable — keep the quick guess if we had one
+      if(!quick){
+        document.getElementById('zone-status').innerHTML=
+          `<div class="zone-warn">📍 Zone detection unavailable — Claude will infer from your location</div>`;
+      }
     }
   }, 600);
 }
 
-// ── Tracker ───────────────────────────────────────────────
-function renderTracker(a) {
-  const labels = ['Location','Site','Water','Aesthetic'];
-  let h = '';
-  labels.forEach((l,i) => {
-    const c = i<a?'done':i===a?'active':'';
-    const lL = i>0 ? `<div class="tr-line ${i<=a?'done':''}"></div>` : '';
-    const lR = i<3 ? `<div class="tr-line ${i<a?'done':''}"></div>` : '';
-    h += `<div class="tr-step"><div class="tr-row">${lL}<div class="tr-dot ${c}" onclick="goStep(${i})">${i<a?'✓':i+1}</div>${lR}</div><div class="tr-label">${l}</div></div>`;
+function renderTracker(a){
+  const labels=['Location','Site','Water','Aesthetic'];
+  let h='';
+  labels.forEach((l,i)=>{
+    const c=i<a?'done':i===a?'active':'';
+    const lL=i>0?`<div class="tr-line ${i<=a?'done':''}"></div>`:'';
+    const lR=i<3?`<div class="tr-line ${i<a?'done':''}"></div>`:'';
+    h+=`<div class="tr-step"><div class="tr-row">${lL}<div class="tr-dot ${c}" onclick="goStep(${i})">${i<a?'✓':i+1}</div>${lR}</div><div class="tr-label">${l}</div></div>`;
   });
-  document.getElementById('tracker-wrap').innerHTML = `<div class="tracker">${h}</div>`;
+  document.getElementById('tracker-wrap').innerHTML=`<div class="tracker">${h}</div>`;
 }
 
-function goStep(n) {
-  document.querySelectorAll('#tab-rec .step-panel').forEach((p,i) => p.classList.toggle('active', i===n));
+function goStep(n){
+  document.querySelectorAll('#tab-rec .step-panel').forEach((p,i)=>p.classList.toggle('active',i===n));
   renderTracker(Math.min(n,3));
-  window.scrollTo({ top:0, behavior:'smooth' });
+  window.scrollTo({top:0,behavior:'smooth'});
 }
 
-function switchTab(t) {
-  const tabs = ['rec','lookup','planner'];
-  document.querySelectorAll('.tab').forEach((el,i) => el.classList.toggle('active', tabs[i]===t));
-  document.querySelectorAll('.tab-panel').forEach((el,i) => el.classList.toggle('active', ['tab-rec','tab-lookup','tab-planner'][i]==='tab-'+t));
-  if (t==='lookup') updateCtx();
-  if (t==='planner') renderPlanner();
+function switchTab(t){
+  const tabs  =['rec','lookup','identify','planner','shop','nurseries'];
+  const panels=['tab-rec','tab-lookup','tab-identify','tab-planner','tab-shop','tab-nurseries'];
+  document.querySelectorAll('.tab').forEach((el,i)=>el.classList.toggle('active',tabs[i]===t));
+  document.querySelectorAll('.tab-panel').forEach((el,i)=>el.classList.toggle('active',panels[i]==='tab-'+t));
+  if(t==='lookup')updateCtx();
+  if(t==='planner')renderPlanner();
+  if(t==='nurseries')loadNurseries();
 }
 
-function updateCtx() {
-  const loc = document.getElementById('location').value;
-  const parts = [loc&&'📍 '+loc, S.zone&&'🗺 '+S.zone, S.season&&'📅 '+S.season, S.sun&&'☀️ '+S.sun, S.soil&&'🌱 '+S.soil, S.water&&'💧 '+S.water].filter(Boolean);
-  document.getElementById('ctx-bar').innerHTML = parts.length
-    ? '<span style="font-weight:600;color:var(--bloom);margin-right:4px;">Your site:</span>' + parts.map(p=>`<span class="ctx-pill">${p}</span>`).join('')
-    : '<span>💡 Fill in the Recommendations tab first for personalized scoring</span>';
+function updateCtx(){
+  const loc=document.getElementById('location').value;
+  const parts=[loc&&'📍 '+loc,S.zone&&'🗺 '+S.zone,S.season&&'📅 '+S.season,S.sun&&'☀️ '+S.sun,S.soil&&'🌱 '+S.soil,S.water&&'💧 '+S.water].filter(Boolean);
+  document.getElementById('ctx-bar').innerHTML=parts.length
+    ?'<span style="font-weight:600;color:var(--bloom);margin-right:4px;">Your site:</span>'+parts.map(p=>`<span class="ctx-pill">${p}</span>`).join('')
+    :'<span>💡 Fill in the Recommendations tab first for personalized scoring</span>';
 }
 
-// ── Chip helpers ──────────────────────────────────────────
-const COLORS = ['petal','gold','lav','sage','sky','rust'];
-function schip(el, g, cls) {
-  el.parentElement.querySelectorAll('.chip,.opt-card,.style-chip').forEach(c => {
-    c.className = c.className.replace(new RegExp('\\b('+COLORS.join('|')+')\\b','g'),'').trim();
-  });
+const COLORS=['petal','gold','lav','sage','sky','rust'];
+function schip(el,g,cls){
+  el.parentElement.querySelectorAll('.chip,.opt-card,.style-chip').forEach(c=>{c.className=c.className.replace(new RegExp('\\b('+COLORS.join('|')+')\\b','g'),'').trim();});
   el.classList.add(cls);
-  const label = el.querySelector('.ol');
-  S[g] = (label ? label.textContent : el.textContent).trim().replace(/[^\w\s\-\/()]/g,'').replace(/\s+/g,' ').trim();
+  const label=el.querySelector('.ol');
+  S[g]=(label?label.textContent:el.textContent).trim().replace(/[^\w\s\-\/()]/g,'').replace(/\s+/g,' ').trim();
 }
-function mchip(el, g, cls) {
-  const on = COLORS.some(c => el.classList.contains(c));
-  if (on) { el.className = el.className.replace(new RegExp('\\b('+COLORS.join('|')+')\\b','g'),'').trim(); }
+function mchip(el,g,cls){
+  const on=COLORS.some(c=>el.classList.contains(c));
+  if(on){el.className=el.className.replace(new RegExp('\\b('+COLORS.join('|')+')\\b','g'),'').trim();}
   else el.classList.add(cls);
-  S[g] = [...el.parentElement.querySelectorAll(COLORS.map(c=>'.'+c).join(','))].map(c => c.textContent.trim().replace(/[^\w\s\-\/()]/g,'').replace(/\s+/g,' ').trim());
+  S[g]=[...el.parentElement.querySelectorAll(COLORS.map(c=>'.'+c).join(','))].map(c=>c.textContent.trim().replace(/[^\w\s\-\/()]/g,'').replace(/\s+/g,' ').trim());
 }
 
-// ── Profile builder ───────────────────────────────────────
-function prof() {
-  return {
-    location:    document.getElementById('location').value || 'Not specified',
-    zone:        S.zone || 'Unknown — infer from location',
-    season:      S.season || 'not specified',
-    climate:     (S.climate||[]).join(', ') || 'not specified',
-    sun:         S.sun || 'not specified',
-    soil:        S.soil || 'not specified',
-    ph:          document.getElementById('ph').value || 'unknown',
-    drainage:    document.getElementById('drainage').value || 'unknown',
-    microclimate:document.getElementById('microclimate').value || 'none',
-    water:       S.water || 'not specified',
-    wrestrict:   (S.wrestrict||[]).join(', ') || 'none',
-    rainfall:    document.getElementById('rainfall').value || 'unknown',
-    irrigation:  document.getElementById('irrigation').value || 'none',
-    style:       S.style || 'not specified',
-    colors:      (S.color||[]).join(', ') || 'no preference',
-    priorities:  (S.priority||[]).join(', ') || 'none',
-    notes:       document.getElementById('notes').value || 'none',
+function prof(){
+  return{
+    location:document.getElementById('location').value||'Not specified',
+    zone:S.zone||'Unknown — infer from location',
+    country:S.country||'',
+    season:S.season||'not specified',
+    climate:(S.climate||[]).join(', ')||'not specified',
+    sun:S.sun||'not specified',
+    soil:S.soil||'not specified',
+    ph:document.getElementById('ph').value||'unknown',
+    drainage:document.getElementById('drainage').value||'unknown',
+    microclimate:document.getElementById('microclimate').value||'none',
+    water:S.water||'not specified',
+    wrestrict:(S.wrestrict||[]).join(', ')||'none',
+    rainfall:document.getElementById('rainfall').value||'unknown',
+    irrigation:document.getElementById('irrigation').value||'none',
+    style:S.style||'not specified',
+    colors:(S.color||[]).join(', ')||'no preference',
+    priorities:(S.priority||[]).join(', ')||'none',
+    notes:document.getElementById('notes').value||'none'
   };
 }
 
-// ── Photo helpers ─────────────────────────────────────────
-async function getPhotos(commonName, scientificName) {
+function parseJ(text,type='array'){
+  try{
+    const c=text.replace(/```json|```/gi,'').trim();
+    const s=c.indexOf(type==='array'?'[':'{');
+    const e=type==='array'?c.lastIndexOf(']'):c.lastIndexOf('}');
+    if(s>-1&&e>-1)return JSON.parse(c.slice(s,e+1));
+  }catch(e){}
+  return null;
+}
+
+// claude() now routes through your backend — no API key needed in the browser
+async function claude(prompt, max=1800){
+  const data = await apiCall('/claude', { prompt, max });
+  return data.text || '';
+}
+
+// Photos — fetched via backend which tries Perenual first, falls back to Wikipedia
+async function getPhotos(commonName, scientificName){
   try {
-    const data = await apiCall('/photos', { common: commonName, scientific: scientificName });
+    const data = await apiCall('/photos', { name: commonName, scientific: scientificName });
     return data.photos || [];
   } catch(e) {
-    // Fallback: try Wikipedia directly from browser
-    try {
-      const r = await fetch(`https://en.wikipedia.org/w/api.php?action=query&titles=${encodeURIComponent(scientificName||commonName)}&prop=pageimages&format=json&pithumbsize=600&origin=*`);
-      const d = await r.json();
-      const pages = d.query?.pages;
-      if (pages) {
-        const url = Object.values(pages)[0]?.thumbnail?.source;
-        if (url) return [url];
-      }
-    } catch {}
+    console.warn('Photo fetch failed:', e.message);
     return [];
   }
 }
 
-function buildPhotos(photos, alt, cls='plant-photos') {
-  if (!photos || photos.length === 0)
+function buildPhotos(photos,alt,cls='plant-photos'){
+  if(!photos||photos.length===0)
     return `<div class="${cls}"><div class="no-photo">No photo available</div></div>`;
-  const imgs = photos.slice(0,2).map(url =>
+  const imgs=photos.slice(0,2).map(url=>
     `<img src="${url}" alt="${alt}" loading="lazy" onerror="this.remove()"/>`
   ).join('');
   return `<div class="${cls}">${imgs}</div>`;
 }
 
-function seasonEmoji(s) {
-  const l = (s||'').toLowerCase();
-  if (l.includes('spring')) return '🌸';
-  if (l.includes('fall')||l.includes('autumn')) return '🍂';
-  if (l.includes('summer')) return '☀️';
-  if (l.includes('winter')) return '❄️';
-  return '📅';
+function seasonEmoji(s){
+  const l=(s||'').toLowerCase();
+  if(l.includes('spring'))return'🌸';
+  if(l.includes('fall')||l.includes('autumn'))return'🍂';
+  if(l.includes('summer'))return'☀️';
+  if(l.includes('winter'))return'❄️';
+  return'📅';
 }
 
-// ── Recommendations ───────────────────────────────────────
-async function generateRecs() {
-  const p = prof();
-  document.getElementById('summary-pills').innerHTML = `<div class="summary-pills">${
-    [p.location, p.zone, p.season, p.sun, p.soil, p.water, p.style]
-    .filter(v => v && v !== 'not specified' && !v.toLowerCase().includes('unknown'))
-    .map(v => `<span class="s-pill">${v}</span>`).join('')
+async function generateRecs(){
+  const p=prof();
+  document.getElementById('summary-pills').innerHTML=`<div class="summary-pills">${
+    [p.location,p.zone,p.season,p.sun,p.soil,p.water,p.style]
+    .filter(v=>v&&v!=='not specified'&&!v.toLowerCase().includes('unknown'))
+    .map(v=>`<span class="s-pill">${v}</span>`).join('')
   }</div>`;
   goStep(4);
-  document.getElementById('results').innerHTML = `<div class="loading"><div class="loader"></div><div class="loading-text">Finding your perfect plants…</div><div class="loading-sub">Analyzing ${p.location} — takes about 10 seconds</div></div>`;
+  document.getElementById('results').innerHTML=`<div class="loading"><div class="loader"></div><div class="loading-text">Finding your perfect plants…</div><div class="loading-sub">Analyzing ${p.location} — takes about 10 seconds</div></div>`;
 
-  try {
+  try{
     const data = await apiCall('/recommendations', p);
-    updateUsageFromResponse(data.usage);
     const plants = data.plants;
-    if (!plants || !plants.length) throw new Error('No plant data returned — please try again');
+    if(!plants||!plants.length)throw new Error('No plant data returned — please try again');
 
-    document.getElementById('results').innerHTML = `<div class="loading"><div class="loader"></div><div class="loading-text">Loading photos…</div></div>`;
+    // Track usage for free users
+    if(!IS_PRO){ USAGE_TODAY++; updateUsageBar(); }
+    shoppingListGenerated = false; // new recs = shopping list needs refresh
 
-    const cards = await Promise.all(plants.map(async pl => {
-      const photos = await getPhotos(pl.name, pl.scientific);
-      pl.photo = photos[0] || null;
-      const inGarden = garden.find(g => g.name === pl.name);
+    document.getElementById('results').innerHTML=`<div class="loading"><div class="loader"></div><div class="loading-text">Loading photos…</div></div>`;
+
+    const cards=await Promise.all(plants.map(async pl=>{
+      const photos=await getPhotos(pl.name,pl.scientific);
+      pl.photo = photos[0]||null;
+      const inGarden = garden.find(g=>g.name===pl.name);
+      const addBtnState = inGarden ? 'added" disabled' : '"';
+      const addBtnText = inGarden ? '✓ In garden' : '+ Add to garden';
+      const specsHtml = (pl.mature_height||pl.mature_spread||pl.spacing||pl.growth_rate||pl.lifespan) ? `
+            <div class="plant-specs">
+              ${pl.mature_height  ? `<div class="spec-chip"><div class="spec-label">Height</div><div class="spec-val">${pl.mature_height}</div></div>` : ''}
+              ${pl.mature_spread  ? `<div class="spec-chip"><div class="spec-label">Spread</div><div class="spec-val">${pl.mature_spread}</div></div>` : ''}
+              ${pl.spacing        ? `<div class="spec-chip"><div class="spec-label">Spacing</div><div class="spec-val">${pl.spacing}</div></div>` : ''}
+              ${pl.growth_rate    ? `<div class="spec-chip"><div class="spec-label">Growth</div><div class="spec-val">${pl.growth_rate}</div></div>` : ''}
+              ${pl.lifespan       ? `<div class="spec-chip"><div class="spec-label">Lifespan</div><div class="spec-val">${pl.lifespan}</div></div>` : ''}
+            </div>` : '';
       return `
         <div class="plant-card">
-          ${buildPhotos(photos, pl.name, 'plant-photos')}
+          ${buildPhotos(photos,pl.name,'plant-photos')}
           <div class="card-body">
             <div class="plant-name">${pl.name}</div>
             <div class="plant-sci">${pl.scientific}</div>
@@ -1262,69 +1579,61 @@ async function generateRecs() {
               <span class="ptag">🌱 ${pl.soil}</span>
               <span class="ptag">✅ ${pl.fit}</span>
             </div>
+            ${specsHtml}
             <div class="plant-desc">${pl.description}</div>
             <button class="add-to-garden-btn ${inGarden?'added':''}" data-name="${pl.name}"
-              onclick='addToGarden(${JSON.stringify(pl)}, this)'>${inGarden?'✓ In garden':'+ Add to garden'}</button>
+              onclick='addToGarden(${JSON.stringify(pl)}, this)'>${addBtnText}</button>
           </div>
         </div>`;
     }));
 
-    document.getElementById('results').innerHTML = `
+    document.getElementById('results').innerHTML=`
       <div class="results-header">Your BloomWise Plant Picks 🌻</div>
       <div class="plants-grid">${cards.join('')}</div>`;
-    document.getElementById('pdf-btn').style.display = 'inline-flex';
-
-  } catch(e) {
-    if (e.error === 'daily_limit_reached') {
-      document.getElementById('results').innerHTML = `
-        <div class="limit-banner">
-          <div class="lb-icon">🌿</div>
-          <div class="lb-text">
-            <div class="lb-title">Daily limit reached</div>
-            <div class="lb-sub">${e.message || "You've used all your free recommendations today."}</div>
-          </div>
-          <button class="btn-upgrade" style="flex-shrink:0;" onclick="openProModal()">✨ Go Pro</button>
-        </div>`;
-      openProModal();
+    document.getElementById('pdf-btn').style.display='inline-flex';
+  }catch(e){
+    if(e.message === 'free_limit_reached'){
+      // Modal already shown by apiCall — restore the step so user can try again after upgrading
+      goStep(3);
     } else {
-      document.getElementById('results').innerHTML = `<div class="error-box"><strong>Something went wrong:</strong> ${e.message}</div>`;
+      document.getElementById('results').innerHTML=`<div class="error-box"><strong>Something went wrong:</strong> ${e.message}</div>`;
     }
   }
 }
 
-// ── Lookup ────────────────────────────────────────────────
-async function doLookup() {
-  const plant = document.getElementById('lookup-input').value.trim();
-  if (!plant) return;
+async function doLookup(){
+  const plant=document.getElementById('lookup-input').value.trim();
+  if(!plant)return;
   updateCtx();
-  const p = prof();
-  const hasCtx = p.location !== 'Not specified' || p.sun !== 'not specified' || p.soil !== 'not specified';
+  const p=prof();
+  const hasCtx=p.location!=='Not specified'||p.sun!=='not specified'||p.soil!=='not specified';
 
-  document.getElementById('lookup-results').innerHTML = `<div class="loading"><div class="loader"></div><div class="loading-text">Researching ${plant}…</div></div>`;
+  document.getElementById('lookup-results').innerHTML=`<div class="loading"><div class="loader"></div><div class="loading-text">Researching ${plant}…</div></div>`;
 
-  try {
+  try{
+    // Use dedicated backend endpoint
     const data = await apiCall('/lookup', { plant, site: hasCtx ? p : null });
-    updateUsageFromResponse(data.usage);
     const d = data.result;
-    if (!d || !d.name) throw new Error('Could not parse — please try again');
+    if(!d||!d.name)throw new Error('Could not parse — please try again');
 
-    const photos = await getPhotos(d.name, d.scientific || d.name);
-    const strip  = buildPhotos(photos, d.name, 'fit-photos');
-    const vC = { green:'verdict-green', yellow:'verdict-yellow', red:'verdict-red' };
-    const vI = { green:'🟢', yellow:'🟡', red:'🔴' };
-    const rI = { ok:'✅', warn:'⚠️', bad:'❌', neutral:'ℹ️' };
-    const reqs = (d.requirements||[]).map(r => `
-      <div class="req ${r.status||'neutral'}">
+    const photos=await getPhotos(d.name,d.scientific||d.name);
+    const strip=buildPhotos(photos,d.name,'fit-photos');
+    const vC={green:'verdict-green',yellow:'verdict-yellow',red:'verdict-red'};
+    const vI={green:'🟢',yellow:'🟡',red:'🔴'};
+    const rC={ok:'ok',warn:'warn',bad:'bad',neutral:'neutral'};
+    const rI={ok:'✅',warn:'⚠️',bad:'❌',neutral:'ℹ️'};
+    const reqs=(d.requirements||[]).map(r=>`
+      <div class="req ${rC[r.status]||'neutral'}">
         <div class="req-label">${rI[r.status]||'ℹ️'} ${r.label}</div>
         <div class="req-val">${r.value}</div>
         <div class="req-note">${r.note}</div>
       </div>`).join('');
-    const specials = d.special_requirements?.length
-      ? `<div class="special-box"><div class="special-title">⭐ Special requirements & watch-outs</div><ul>${d.special_requirements.map(s=>`<li>${s}</li>`).join('')}</ul></div>` : '';
-    const tip = d.pro_tip ? `<div class="pro-tip"><strong>💡 Pro tip:</strong> ${d.pro_tip}</div>` : '';
-    const noCtx = !hasCtx ? `<div style="font-size:12px;color:#7a4e00;padding:9px 14px;background:var(--gold-lt);border-radius:var(--r);border:1px solid var(--gold);margin-bottom:16px;">📋 Add your site profile in the Recommendations tab for personalized ✅ ⚠️ ❌ scoring</div>` : '';
+    const specials=d.special_requirements?.length
+      ?`<div class="special-box"><div class="special-title">⭐ Special requirements & watch-outs</div><ul>${d.special_requirements.map(s=>`<li>${s}</li>`).join('')}</ul></div>`:'' ;
+    const tip=d.pro_tip?`<div class="pro-tip"><strong>💡 Pro tip:</strong> ${d.pro_tip}</div>`:'';
+    const noCtx=!hasCtx?`<div style="font-size:12px;color:#7a4e00;padding:9px 14px;background:var(--gold-lt);border-radius:var(--r);border:1px solid var(--gold);margin-bottom:16px;">📋 Add your site profile in the Recommendations tab for personalized ✅ ⚠️ ❌ scoring</div>`:'';
 
-    document.getElementById('lookup-results').innerHTML = `
+    document.getElementById('lookup-results').innerHTML=`
       <div class="fit-card">
         ${strip}
         <div class="fit-body">
@@ -1338,93 +1647,94 @@ async function doLookup() {
           ${specials}${tip}
         </div>
       </div>`;
-  } catch(e) {
-    if (e.error === 'daily_limit_reached') {
-      document.getElementById('lookup-results').innerHTML = `
-        <div class="limit-banner">
-          <div class="lb-icon">🌿</div>
-          <div class="lb-text">
-            <div class="lb-title">Daily limit reached</div>
-            <div class="lb-sub">${e.message || "You've used all your free lookups today."}</div>
-          </div>
-          <button class="btn-upgrade" style="flex-shrink:0;" onclick="openProModal()">✨ Go Pro</button>
-        </div>`;
-      openProModal();
-    } else {
-      document.getElementById('lookup-results').innerHTML = `<div class="error-box"><strong>Something went wrong:</strong> ${e.message}</div>`;
-    }
+  }catch(e){
+    document.getElementById('lookup-results').innerHTML=`<div class="error-box"><strong>Something went wrong:</strong> ${e.message}</div>`;
   }
 }
 
-// ── Garden Planner (PostgreSQL-backed) ────────────────────
+// ── Garden Planner — backed by Railway PostgreSQL ────────
+function getUserId(){
+  let id = localStorage.getItem('bloomwise-uid');
+  if(!id){
+    id = 'user-' + Math.random().toString(36).slice(2) + Date.now().toString(36);
+    localStorage.setItem('bloomwise-uid', id);
+  }
+  return id;
+}
+const USER_ID = getUserId();
 let garden = [];
 
-async function loadGarden() {
-  try {
-    const data = await apiCall('/garden', undefined, 'GET');
+async function loadGardenFromDB(){
+  try{
+    showPlannerLoading(true);
+    const data = await apiCall('/garden/get', { uid: USER_ID });
     garden = data.plants || [];
-  } catch(e) {
-    // Fallback to localStorage if DB unavailable
-    garden = JSON.parse(localStorage.getItem('bloomwise-garden') || '[]');
-  }
+  }catch(e){
+    console.warn('Could not load garden from server — using localStorage:', e.message);
+    garden = JSON.parse(localStorage.getItem('bloomwise-garden')||'[]');
+  }finally{ showPlannerLoading(false); }
   updatePlannerBadge();
 }
 
-async function saveGarden() {
+async function saveGardenToDB(){
+  // Always save locally as instant backup
   localStorage.setItem('bloomwise-garden', JSON.stringify(garden));
-  try {
-    await apiCall('/garden', { plants: garden });
-  } catch(e) {
-    console.warn('Garden save to DB failed — saved locally only:', e.message);
-  }
+  try{
+    await apiCall('/garden/save', { uid: USER_ID, plants: garden });
+  }catch(e){ console.warn('Server save failed — saved locally only:', e.message); }
   updatePlannerBadge();
 }
 
-function updatePlannerBadge() {
-  const badge = document.getElementById('planner-count');
-  if (garden.length > 0) { badge.textContent = garden.length; badge.style.display = 'inline-flex'; }
-  else badge.style.display = 'none';
+function showPlannerLoading(show){
+  const g = document.getElementById('planner-grid');
+  if(show) g.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:2rem;color:var(--stone);">Loading your garden…</div>';
 }
 
-async function addToGarden(plant, btn) {
-  if (garden.find(p => p.name === plant.name)) return;
+function updatePlannerBadge(){
+  const badge = document.getElementById('planner-count');
+  if(garden.length>0){ badge.textContent=garden.length; badge.style.display='inline-flex'; }
+  else badge.style.display='none';
+}
+
+async function addToGarden(plant, btn){
+  if(garden.find(p=>p.name===plant.name)) return;
   garden.push(plant);
   btn.classList.add('added');
-  btn.textContent = '✓ In garden';
-  btn.disabled = true;
-  await saveGarden();
+  btn.textContent='✓ In garden';
+  btn.disabled=true;
+  await saveGardenToDB();
 }
 
-async function removeFromGarden(name) {
-  garden = garden.filter(p => p.name !== name);
-  await saveGarden();
+async function removeFromGarden(name){
+  garden = garden.filter(p=>p.name!==name);
+  await saveGardenToDB();
   renderPlanner();
-  document.querySelectorAll('.add-to-garden-btn').forEach(btn => {
-    if (btn.dataset.name === name) { btn.classList.remove('added'); btn.textContent = '+ Add to garden'; btn.disabled = false; }
+  document.querySelectorAll('.add-to-garden-btn').forEach(btn=>{
+    if(btn.dataset.name===name){ btn.classList.remove('added'); btn.textContent='+ Add to garden'; btn.disabled=false; }
   });
 }
 
-async function clearGarden() {
-  if (!confirm('Remove all plants from your garden?')) return;
-  garden = [];
-  await saveGarden();
+async function clearGarden(){
+  if(!confirm('Remove all plants from your garden?')) return;
+  garden=[];
+  await saveGardenToDB();
   renderPlanner();
-  document.querySelectorAll('.add-to-garden-btn').forEach(btn => {
-    btn.classList.remove('added'); btn.textContent = '+ Add to garden'; btn.disabled = false;
+  document.querySelectorAll('.add-to-garden-btn').forEach(btn=>{
+    btn.classList.remove('added'); btn.textContent='+ Add to garden'; btn.disabled=false;
   });
 }
 
-function renderPlanner() {
+function renderPlanner(){
   const empty   = document.getElementById('planner-empty');
   const grid    = document.getElementById('planner-grid');
   const actions = document.getElementById('planner-actions');
-  if (garden.length === 0) { empty.style.display='block'; grid.innerHTML=''; actions.style.display='none'; return; }
-  empty.style.display = 'none'; actions.style.display = 'flex';
-  grid.innerHTML = garden.map(pl => {
+  if(garden.length===0){ empty.style.display='block'; grid.innerHTML=''; actions.style.display='none'; return; }
+  empty.style.display='none'; actions.style.display='flex';
+  grid.innerHTML = garden.map(pl=>{
     const photo = pl.photo
-      ? `<img class="pc-photo" src="${pl.photo}" alt="${pl.name}" onerror="this.outerHTML='<div class=\\'pc-photo-placeholder\\'>No photo</div>'">`
+      ? `<img class="pc-photo" src="${pl.photo}" alt="${pl.name}" onerror="this.outerHTML='<div class=\'pc-photo-placeholder\'>No photo</div>'">`
       : `<div class="pc-photo-placeholder">No photo available</div>`;
-    const safeName = pl.name.replace(/'/g, "\\'");
+    const safeName = pl.name.replace(/'/g, "\'");
     return `<div class="planner-card">
       ${photo}
       <div class="pc-body">
@@ -1442,157 +1752,623 @@ function renderPlanner() {
   }).join('');
 }
 
-// ── PDF Export ────────────────────────────────────────────
-function exportPDF() {
-  const { jsPDF } = window.jspdf;
-  const doc = new jsPDF({ unit:'mm', format:'a4' });
-  const W = doc.internal.pageSize.getWidth();
-  let y = 20;
+// ── PDF Export ───────────────────────────────────────────
+// Color palette
+const PDF_NAVY  = [13, 42, 74];
+const PDF_GOLD  = [212, 160, 23];
+const PDF_LIGHT = [245, 249, 253];
+const PDF_MIST  = [232, 241, 250];
+const PDF_RULE  = [210, 225, 240];
+const PDF_STONE = [120, 145, 170];
+const PDF_INK   = [30, 55, 85];
+const PDF_WHITE = [255, 255, 255];
 
-  doc.setFillColor(13, 42, 74);
-  doc.rect(0, 0, W, 28, 'F');
-  doc.setTextColor(255, 217, 102);
-  doc.setFontSize(20); doc.setFont('helvetica','bold');
-  doc.text('BloomWise', 14, 18);
-  doc.setTextColor(184, 216, 244);
-  doc.setFontSize(9); doc.setFont('helvetica','normal');
-  doc.text('AI-Powered Plant Recommendations', 14, 24);
-  y = 38;
+const PDF_ACCENTS = [
+  [58, 140, 100],   // sage green
+  [30, 125, 175],   // sky blue
+  [180, 120, 20],   // amber
+  [107, 79, 160],   // lavender
+  [180, 88, 64],    // coral
+  [176, 74, 114],   // rose
+];
 
-  const p = prof();
-  const siteLines = [
-    `Location: ${p.location}  |  Zone: ${p.zone}  |  Season: ${p.season}`,
-    `Sun: ${p.sun}  |  Soil: ${p.soil}  |  Water: ${p.water}`,
-    `Style: ${p.style}`
-  ].filter(l => !l.includes('not specified') && !l.includes('Unknown'));
-  doc.setFillColor(232, 244, 252);
-  doc.roundedRect(10, y, W-20, siteLines.length*6+8, 3, 3, 'F');
-  doc.setTextColor(26, 92, 150); doc.setFontSize(8);
-  siteLines.forEach((line,i) => { doc.text(line, 14, y+6+i*6); });
-  y += siteLines.length*6+16;
+function pdfSetFont(doc, size, weight, color) {
+  doc.setFontSize(size);
+  doc.setFont('helvetica', weight || 'normal');
+  if (color) doc.setTextColor(...color);
+}
 
-  const cards = document.querySelectorAll('.plant-card');
-  doc.setFontSize(14); doc.setFont('helvetica','bold');
-  doc.setTextColor(26, 92, 150);
-  doc.text('Your Plant Picks', 14, y);
-  y += 8;
+function pdfHeader(doc, W) {
+  // Navy bar
+  doc.setFillColor(...PDF_NAVY);
+  doc.rect(0, 0, W, 18, 'F');
+  // Gold accent line
+  doc.setFillColor(...PDF_GOLD);
+  doc.rect(0, 18, W, 1.2, 'F');
+  // Logo
+  pdfSetFont(doc, 15, 'bold', PDF_GOLD);
+  doc.text('BloomWise', 14, 12);
+  // Tagline
+  pdfSetFont(doc, 7.5, 'normal', [184, 216, 244]);
+  doc.text('AI-Powered Plant Advisor', 56, 12);
+}
 
-  cards.forEach((card, idx) => {
-    const name   = card.querySelector('.plant-name')?.textContent || '';
-    const sci    = card.querySelector('.plant-sci')?.textContent || '';
-    const season = card.querySelector('.season-badge')?.textContent || '';
-    const tags   = [...card.querySelectorAll('.ptag')].map(t => t.textContent).join('  ');
-    const desc   = card.querySelector('.plant-desc')?.textContent || '';
+function pdfFooter(doc, W, H, pageNum, total) {
+  doc.setFillColor(...PDF_NAVY);
+  doc.rect(0, H - 10, W, 10, 'F');
+  pdfSetFont(doc, 7, 'normal', [150, 180, 210]);
+  doc.text('bloomwise.app', 14, H - 3.5);
+  doc.text(`Page ${pageNum} of ${total}`, W - 14, H - 3.5, { align: 'right' });
+}
 
-    if (y > 250) { doc.addPage(); y = 20; }
+function pdfSiteChips(doc, W, MARGIN, y, p) {
+  const items = [
+    p.location && p.location !== 'Not specified' ? p.location : null,
+    p.zone && !p.zone.includes('Unknown') ? p.zone : null,
+    p.season && p.season !== 'not specified' ? '📅 ' + p.season : null,
+    p.sun && p.sun !== 'not specified' ? '☀ ' + p.sun : null,
+    p.soil && p.soil !== 'not specified' ? '🌱 ' + p.soil : null,
+    p.water && p.water !== 'not specified' ? '💧 ' + p.water : null,
+    p.style && p.style !== 'not specified' ? p.style : null,
+  ].filter(Boolean);
+  if (!items.length) return y;
 
-    doc.setFillColor(245, 249, 253);
-    doc.roundedRect(10, y, W-20, 42, 3, 3, 'F');
-    doc.setDrawColor(200, 221, 240);
-    doc.roundedRect(10, y, W-20, 42, 3, 3, 'S');
+  pdfSetFont(doc, 7, 'bold', PDF_STONE);
+  doc.text('SITE PROFILE', MARGIN, y);
+  y += 5;
 
-    doc.setFillColor(46, 125, 196);
-    doc.circle(19, y+8, 5, 'F');
-    doc.setTextColor(255,255,255);
-    doc.setFontSize(8); doc.setFont('helvetica','bold');
-    doc.text(String(idx+1), 19, y+10, {align:'center'});
+  let chipX = MARGIN;
+  const chipH = 6.5;
+  const chipPadX = 4;
+  const rowMaxX = W - MARGIN;
 
-    doc.setTextColor(26, 92, 150);
-    doc.setFontSize(12); doc.setFont('helvetica','bold');
-    doc.text(name, 27, y+9);
+  items.forEach(item => {
+    pdfSetFont(doc, 7.5, 'normal');
+    const tw = doc.getTextWidth(item.replace(/[^\x00-\x7F]/g, '')) + chipPadX * 2 + 4;
+    if (chipX + tw > rowMaxX) { chipX = MARGIN; y += chipH + 3; }
+    doc.setFillColor(...PDF_MIST);
+    doc.roundedRect(chipX, y - 4.5, tw, chipH, 2, 2, 'F');
+    pdfSetFont(doc, 7.5, 'normal', PDF_INK);
+    doc.text(item.replace(/[^\x00-\x7F]/g, '').trim(), chipX + chipPadX, y);
+    chipX += tw + 3;
+  });
+  return y + chipH + 2;
+}
 
-    doc.setTextColor(100, 130, 160);
-    doc.setFontSize(8); doc.setFont('helvetica','italic');
-    doc.text(sci, 27, y+15);
+function pdfPlantCard(doc, W, MARGIN, CONTENT_W, y, plant, idx) {
+  const CARD_H = 68;
+  const [ar, ag, ab] = PDF_ACCENTS[idx % PDF_ACCENTS.length];
 
-    doc.setTextColor(122, 80, 0);
-    doc.setFontSize(7.5); doc.setFont('helvetica','normal');
-    doc.text(season, 27, y+21);
+  // Card background
+  doc.setFillColor(248, 251, 254);
+  doc.roundedRect(MARGIN, y, CONTENT_W, CARD_H, 3, 3, 'F');
 
-    doc.setTextColor(60, 80, 100);
-    doc.setFontSize(7.5);
-    doc.text(tags, 14, y+27);
+  // Left accent bar
+  doc.setFillColor(ar, ag, ab);
+  doc.roundedRect(MARGIN, y, 3.5, CARD_H, 2, 2, 'F');
 
-    const descLines = doc.splitTextToSize(desc, W-28);
-    doc.setTextColor(44, 66, 96); doc.setFontSize(8);
-    doc.text(descLines.slice(0,2), 14, y+33);
+  // Number circle
+  doc.setFillColor(ar, ag, ab);
+  doc.circle(MARGIN + 14, y + 9, 5.5, 'F');
+  pdfSetFont(doc, 8, 'bold', PDF_WHITE);
+  doc.text(String(idx + 1), MARGIN + 14, y + 11.5, { align: 'center' });
 
-    y += 48;
+  // Plant name
+  pdfSetFont(doc, 14, 'bold', PDF_NAVY);
+  const nameMaxW = CONTENT_W - 32;
+  const nameTrunc = doc.splitTextToSize(plant.name || '', nameMaxW)[0];
+  doc.text(nameTrunc, MARGIN + 24, y + 9);
+
+  // Scientific name
+  pdfSetFont(doc, 8, 'italic', PDF_STONE);
+  doc.text(plant.sci || '', MARGIN + 24, y + 16);
+
+  // Season pill
+  const seasonText = (plant.season || 'Spring or Fall').replace(/[^\x00-\x7F]/g, '').trim();
+  pdfSetFont(doc, 7.5, 'bold');
+  const sw = doc.getTextWidth(seasonText) + 8;
+  doc.setFillColor(255, 243, 215);
+  doc.roundedRect(MARGIN + 24, y + 19, sw, 6.5, 2, 2, 'F');
+  pdfSetFont(doc, 7.5, 'bold', [150, 95, 10]);
+  doc.text(seasonText, MARGIN + 28, y + 24);
+
+  // Tags row
+  const tags = (plant.tags || []).filter(Boolean);
+  let tagX = MARGIN + 6;
+  const tagY = y + 30;
+  tags.forEach(tag => {
+    const clean = tag.replace(/[^\x00-\x7F]/g, '').trim();
+    if (!clean) return;
+    pdfSetFont(doc, 7);
+    const tw = doc.getTextWidth(clean) + 7;
+    if (tagX + tw > W - MARGIN - 4) return;
+    doc.setFillColor(220, 233, 245);
+    doc.roundedRect(tagX, tagY - 4, tw, 6, 2, 2, 'F');
+    pdfSetFont(doc, 7, 'normal', [40, 80, 120]);
+    doc.text(clean, tagX + 3.5, tagY);
+    tagX += tw + 3;
   });
 
-  const pH = doc.internal.pageSize.getHeight();
-  doc.setFillColor(13, 42, 74);
-  doc.rect(0, pH-14, W, 14, 'F');
-  doc.setTextColor(122, 174, 204); doc.setFontSize(7);
-  doc.text('Generated by BloomWise · bloomwise.app', W/2, pH-5, {align:'center'});
+  // Divider
+  doc.setDrawColor(...PDF_RULE);
+  doc.setLineWidth(0.3);
+  doc.line(MARGIN + 6, y + 38, W - MARGIN - 6, y + 38);
+
+  // Description
+  if (plant.desc) {
+    const lines = doc.splitTextToSize(plant.desc, CONTENT_W - 14);
+    pdfSetFont(doc, 8, 'normal', [55, 75, 100]);
+    doc.text(lines.slice(0, 3), MARGIN + 6, y + 45);
+  }
+
+  return y + CARD_H + 7;
+}
+
+function exportPDF() {
+  const { jsPDF } = window.jspdf;
+  const doc   = new jsPDF({ unit: 'mm', format: 'a4' });
+  const W     = doc.internal.pageSize.getWidth();
+  const H     = doc.internal.pageSize.getHeight();
+  const MARGIN = 14;
+  const CONTENT_W = W - MARGIN * 2;
+
+  const cards = document.querySelectorAll('.plant-card');
+  if (!cards.length) return;
+
+  // Pull data from DOM
+  const plants = [...cards].map(card => ({
+    name:   card.querySelector('.plant-name')?.textContent?.trim() || '',
+    sci:    card.querySelector('.plant-sci')?.textContent?.trim() || '',
+    season: (card.querySelector('.season-badge')?.textContent || '')
+              .replace('Best time to plant:', '').replace(/[^\x00-\x7F]/g, '').trim(),
+    tags:   [...card.querySelectorAll('.ptag')].map(t => t.textContent.trim()),
+    desc:   card.querySelector('.plant-desc')?.textContent?.trim() || '',
+  }));
+
+  const p    = prof();
+  const date = new Date().toLocaleDateString('en-US', { year:'numeric', month:'long', day:'numeric' });
+
+  // ── Page 1: Cover ────────────────────────────────────────
+  pdfHeader(doc, W);
+  pdfFooter(doc, W, H, 1, 2);
+
+  let y = 32;
+
+  // Title block
+  pdfSetFont(doc, 28, 'bold', PDF_NAVY);
+  doc.text('Your Plant', MARGIN, y);
+  y += 10;
+  pdfSetFont(doc, 28, 'bold', PDF_ACCENTS[0]);
+  doc.setTextColor(...PDF_ACCENTS[0]);
+  doc.text('Recommendations', MARGIN, y);
+  y += 7;
+
+  // Gold rule
+  doc.setFillColor(...PDF_GOLD);
+  doc.rect(MARGIN, y, 30, 1, 'F');
+  y += 6;
+
+  pdfSetFont(doc, 9.5, 'normal', PDF_STONE);
+  doc.text(`${plants.length} plants curated for your garden  ·  ${date}`, MARGIN, y);
+  y += 14;
+
+  // Site profile chips
+  y = pdfSiteChips(doc, W, MARGIN, y, p);
+  y += 8;
+
+  // Plant name index on cover page
+  doc.setFillColor(...PDF_NAVY);
+  doc.roundedRect(MARGIN, y, CONTENT_W, 10, 2, 2, 'F');
+  pdfSetFont(doc, 7.5, 'bold', PDF_GOLD);
+  doc.text('PLANTS IN THIS REPORT', MARGIN + 4, y + 6.5);
+  y += 13;
+
+  plants.forEach((pl, i) => {
+    const [ar, ag, ab] = PDF_ACCENTS[i % PDF_ACCENTS.length];
+    doc.setFillColor(ar, ag, ab);
+    doc.circle(MARGIN + 3.5, y - 1, 2, 'F');
+    pdfSetFont(doc, 9, 'bold', PDF_INK);
+    doc.text(pl.name, MARGIN + 9, y + 0.5);
+    pdfSetFont(doc, 8, 'italic', PDF_STONE);
+    doc.text(pl.sci, W - MARGIN, y + 0.5, { align: 'right' });
+    y += 8;
+    if (y > H - 20) { y = H - 20; } // safety cap
+  });
+
+  // ── Page 2+: Plant cards ──────────────────────────────────
+  doc.addPage();
+  pdfHeader(doc, W);
+  pdfFooter(doc, W, H, 2, 2);
+  y = 26;
+
+  pdfSetFont(doc, 8, 'bold', PDF_STONE);
+  doc.text('PLANT DETAILS', MARGIN, y);
+  y += 7;
+
+  plants.forEach((pl, i) => {
+    if (y + 75 > H - 12) {
+      doc.addPage();
+      pdfHeader(doc, W);
+      pdfFooter(doc, W, H, doc.internal.getNumberOfPages(), doc.internal.getNumberOfPages());
+      y = 26;
+    }
+    y = pdfPlantCard(doc, W, MARGIN, CONTENT_W, y, pl, i);
+  });
+
   doc.save('bloomwise-plant-picks.pdf');
 }
 
 function exportGardenPDF() {
+  if (!garden.length) return;
   const { jsPDF } = window.jspdf;
-  const doc = new jsPDF({ unit:'mm', format:'a4' });
-  const W = doc.internal.pageSize.getWidth();
-  let y = 20;
+  const doc   = new jsPDF({ unit: 'mm', format: 'a4' });
+  const W     = doc.internal.pageSize.getWidth();
+  const H     = doc.internal.pageSize.getHeight();
+  const MARGIN = 14;
+  const CONTENT_W = W - MARGIN * 2;
+  const date = new Date().toLocaleDateString('en-US', { year:'numeric', month:'long', day:'numeric' });
 
-  doc.setFillColor(13, 42, 74);
-  doc.rect(0, 0, W, 28, 'F');
-  doc.setTextColor(255, 217, 102);
-  doc.setFontSize(20); doc.setFont('helvetica','bold');
-  doc.text('BloomWise — My Garden', 14, 18);
-  doc.setTextColor(184, 216, 244);
-  doc.setFontSize(9); doc.setFont('helvetica','normal');
-  doc.text(`${garden.length} plant${garden.length!==1?'s':''} in collection`, 14, 24);
-  y = 38;
+  // ── Cover page ───────────────────────────────────────────
+  pdfHeader(doc, W);
+  pdfFooter(doc, W, H, 1, Math.ceil(garden.length / 3) + 1);
 
-  garden.forEach((pl, idx) => {
-    if (y > 250) { doc.addPage(); y = 20; }
-    doc.setFillColor(245, 249, 253);
-    doc.roundedRect(10, y, W-20, 38, 3, 3, 'F');
-    doc.setDrawColor(200, 221, 240);
-    doc.roundedRect(10, y, W-20, 38, 3, 3, 'S');
+  let y = 32;
 
-    doc.setFillColor(212, 160, 23);
-    doc.circle(19, y+8, 5, 'F');
-    doc.setTextColor(255,255,255);
-    doc.setFontSize(8); doc.setFont('helvetica','bold');
-    doc.text(String(idx+1), 19, y+10, {align:'center'});
+  pdfSetFont(doc, 28, 'bold', PDF_NAVY);
+  doc.text('My Garden', MARGIN, y);
+  y += 10;
+  doc.setTextColor(...PDF_ACCENTS[0]);
+  doc.text('Collection', MARGIN, y);
+  y += 7;
 
-    doc.setTextColor(26, 92, 150);
-    doc.setFontSize(12); doc.setFont('helvetica','bold');
-    doc.text(pl.name, 27, y+9);
+  doc.setFillColor(...PDF_GOLD);
+  doc.rect(MARGIN, y, 30, 1, 'F');
+  y += 6;
 
-    doc.setTextColor(100, 130, 160);
-    doc.setFontSize(8); doc.setFont('helvetica','italic');
-    doc.text(pl.scientific, 27, y+15);
+  pdfSetFont(doc, 9.5, 'normal', PDF_STONE);
+  doc.text(`${garden.length} plant${garden.length !== 1 ? 's' : ''} saved  ·  ${date}`, MARGIN, y);
+  y += 14;
 
-    doc.setTextColor(122, 80, 0);
-    doc.setFontSize(7.5); doc.setFont('helvetica','normal');
-    doc.text(`${seasonEmoji(pl.planting_season)} ${pl.planting_season||'Spring or Fall'}`, 27, y+21);
+  // Index list on cover
+  doc.setFillColor(...PDF_NAVY);
+  doc.roundedRect(MARGIN, y, CONTENT_W, 10, 2, 2, 'F');
+  pdfSetFont(doc, 7.5, 'bold', PDF_GOLD);
+  doc.text('YOUR COLLECTION', MARGIN + 4, y + 6.5);
+  y += 13;
 
-    const tags = [pl.sun, pl.water, pl.soil].filter(Boolean).join('  ·  ');
-    doc.setTextColor(60, 80, 100); doc.setFontSize(7.5);
-    doc.text(tags, 14, y+28);
-
-    if (pl.description) {
-      const lines = doc.splitTextToSize(pl.description, W-28);
-      doc.setTextColor(44, 66, 96); doc.setFontSize(7.5);
-      doc.text(lines.slice(0,1), 14, y+34);
-    }
-    y += 44;
+  garden.forEach((pl, i) => {
+    const [ar, ag, ab] = PDF_ACCENTS[i % PDF_ACCENTS.length];
+    doc.setFillColor(ar, ag, ab);
+    doc.circle(MARGIN + 3.5, y - 1, 2, 'F');
+    pdfSetFont(doc, 9, 'bold', PDF_INK);
+    doc.text(pl.name, MARGIN + 9, y + 0.5);
+    pdfSetFont(doc, 8, 'italic', PDF_STONE);
+    doc.text(pl.scientific || '', W - MARGIN, y + 0.5, { align: 'right' });
+    y += 8;
+    if (y > H - 20) { y = H - 20; }
   });
 
-  const pH = doc.internal.pageSize.getHeight();
-  doc.setFillColor(13, 42, 74);
-  doc.rect(0, pH-14, W, 14, 'F');
-  doc.setTextColor(122, 174, 204); doc.setFontSize(7);
-  doc.text('Generated by BloomWise · bloomwise.app', W/2, pH-5, {align:'center'});
+  // ── Detail pages ─────────────────────────────────────────
+  doc.addPage();
+  pdfHeader(doc, W);
+  pdfFooter(doc, W, H, 2, Math.ceil(garden.length / 3) + 1);
+  y = 26;
+
+  pdfSetFont(doc, 8, 'bold', PDF_STONE);
+  doc.text('PLANT DETAILS', MARGIN, y);
+  y += 7;
+
+  garden.forEach((pl, i) => {
+    if (y + 75 > H - 12) {
+      doc.addPage();
+      pdfHeader(doc, W);
+      pdfFooter(doc, W, H, doc.internal.getNumberOfPages(), Math.ceil(garden.length / 3) + 1);
+      y = 26;
+    }
+    const plant = {
+      name:   pl.name,
+      sci:    pl.scientific || '',
+      season: (pl.planting_season || 'Spring or Fall').replace(/[^\x00-\x7F]/g, '').trim(),
+      tags:   [pl.sun, pl.water, pl.soil].filter(Boolean),
+      desc:   pl.description || '',
+    };
+    y = pdfPlantCard(doc, W, MARGIN, CONTENT_W, y, plant, i);
+  });
+
   doc.save('bloomwise-my-garden.pdf');
 }
 
-// ── Boot ──────────────────────────────────────────────────
+
+// ── Shopping List ─────────────────────────────────────────
+let shoppingListGenerated = false;
+
+async function generateShoppingList() {
+  const btn = document.getElementById('shop-btn');
+  const results = document.getElementById('shop-results');
+
+  // Gather current profile and plant picks
+  const p = prof();
+  const plantCards = [...document.querySelectorAll('.plant-card')];
+  const plants = plantCards.map(c => ({
+    name: c.querySelector('.plant-name')?.textContent?.trim() || ''
+  })).filter(pl => pl.name);
+
+  btn.disabled = true;
+  btn.textContent = 'Building your list…';
+  results.innerHTML = `<div class="loading"><div class="loader"></div><div class="loading-text">Generating your shopping list…</div><div class="loading-sub">Claude is reviewing your site profile and plant selections</div></div>`;
+
+  try {
+    const data = await apiCall('/shopping-list', { ...p, plants });
+    const list = data.list;
+    if (!list?.categories?.length) throw new Error('No list returned — please try again');
+
+    shoppingListGenerated = true;
+    let html = '';
+
+    if (list.intro) {
+      html += `<div class="shop-intro">${list.intro}</div>`;
+    }
+
+    list.categories.forEach(cat => {
+      html += `<div class="shop-category">
+        <div class="shop-cat-header">
+          <span class="shop-cat-icon">${cat.icon || '📦'}</span>
+          <span class="shop-cat-name">${cat.name}</span>
+        </div>
+        <div class="shop-items">`;
+
+      (cat.items || []).forEach(item => {
+        const isOptional = item.priority === 'optional';
+        html += `<div class="shop-item ${isOptional ? 'optional' : ''}">
+          <div class="shop-item-dot"></div>
+          <div class="shop-item-body">
+            <div class="shop-item-name">${item.name}</div>
+            ${item.detail ? `<div class="shop-item-detail">${item.detail}</div>` : ''}
+            ${item.tip    ? `<div class="shop-item-tip">💡 ${item.tip}</div>` : ''}
+          </div>
+          <span class="shop-item-badge ${isOptional ? 'optional' : 'essential'}">${isOptional ? 'Optional' : 'Essential'}</span>
+        </div>`;
+      });
+
+      html += `</div></div>`;
+    });
+
+    results.innerHTML = html;
+  } catch(e) {
+    if (e.message === 'free_limit_reached') {
+      results.innerHTML = '';
+    } else {
+      results.innerHTML = `<div class="error-box"><strong>Something went wrong:</strong> ${e.message}</div>`;
+    }
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '🔄 Regenerate list';
+  }
+}
+
+// ── Nurseries ─────────────────────────────────────────────
+let nurseriesLoaded = false;
+
+async function loadNurseries() {
+  if (nurseriesLoaded) return; // only fetch once per session
+  const results = document.getElementById('nursery-results');
+  const location = document.getElementById('location')?.value?.trim();
+
+  if (!location) {
+    results.innerHTML = `<div class="nursery-missing">
+      <strong>📍 No location set</strong><br>
+      Fill in your location on the Recommendations tab first, then come back here to find nurseries near you.
+    </div>`;
+    return;
+  }
+
+  results.innerHTML = `<div class="loading"><div class="loader"></div><div class="loading-text">Finding nurseries near ${location}…</div></div>`;
+
+  try {
+    const data = await apiCall('/nurseries', { location });
+
+    if (!data.nurseries?.length) {
+      results.innerHTML = `<div class="nursery-missing">
+        ${data.error === 'Google Places not configured'
+          ? '<strong>🔑 Google Places API not configured</strong><br>Add a <code>GOOGLE_PLACES_API_KEY</code> environment variable in Railway to enable nursery search.'
+          : `<strong>No nurseries found near "${location}"</strong><br>Try a more specific location like a city name or zip code.`
+        }
+      </div>`;
+      return;
+    }
+
+    nurseriesLoaded = true;
+    const { nurseries } = data;
+
+    const items = nurseries.map((n, i) => {
+      const stars = n.rating ? `⭐ ${n.rating.toFixed(1)}` + (n.reviews ? ` <span style="color:var(--stone);font-weight:400">(${n.reviews.toLocaleString()})</span>` : '') : '';
+      const openStatus = n.open === true ? 'open' : n.open === false ? 'closed' : 'unknown';
+      const openLabel  = n.open === true ? 'Open now' : n.open === false ? 'Closed' : 'Hours unknown';
+      const mapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(n.name + ' ' + (n.address || ''))}`;
+      return `<div class="nursery-card">
+        <div class="nursery-num">${i + 1}</div>
+        <div class="nursery-body">
+          <div class="nursery-name">${n.name}</div>
+          <div class="nursery-address">📍 ${n.address || 'Address not available'}</div>
+        </div>
+        <div class="nursery-meta">
+          ${stars ? `<div class="nursery-rating">${stars}</div>` : ''}
+          <span class="nursery-open ${openStatus}">${openLabel}</span>
+          <a class="nursery-directions" href="${mapsUrl}" target="_blank">Get directions →</a>
+        </div>
+      </div>`;
+    }).join('');
+
+    results.innerHTML = `
+      <div style="font-size:13px;color:var(--stone);margin-bottom:1rem;">
+        Found ${nurseries.length} nurseries near <strong style="color:var(--bloom)">${location}</strong>
+      </div>
+      <div class="nursery-list">${items}</div>`;
+
+  } catch(e) {
+    results.innerHTML = `<div class="error-box"><strong>Something went wrong:</strong> ${e.message}</div>`;
+  }
+}
+
+// ── Plant Identification ──────────────────────────────────
+let identifyImageData = null;
+let identifyMimeType  = null;
+
+function handleIdentifyFile(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  loadIdentifyImage(file);
+}
+
+function handleIdentifyDrop(event) {
+  event.preventDefault();
+  document.getElementById('identify-drop').classList.remove('drag-over');
+  const file = event.dataTransfer.files[0];
+  if (!file || !file.type.startsWith('image/')) return;
+  loadIdentifyImage(file);
+}
+
+function loadIdentifyImage(file) {
+  identifyMimeType = file.type || 'image/jpeg';
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    const dataUrl = e.target.result;
+    identifyImageData = dataUrl.split(',')[1]; // base64 only
+
+    const preview = document.getElementById('identify-preview');
+    const drop    = document.getElementById('identify-drop');
+    const icon    = document.getElementById('identify-icon');
+    const prompt  = document.getElementById('identify-prompt');
+
+    preview.src = dataUrl;
+    preview.style.display = 'block';
+    icon.style.display    = 'none';
+    prompt.style.display  = 'none';
+    drop.classList.add('has-image');
+    drop.onclick = null; // don't re-open picker when clicking preview
+
+    document.getElementById('identify-btn').style.display   = 'inline-flex';
+    document.getElementById('identify-reset').style.display = 'inline-flex';
+    document.getElementById('identify-results').innerHTML = '';
+  };
+  reader.readAsDataURL(file);
+}
+
+function resetIdentify() {
+  identifyImageData = null;
+  identifyMimeType  = null;
+  const drop   = document.getElementById('identify-drop');
+  const preview = document.getElementById('identify-preview');
+  preview.style.display = 'none';
+  preview.src = '';
+  document.getElementById('identify-icon').style.display   = 'block';
+  document.getElementById('identify-prompt').style.display = 'block';
+  drop.classList.remove('has-image');
+  drop.onclick = () => document.getElementById('identify-input').click();
+  document.getElementById('identify-btn').style.display   = 'none';
+  document.getElementById('identify-reset').style.display = 'none';
+  document.getElementById('identify-results').innerHTML = '';
+  document.getElementById('identify-input').value = '';
+}
+
+async function identifyPlant() {
+  if (!identifyImageData) return;
+  const btn     = document.getElementById('identify-btn');
+  const results = document.getElementById('identify-results');
+
+  btn.disabled    = true;
+  btn.textContent = 'Identifying…';
+  results.innerHTML = `<div class="loading"><div class="loader"></div><div class="loading-text">Identifying your plant…</div><div class="loading-sub">Claude is analysing the photo</div></div>`;
+
+  try {
+    const data  = await apiCall('/identify-plant', { image: identifyImageData, mimeType: identifyMimeType });
+    const plant = data.plant;
+
+    if (!plant.identified) {
+      results.innerHTML = `<div class="error-box">
+        <strong>Couldn't identify this plant</strong><br>
+        ${plant.reason || 'Try a clearer photo with the plant filling most of the frame, in good lighting.'}
+      </div>`;
+      return;
+    }
+
+    // Confidence badge color
+    const confColor = plant.confidence === 'high' ? 'var(--sage)' : plant.confidence === 'medium' ? 'var(--gold)' : 'var(--rust)';
+
+    // Specs chips
+    const specsHtml = [
+      plant.mature_height && ['Height', plant.mature_height],
+      plant.mature_spread && ['Spread', plant.mature_spread],
+      plant.growth_rate   && ['Growth', plant.growth_rate],
+      plant.lifespan      && ['Lifespan', plant.lifespan],
+    ].filter(Boolean).map(([label, val]) =>
+      `<div class="spec-chip"><div class="spec-label">${label}</div><div class="spec-val">${val}</div></div>`
+    ).join('');
+
+    // Care grid
+    const care = plant.care || {};
+    const careHtml = [
+      ['☀️ Sun', care.sun],
+      ['💧 Water', care.water],
+      ['🌱 Soil', care.soil],
+      ['🗺 Hardiness', care.hardiness],
+    ].filter(([,v])=>v).map(([label,val])=>
+      `<div class="id-care-item"><div class="id-care-label">${label}</div><div class="id-care-val">${val}</div></div>`
+    ).join('');
+
+    // Safety flags
+    const flagsHtml = [
+      plant.edible === true  ? `<span class="id-flag safe">✅ Edible</span>` : '',
+      plant.edible === false ? `<span class="id-flag neutral">🚫 Not edible</span>` : '',
+      plant.toxic_to_pets === true  ? `<span class="id-flag warning">⚠️ Toxic to pets</span>` : '',
+      plant.toxic_to_pets === false ? `<span class="id-flag safe">🐾 Pet safe</span>` : '',
+    ].filter(Boolean).join('');
+
+    results.innerHTML = `
+      <div class="id-card">
+        <div class="id-card-header">
+          <div class="id-name">${plant.common_name}</div>
+          <div class="id-sci">${plant.scientific_name}${plant.family ? ` · ${plant.family}` : ''}</div>
+          <div class="id-meta">
+            <span class="id-badge" style="background:${confColor}">${plant.confidence} confidence</span>
+          </div>
+        </div>
+        <div class="id-body">
+          <p class="id-desc">${plant.description || ''}</p>
+          ${specsHtml ? `<div class="id-specs">${specsHtml}</div>` : ''}
+          ${careHtml  ? `<div class="id-care">${careHtml}</div>` : ''}
+          ${flagsHtml ? `<div class="id-flags">${flagsHtml}</div>` : ''}
+          ${plant.notes ? `<div class="id-notes">💡 ${plant.notes}</div>` : ''}
+          <div class="id-actions">
+            <button class="btn btn-primary" onclick="lookupFromID('${plant.common_name.replace(/'/g,"\\'")}')">
+              🔍 Full plant lookup
+            </button>
+            <button class="btn btn-ghost" onclick="resetIdentify()">📸 Try another photo</button>
+          </div>
+        </div>
+      </div>`;
+
+  } catch(e) {
+    if (e.message !== 'free_limit_reached') {
+      results.innerHTML = `<div class="error-box"><strong>Something went wrong:</strong> ${e.message}</div>`;
+    }
+  } finally {
+    btn.disabled    = false;
+    btn.textContent = '🔍 Identify this plant';
+  }
+}
+
+function lookupFromID(plantName) {
+  // Switch to lookup tab and pre-fill the plant name
+  switchTab('lookup');
+  const input = document.getElementById('lookup-input');
+  input.value = plantName;
+  doLookup();
+}
+
 renderTracker(0);
-loadGarden();
-loadUserStatus();
+loadGardenFromDB(); // loads from Railway PostgreSQL (falls back to localStorage)
+initProStatus();   // checks pro status and sets up usage bar
 </script>
 </body>
 </html>
