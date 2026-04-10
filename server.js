@@ -41,6 +41,7 @@ const STRIPE_WEBHOOK   = process.env.STRIPE_WEBHOOK_SECRET || "";
 const PERENUAL_KEY     = process.env.PERENUAL_API_KEY || "";
 
 const FREE_DAILY_LIMIT = 3;
+const PRO_PRICE        = "$4.99/month";
 
 // ---------- Database setup ----------
 
@@ -663,6 +664,8 @@ initDB().then(() => {
   ║   Database:${pool ? "✅ connected" : "❌ DATABASE_URL not set"}                       ║
   ║   Stripe:  ${stripe ? "✅ configured" : "❌ STRIPE_SECRET_KEY not set"}                    ║
   ║   Perenual:${PERENUAL_KEY ? "✅ configured" : "⚪ optional — using Wikipedia"}          ║
+  ║                                                      ║
+  ║   Pro plan: ${PRO_PRICE}                                  ║
   ╚══════════════════════════════════════════════════════╝
     `);
   });
