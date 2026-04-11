@@ -168,11 +168,15 @@ function readBodyRaw(req) {
   });
 }
 
-async function readBody(req) {
+async function readBody(req, maxSize = 25000) {
   const buf = await readBodyRaw(req);
-  if (buf.length > 25000) throw new Error("Request too large");
+  if (buf.length > maxSize) throw new Error("Request too large");
   try { return JSON.parse(buf.toString()); }
   catch { throw new Error("Invalid JSON body"); }
+}
+
+async function readBodyLarge(req) {
+  return readBody(req, 10 * 1024 * 1024); // 10MB for image uploads
 }
 
 // ── Anthropic ─────────────────────────────────────────────
@@ -337,7 +341,7 @@ verdict must be green, yellow, or red. status must be ok, warn, bad, or neutral.
 }
 
 async function handleIdentifyPlant(req, res) {
-  const { image, mimeType } = await readBody(req);
+  const { image, mimeType } = await readBodyLarge(req);
   if (!image) return sendJSON(res, 400, { error: "image is required" });
 
   const prompt = `You are an expert botanist. Identify the plant in this photo.
