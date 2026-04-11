@@ -388,58 +388,92 @@ Return ONLY a valid JSON object:
     {"label": "Mature size", "value": "height x spread", "status": "neutral", "note": "note"}
   ],
   "special_requirements": ["req1", "req2"],
-  "pro_tip": "one practical tip",
-  "care_guide": {
-    "planting": {
-      "when": "best time of year to plant with months",
-      "how": "step by step planting instructions in 3-5 sentences — hole depth, spacing, soil prep, initial watering",
-      "tip": "one key planting tip most people miss"
-    },
-    "watering": {
-      "frequency": "how often e.g. twice a week in summer, once a week in winter",
-      "method": "best watering method e.g. deep watering at base, avoid wetting foliage",
-      "signs": "signs of overwatering and underwatering to watch for"
-    },
-    "feeding": {
-      "fertilizer": "what type of fertilizer to use",
-      "schedule": "when and how often to feed",
-      "tip": "one feeding tip"
-    },
-    "pruning": {
-      "when": "best time to prune",
-      "how": "how to prune — what to cut, how much, what tools",
-      "tip": "one pruning tip"
-    },
-    "propagation": [
-      {"method": "e.g. Division", "difficulty": "Easy", "season": "best season", "steps": "2-3 sentence how-to"},
-      {"method": "e.g. Stem cuttings", "difficulty": "Moderate", "season": "best season", "steps": "2-3 sentence how-to"}
-    ],
-    "pests_diseases": [
-      {"name": "pest or disease name", "signs": "what to look for", "treatment": "how to treat"}
-    ],
-    "seasonal_care": {
-      "spring": "what to do in spring",
-      "summer": "what to do in summer",
-      "fall": "what to do in fall",
-      "winter": "what to do in winter / how to overwinter"
-    },
-    "edibility": {
-      "edible": true,
-      "parts": "which parts are edible e.g. leaves, fruit, roots, flowers — or null if not edible",
-      "harvest_season": "when to harvest e.g. Summer through Fall, or null if not applicable",
-      "how_to_harvest": "how to harvest — what to look for, how to pick, tools needed — or null",
-      "yield": "expected yield per plant e.g. 5-10 lbs of fruit per season — or null",
-      "storage": "how to store after harvest — or null",
-      "culinary_uses": "how to use in cooking/eating — or null",
-      "caution": "any parts that are toxic or preparation notes — or null if fully safe"
-    }
+  "pro_tip": "one practical tip"
+}
+verdict: green/yellow/red. status: ok/warn/bad/neutral.`;
+
+  const text = await ai(prompt, 1400);
+
+  // Robust JSON extraction — handles truncated responses by closing open braces
+  let result;
+  try {
+    result = parseJSON(text, "object");
+  } catch(e) {
+    // Try to recover truncated JSON by finding the last complete field
+    const clean = text.replace(/```json|```/gi, "").trim();
+    const start = clean.indexOf("{");
+    if (start === -1) throw new Error("No plant data returned — please try again");
+    let partial = clean.slice(start);
+    // Count open braces to find how many we need to close
+    let opens = 0, closes = 0;
+    for (const ch of partial) { if (ch === "{") opens++; if (ch === "}") closes++; }
+    partial += "}".repeat(Math.max(0, opens - closes));
+    try { result = JSON.parse(partial); }
+    catch(e2) { throw new Error("Could not parse plant data — please try again"); }
+  }
+
+  sendJSON(res, 200, { result });
+}
+
+async function handleLookupCare(req, res) {
+  const { plant } = await readBody(req);
+  if (!plant) return sendJSON(res, 400, { error: "plant name required" });
+
+  const prompt = `You are an expert horticulturist. Write a complete care guide for "${plant}".
+Return ONLY a valid JSON object:
+{
+  "planting": {
+    "when": "best time of year to plant with months",
+    "how": "step by step planting instructions in 3-5 sentences",
+    "tip": "one key planting tip most people miss"
+  },
+  "watering": {
+    "frequency": "how often e.g. twice a week in summer",
+    "method": "best watering method",
+    "signs": "signs of overwatering and underwatering"
+  },
+  "feeding": {
+    "fertilizer": "what type of fertilizer to use",
+    "schedule": "when and how often to feed",
+    "tip": "one feeding tip"
+  },
+  "pruning": {
+    "when": "best time to prune",
+    "how": "how to prune — what to cut, how much, tools",
+    "tip": "one pruning tip"
+  },
+  "propagation": [
+    {"method": "e.g. Division", "difficulty": "Easy", "season": "best season", "steps": "2-3 sentence how-to"},
+    {"method": "e.g. Stem cuttings", "difficulty": "Moderate", "season": "best season", "steps": "2-3 sentence how-to"}
+  ],
+  "pests_diseases": [
+    {"name": "pest or disease name", "signs": "what to look for", "treatment": "how to treat"},
+    {"name": "another pest", "signs": "signs", "treatment": "treatment"}
+  ],
+  "seasonal_care": {
+    "spring": "what to do in spring",
+    "summer": "what to do in summer",
+    "fall": "what to do in fall",
+    "winter": "what to do in winter"
   }
 }
-verdict: green/yellow/red. status: ok/warn/bad/neutral. difficulty: Easy/Moderate/Hard. Set edibility.edible to false and all other edibility fields to null if the plant is not edible.`;
+difficulty: Easy/Moderate/Hard.`;
 
-  const text = await ai(prompt, 2500);
-  const result = parseJSON(text, "object");
-  sendJSON(res, 200, { result });
+  const text = await ai(prompt, 2000);
+  let care;
+  try {
+    care = parseJSON(text, "object");
+  } catch(e) {
+    const clean = text.replace(/```json|```/gi, "").trim();
+    const start = clean.indexOf("{");
+    if (start === -1) throw new Error("Could not parse care guide");
+    let partial = clean.slice(start);
+    let opens = 0, closes = 0;
+    for (const ch of partial) { if (ch === "{") opens++; if (ch === "}") closes++; }
+    partial += "}".repeat(Math.max(0, opens - closes));
+    care = JSON.parse(partial);
+  }
+  sendJSON(res, 200, { care });
 }
 
 async function handleIdentifyPlant(req, res) {
@@ -1059,6 +1093,7 @@ const server = http.createServer(async (req, res) => {
     const AI = {
       "/recommendations": handleRecommendations,
       "/lookup":          handleLookup,
+      "/lookup-care":     handleLookupCare,
       "/identify-plant":  handleIdentifyPlant,
     };
 
