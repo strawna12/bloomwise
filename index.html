@@ -891,6 +891,64 @@ textarea { resize: vertical; min-height: 90px; }
   font-size: 14px; color: #7a5500; line-height: 1.6;
 }
 
+/* ── Pricing modal ── */
+.pricing-overlay {
+  position: fixed; inset: 0;
+  background: rgba(10,20,40,.6);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 300; padding: 1.5rem;
+}
+.pricing-modal {
+  background: var(--white); border-radius: var(--r-xl);
+  max-width: 560px; width: 100%; overflow: hidden;
+  box-shadow: 0 24px 64px rgba(10,20,40,.3);
+  max-height: 92vh; overflow-y: auto;
+}
+.pricing-header {
+  background: linear-gradient(135deg, #0d2a4a, #1a5c96);
+  padding: 2rem 2rem 1.5rem; text-align: center;
+}
+.pricing-header h2 { font-family:'Cormorant Garamond',serif; font-size: 28px; color: #fff; font-weight: 600; margin-bottom: 6px; }
+.pricing-header p  { font-size: 13px; color: #b8d8f4; }
+.pricing-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0; }
+.pricing-col {
+  padding: 1.5rem;
+  border-right: 1px solid var(--border2);
+}
+.pricing-col:last-child { border-right: none; }
+.pricing-col-header {
+  text-align: center; margin-bottom: 1.25rem;
+  padding-bottom: 1.25rem; border-bottom: 1px solid var(--border2);
+}
+.pricing-col-name { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--stone); margin-bottom: 6px; }
+.pricing-col-price { font-family:'Cormorant Garamond',serif; font-size: 34px; font-weight: 600; color: var(--bloom); line-height: 1; }
+.pricing-col-price span { font-size: 14px; color: var(--stone); font-weight: 400; font-family: 'Jost', sans-serif; }
+.pricing-col.pro-col { background: linear-gradient(180deg, #edf5fc, var(--white)); }
+.pricing-col.pro-col .pricing-col-name { color: var(--sky); }
+.pricing-col.pro-col .pricing-col-price { color: var(--bloom); }
+.pricing-feature {
+  display: flex; align-items: flex-start; gap: 8px;
+  font-size: 13px; margin-bottom: 10px; line-height: 1.4;
+}
+.pricing-feature .pf-icon { font-size: 14px; flex-shrink: 0; margin-top: 1px; }
+.pricing-feature .pf-text { color: var(--ink2); }
+.pricing-feature .pf-text strong { color: var(--bloom); }
+.pricing-feature.locked .pf-text { color: var(--stone); }
+.pricing-actions {
+  padding: 1.25rem 1.5rem 1.5rem; text-align: center;
+  border-top: 1px solid var(--border2);
+}
+.pricing-cta {
+  width: 100%; max-width: 280px; padding: 14px; font-size: 15px; font-weight: 700;
+  border-radius: 50px; cursor: pointer; font-family: inherit;
+  background: linear-gradient(135deg, var(--gold), #f0b429);
+  color: #fff; border: none; margin-bottom: 8px; transition: opacity .15s;
+}
+.pricing-cta:hover { opacity: .88; }
+.pricing-cta:disabled { opacity: .6; cursor: not-allowed; }
+.pricing-fine { font-size: 11px; color: var(--stone); margin-top: 6px; }
+.pricing-dismiss { font-size: 12px; color: var(--stone); cursor: pointer; background: none; border: none; font-family: inherit; text-decoration: underline; margin-top: 6px; display: block; }
+
 /* ── Login modal ── */
 .login-modal-overlay {
   position: fixed; inset: 0;
@@ -950,8 +1008,8 @@ textarea { resize: vertical; min-height: 90px; }
   <div class="usage-bar" id="usage-bar" style="display:none;">
     <div class="usage-label">Free plan</div>
     <div class="usage-track"><div class="usage-fill" id="usage-fill" style="width:0%"></div></div>
-    <div class="usage-text" id="usage-text">0 / 3 today</div>
-    <button class="btn-upgrade" onclick="showUpgradeModal()">⚡ Upgrade to Pro</button>
+    <div class="usage-text" id="usage-text">0 / 3 this week</div>
+    <button class="btn-upgrade" onclick="showPricingModal()">⚡ Upgrade to Pro</button>
   </div>
 
   <!-- User bar — shows when logged in -->
@@ -973,20 +1031,86 @@ textarea { resize: vertical; min-height: 90px; }
   <div class="login-modal-overlay" id="login-modal" style="display:none;" onclick="if(event.target===this)hideLoginModal()">
     <div class="login-modal">
       <div class="login-modal-icon">🌸</div>
-      <div class="login-modal-title">Sign in to BloomWise</div>
-      <div class="login-modal-sub">Enter your email and we'll send you a magic link — no password needed. Your garden syncs across all your devices.</div>
+      <div class="login-modal-title">Welcome to BloomWise</div>
+
+      <!-- Tab switcher -->
+      <div style="display:flex;gap:4px;background:var(--bg);border-radius:50px;padding:4px;margin-bottom:1.25rem;">
+        <button id="auth-tab-login" onclick="switchAuthTab('login')" style="flex:1;padding:8px;border-radius:50px;border:none;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;background:linear-gradient(135deg,#1a4d7a,#2e7dc4);color:#fff;transition:all .2s;">Sign In</button>
+        <button id="auth-tab-signup" onclick="switchAuthTab('signup')" style="flex:1;padding:8px;border-radius:50px;border:none;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;background:none;color:var(--stone);transition:all .2s;">Create Account</button>
+      </div>
+
       <div id="login-msg"></div>
-      <input type="email" class="login-input" id="login-email" placeholder="you@example.com" onkeydown="if(event.key==='Enter')sendMagicLink()"/>
-      <button class="login-submit" id="login-submit-btn" onclick="sendMagicLink()">✉️ Send me a login link</button>
+
+      <!-- Sign In form -->
+      <div id="auth-form-login">
+        <input type="email" class="login-input" id="login-email" placeholder="Email address" autocomplete="email"/>
+        <input type="password" class="login-input" id="login-password" placeholder="Password" autocomplete="current-password" onkeydown="if(event.key==='Enter')submitLogin()"/>
+        <button class="login-submit" id="login-submit-btn" onclick="submitLogin()">Sign In</button>
+      </div>
+
+      <!-- Sign Up form -->
+      <div id="auth-form-signup" style="display:none;">
+        <input type="text" class="login-input" id="signup-name" placeholder="Your name (optional)" autocomplete="name"/>
+        <input type="email" class="login-input" id="signup-email" placeholder="Email address" autocomplete="email"/>
+        <input type="password" class="login-input" id="signup-password" placeholder="Password (min 8 characters)" autocomplete="new-password" onkeydown="if(event.key==='Enter')submitSignup()"/>
+        <button class="login-submit" id="signup-submit-btn" onclick="submitSignup()">Create Account</button>
+      </div>
+
       <br/>
       <button class="login-dismiss" onclick="hideLoginModal()">Maybe later</button>
     </div>
   </div>
+
+  <!-- Pricing comparison modal -->
+  <div class="pricing-overlay" id="pricing-modal" style="display:none;" onclick="if(event.target===this)hidePricingModal()">
+    <div class="pricing-modal">
+      <div class="pricing-header">
+        <h2>🌸 BloomWise Plans</h2>
+        <p>Everything you need for a thriving garden</p>
+      </div>
+      <div class="pricing-grid">
+        <div class="pricing-col">
+          <div class="pricing-col-header">
+            <div class="pricing-col-name">Free</div>
+            <div class="pricing-col-price">$0 <span>/ forever</span></div>
+          </div>
+          <div class="pricing-feature"><span class="pf-icon">🌻</span><span class="pf-text"><strong>3</strong> recommendations/week</span></div>
+          <div class="pricing-feature"><span class="pf-icon">🔍</span><span class="pf-text"><strong>2</strong> plant lookups/week</span></div>
+          <div class="pricing-feature"><span class="pf-icon">📸</span><span class="pf-text"><strong>3</strong> plant IDs/week</span></div>
+          <div class="pricing-feature"><span class="pf-icon">🌱</span><span class="pf-text">Garden up to <strong>6 plants</strong></span></div>
+          <div class="pricing-feature"><span class="pf-icon">🛒</span><span class="pf-text"><strong>🔒</strong> Shopping list (Pro only)</span></div>
+          <div class="pricing-feature"><span class="pf-icon">📍</span><span class="pf-text">Nursery finder</span></div>
+          <div class="pricing-feature locked"><span class="pf-icon">🔒</span><span class="pf-text">PDF export</span></div>
+          <div class="pricing-feature locked"><span class="pf-icon">🔒</span><span class="pf-text">International zones</span></div>
+        </div>
+        <div class="pricing-col pro-col">
+          <div class="pricing-col-header">
+            <div class="pricing-col-name">⚡ Pro</div>
+            <div class="pricing-col-price">$2.99 <span>/ month</span></div>
+          </div>
+          <div class="pricing-feature"><span class="pf-icon">✅</span><span class="pf-text"><strong>Unlimited</strong> recommendations</span></div>
+          <div class="pricing-feature"><span class="pf-icon">✅</span><span class="pf-text"><strong>Unlimited</strong> plant lookups</span></div>
+          <div class="pricing-feature"><span class="pf-icon">✅</span><span class="pf-text"><strong>Unlimited</strong> plant IDs</span></div>
+          <div class="pricing-feature"><span class="pf-icon">✅</span><span class="pf-text"><strong>Unlimited</strong> garden size</span></div>
+          <div class="pricing-feature"><span class="pf-icon">✅</span><span class="pf-text"><strong>Unlimited</strong> shopping lists</span></div>
+          <div class="pricing-feature"><span class="pf-icon">✅</span><span class="pf-text">Nursery finder</span></div>
+          <div class="pricing-feature"><span class="pf-icon">✅</span><span class="pf-text">PDF export (picks + garden)</span></div>
+          <div class="pricing-feature"><span class="pf-icon">✅</span><span class="pf-text">International zone detection</span></div>
+        </div>
+      </div>
+      <div class="pricing-actions">
+        <button class="pricing-cta" id="pricing-checkout-btn" onclick="startCheckout()">🌻 Upgrade to Pro — $2.99/mo</button>
+        <div class="pricing-fine">Cancel anytime · No contracts · Instant access</div>
+        <button class="pricing-dismiss" onclick="hidePricingModal()">Maybe later</button>
+      </div>
+    </div>
+  </div>
+
   <div class="modal-overlay" id="upgrade-modal" style="display:none;" onclick="if(event.target===this)hideUpgradeModal()">
     <div class="modal-box">
       <div class="modal-icon">🌸</div>
       <div class="modal-title">Unlock BloomWise Pro</div>
-      <div class="modal-sub">You've used your free recommendations for today. Upgrade for unlimited access to everything BloomWise has to offer.</div>
+      <div class="modal-sub">You've used your free recommendations for this week. Upgrade for unlimited access to everything BloomWise has to offer.</div>
       <div class="modal-features">
         <div class="modal-feature">Unlimited plant recommendations</div>
         <div class="modal-feature">Unlimited plant lookups</div>
@@ -1236,7 +1360,7 @@ textarea { resize: vertical; min-height: 90px; }
       <div class="nav-row" style="margin-top:2rem;padding-top:1.5rem;border-top:1px solid var(--border2);">
         <button class="btn btn-ghost" onclick="goStep(3)">← Adjust inputs</button>
         <button class="btn btn-primary" onclick="generateRecs()">🔄 Regenerate</button>
-        <button class="btn btn-pdf" id="pdf-btn" onclick="exportPDF()" style="display:none;">⬇ Save PDF</button>
+        <button class="btn btn-pdf" id="pdf-btn" onclick="exportPDF()" style="display:none;" title="Pro feature">⬇ Save PDF</button>
       </div>
     </div>
   </div>
@@ -1310,9 +1434,9 @@ textarea { resize: vertical; min-height: 90px; }
     <div class="lookup-hero">
       <h2>🛒 Shopping List</h2>
       <p>Get a personalised list of everything you need — plants, soil, tools, and more</p>
-      <div style="margin-top:1rem;display:flex;gap:10px;flex-wrap:wrap;">
+      <div style="margin-top:1rem;display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
         <button class="btn btn-primary" id="shop-btn" onclick="generateShoppingList()">Generate my shopping list</button>
-        <div style="font-size:12px;color:#b8d8f4;align-self:center;">Based on your site profile &amp; plant picks</div>
+        <span id="shop-pro-badge" style="display:none;font-size:12px;background:rgba(255,217,102,.2);color:#ffd966;border:1px solid rgba(255,217,102,.4);padding:4px 12px;border-radius:50px;font-weight:600;">⚡ Pro feature</span>
       </div>
     </div>
     <div id="shop-results"></div>
@@ -1375,6 +1499,17 @@ async function initProStatus() {
 function updateProUI() {
   document.getElementById('pro-badge').classList.toggle('show', IS_PRO);
   document.getElementById('usage-bar').style.display = IS_PRO ? 'none' : 'flex';
+
+  // Shopping list — Pro only
+  const shopBadge = document.getElementById('shop-pro-badge');
+  const shopBtn   = document.getElementById('shop-btn');
+  if (shopBadge) shopBadge.style.display = IS_PRO ? 'none' : 'inline-flex';
+  if (shopBtn)   shopBtn.textContent = IS_PRO ? 'Generate my shopping list' : '🔒 Pro only — Upgrade to access';
+
+  // PDF buttons
+  const pdfBtn = document.getElementById('pdf-btn');
+  if (pdfBtn) pdfBtn.textContent = IS_PRO ? '⬇ Save PDF' : '🔒 Save PDF (Pro)';
+
   updateUsageBar();
 }
 
@@ -1384,28 +1519,34 @@ function updateUsageBar() {
   const fill = document.getElementById('usage-fill');
   fill.style.width = pct + '%';
   fill.classList.toggle('full', USAGE_TODAY >= FREE_LIMIT);
-  document.getElementById('usage-text').textContent = `${USAGE_TODAY} / ${FREE_LIMIT} today`;
+  document.getElementById('usage-text').textContent = `${USAGE_TODAY} / ${FREE_LIMIT} this week`;
 }
 
+function showPricingModal() {
+  document.getElementById('pricing-modal').style.display = 'flex';
+  document.getElementById('upgrade-modal').style.display = 'none';
+}
+function hidePricingModal() {
+  document.getElementById('pricing-modal').style.display = 'none';
+}
 function showUpgradeModal() {
-  document.getElementById('upgrade-modal').style.display = 'flex';
+  showPricingModal(); // always show full pricing sheet
 }
-
 function hideUpgradeModal() {
   document.getElementById('upgrade-modal').style.display = 'none';
+  hidePricingModal();
 }
 
 async function startCheckout() {
-  const btn = document.getElementById('checkout-btn');
-  btn.disabled = true;
-  btn.textContent = 'Redirecting to checkout…';
+  // Disable buttons in both modals
+  const btns = ['checkout-btn', 'pricing-checkout-btn'].map(id => document.getElementById(id)).filter(Boolean);
+  btns.forEach(b => { b.disabled = true; b.textContent = 'Redirecting to checkout…'; });
   try {
     const data = await apiCall('/create-checkout', { uid: USER_ID });
     if (data.url) window.location.href = data.url;
     else throw new Error(data.error || 'No checkout URL returned');
   } catch(e) {
-    btn.disabled = false;
-    btn.textContent = '🌻 Start my Pro plan';
+    btns.forEach(b => { b.disabled = false; b.textContent = '🌻 Start my Pro plan'; });
     alert('Could not start checkout: ' + e.message);
   }
 }
@@ -2005,6 +2146,7 @@ function pdfPlantCard(doc, W, MARGIN, CONTENT_W, y, plant, idx) {
 }
 
 function exportPDF() {
+  if (!IS_PRO) { showPricingModal(); return; }
   const { jsPDF } = window.jspdf;
   const doc   = new jsPDF({ unit: 'mm', format: 'a4' });
   const W     = doc.internal.pageSize.getWidth();
@@ -2099,6 +2241,7 @@ function exportPDF() {
 }
 
 function exportGardenPDF() {
+  if (!IS_PRO) { showPricingModal(); return; }
   if (!garden.length) return;
   const { jsPDF } = window.jspdf;
   const doc   = new jsPDF({ unit: 'mm', format: 'a4' });
@@ -2477,82 +2620,125 @@ function lookupFromID(plantName) {
   doLookup();
 }
 
-// ── Auth — Magic Link ─────────────────────────────────────
-let currentUser = null; // { email, uid, name } when logged in
+// ── Auth — Email / Password ───────────────────────────────
+let currentUser = null;
+const SESSION_KEY = 'bloomwise-session';
 
-function showLoginModal()  { document.getElementById('login-modal').style.display = 'flex'; document.getElementById('login-email').focus(); }
-function hideLoginModal()  { document.getElementById('login-modal').style.display = 'none'; document.getElementById('login-msg').innerHTML = ''; }
-
-async function sendMagicLink() {
-  const email = document.getElementById('login-email').value.trim();
-  if (!email || !email.includes('@')) {
-    document.getElementById('login-msg').innerHTML = '<div class="login-error">Please enter a valid email address</div>';
-    return;
-  }
-  const btn = document.getElementById('login-submit-btn');
-  btn.disabled = true; btn.textContent = 'Sending…';
+function showLoginModal()  {
+  document.getElementById('login-modal').style.display = 'flex';
   document.getElementById('login-msg').innerHTML = '';
+  switchAuthTab('login');
+  setTimeout(() => document.getElementById('login-email')?.focus(), 100);
+}
+function hideLoginModal()  { document.getElementById('login-modal').style.display = 'none'; }
+
+function switchAuthTab(tab) {
+  const isLogin = tab === 'login';
+  document.getElementById('auth-form-login').style.display  = isLogin ? 'block' : 'none';
+  document.getElementById('auth-form-signup').style.display = isLogin ? 'none' : 'block';
+  document.getElementById('login-msg').innerHTML = '';
+  const activeStyle  = 'flex:1;padding:8px;border-radius:50px;border:none;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;background:linear-gradient(135deg,#1a4d7a,#2e7dc4);color:#fff;transition:all .2s;';
+  const inactiveStyle = 'flex:1;padding:8px;border-radius:50px;border:none;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;background:none;color:var(--stone);transition:all .2s;';
+  document.getElementById('auth-tab-login').style.cssText  = isLogin ? activeStyle : inactiveStyle;
+  document.getElementById('auth-tab-signup').style.cssText = isLogin ? inactiveStyle : activeStyle;
+}
+
+function setAuthMsg(msg, type = 'error') {
+  document.getElementById('login-msg').innerHTML =
+    `<div class="${type === 'error' ? 'login-error' : 'login-success'}">${msg}</div>`;
+}
+
+async function submitLogin() {
+  const email    = document.getElementById('login-email').value.trim();
+  const password = document.getElementById('login-password').value;
+  if (!email || !password) return setAuthMsg('Please enter your email and password');
+
+  const btn = document.getElementById('login-submit-btn');
+  btn.disabled = true; btn.textContent = 'Signing in…';
+  document.getElementById('login-msg').innerHTML = '';
+
   try {
-    await apiCall('/auth/send-link', { email, uid: USER_ID });
-    document.getElementById('login-msg').innerHTML = `
-      <div class="login-success">
-        ✅ Check your email!<br>
-        We sent a login link to <strong>${email}</strong>.<br>
-        Click the link to sign in — it expires in 15 minutes.
-      </div>`;
-    btn.textContent = '✉️ Resend link';
-    btn.disabled = false;
+    const data = await fetch(BACKEND + '/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password }),
+    }).then(async r => {
+      const d = await r.json();
+      if (!r.ok) throw new Error(d.error || 'Sign in failed');
+      return d;
+    });
+    localStorage.setItem(SESSION_KEY, JSON.stringify({ token: data.token, email: data.email, uid: data.uid, name: data.name }));
+    signIn(data);
+    showToast('✅ Signed in successfully!');
   } catch(e) {
-    document.getElementById('login-msg').innerHTML = `<div class="login-error">${e.message}</div>`;
-    btn.disabled = false; btn.textContent = '✉️ Send me a login link';
+    setAuthMsg(e.message);
+  } finally {
+    btn.disabled = false; btn.textContent = 'Sign In';
   }
 }
 
-async function handleVerifyFromURL() {
-  const params = new URLSearchParams(window.location.search);
-  const token = params.get('verify');
-  if (!token) return;
+async function submitSignup() {
+  const name     = document.getElementById('signup-name').value.trim();
+  const email    = document.getElementById('signup-email').value.trim();
+  const password = document.getElementById('signup-password').value;
+  if (!email) return setAuthMsg('Please enter your email');
+  if (!password || password.length < 8) return setAuthMsg('Password must be at least 8 characters');
 
-  // Clean the URL
-  window.history.replaceState({}, '', '/');
+  const btn = document.getElementById('signup-submit-btn');
+  btn.disabled = true; btn.textContent = 'Creating account…';
+  document.getElementById('login-msg').innerHTML = '';
 
   try {
-    const data = await apiCall('/auth/verify-token', { token });
-    if (data.ok) {
-      signIn(data);
-      showToast('✅ Signed in successfully! Your garden is syncing…');
-    }
+    const data = await fetch(BACKEND + '/auth/signup', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password, name, uid: USER_ID }),
+    }).then(async r => {
+      const d = await r.json();
+      if (!r.ok) throw new Error(d.error || 'Sign up failed');
+      return d;
+    });
+    localStorage.setItem(SESSION_KEY, JSON.stringify({ token: data.token, email: data.email, uid: data.uid, name: data.name }));
+    signIn(data);
+    showToast('🌸 Account created! Welcome to BloomWise.');
   } catch(e) {
-    showToast('⚠️ Login link expired or already used. Please request a new one.', 'warn');
+    setAuthMsg(e.message);
+  } finally {
+    btn.disabled = false; btn.textContent = 'Create Account';
   }
 }
 
 function signIn(user) {
   currentUser = user;
-  localStorage.setItem('bloomwise-user', JSON.stringify(user));
+  window.USER_ID = user.uid;
 
-  // Update USER_ID to the email so garden saves to the right account
-  // (We keep the original anonymous UID in localStorage for fallback)
-  window.USER_ID = user.uid; // override the module-level USER_ID
-
-  // Update UI
   const initial = (user.name || user.email || '?')[0].toUpperCase();
   document.getElementById('user-avatar').textContent = initial;
-  document.getElementById('user-name').textContent = user.name || user.email.split('@')[0];
-  document.getElementById('user-email').textContent = user.email;
+  document.getElementById('user-name').textContent   = user.name || user.email.split('@')[0];
+  document.getElementById('user-email').textContent  = user.email;
   document.getElementById('user-bar').classList.add('show');
   document.getElementById('signin-bar').style.display = 'none';
   hideLoginModal();
 
-  // Reload garden from the logged-in account
   loadGardenFromDB();
   initProStatus();
 }
 
-function signOut() {
+async function signOut() {
+  const saved = localStorage.getItem(SESSION_KEY);
+  if (saved) {
+    try {
+      const { token } = JSON.parse(saved);
+      await fetch(BACKEND + '/auth/signout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token }),
+      });
+    } catch(e) { /* ignore */ }
+  }
   currentUser = null;
-  localStorage.removeItem('bloomwise-user');
-  window.USER_ID = getUserId(); // revert to anonymous UID
+  localStorage.removeItem(SESSION_KEY);
+  window.USER_ID = getUserId();
 
   document.getElementById('user-bar').classList.remove('show');
   document.getElementById('signin-bar').style.display = 'block';
@@ -2573,18 +2759,34 @@ function showToast(msg, type = 'ok') {
   setTimeout(() => t.remove(), 4000);
 }
 
-function initAuth() {
-  // Restore session from localStorage
-  const saved = localStorage.getItem('bloomwise-user');
-  if (saved) {
-    try { signIn(JSON.parse(saved)); return; } catch(e) { localStorage.removeItem('bloomwise-user'); }
+async function initAuth() {
+  const saved = localStorage.getItem(SESSION_KEY);
+  if (!saved) {
+    setTimeout(() => { if (!currentUser) document.getElementById('signin-bar').style.display = 'block'; }, 3000);
+    return;
   }
-  // Show sign-in prompt for anonymous users (after a delay)
-  setTimeout(() => {
-    if (!currentUser) document.getElementById('signin-bar').style.display = 'block';
-  }, 3000);
-  // Check if returning from magic link
-  handleVerifyFromURL();
+  try {
+    const { token, email, uid, name } = JSON.parse(saved);
+    // Verify session is still valid with server
+    const r = await fetch(BACKEND + '/auth/verify-session', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ token }),
+    });
+    if (r.ok) {
+      const data = await r.json();
+      if (data.ok) { signIn({ ...data, token }); return; }
+    }
+    // Session expired — clear it
+    localStorage.removeItem(SESSION_KEY);
+    document.getElementById('signin-bar').style.display = 'block';
+  } catch(e) {
+    // Offline — restore from cache optimistically
+    try {
+      const cached = JSON.parse(saved);
+      signIn(cached);
+    } catch { localStorage.removeItem(SESSION_KEY); }
+  }
 }
 
 renderTracker(0);
