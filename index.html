@@ -451,6 +451,42 @@ textarea { resize: vertical; min-height: 90px; }
 .special-box ul { padding-left: 18px; }
 .special-box li { font-size: 12px; color: var(--lavender); line-height: 1.75; }
 .pro-tip { background: var(--petal-lt); border: 1px solid var(--petal2); border-radius: var(--r); padding: 14px 16px; font-size: 13px; color: var(--bloom); line-height: 1.65; }
+
+/* ── Care Guide ── */
+.care-guide { margin-top: 1.5rem; }
+.care-guide-title { font-family:'Cormorant Garamond',serif; font-size: 20px; font-weight: 600; color: var(--bloom); margin-bottom: 1rem; padding-bottom: 8px; border-bottom: 2px solid var(--border2); }
+.care-tabs { display: flex; gap: 4px; flex-wrap: wrap; margin-bottom: 1rem; }
+.care-tab { padding: 7px 14px; font-size: 12px; font-weight: 600; border-radius: 50px; border: 1.5px solid var(--border); background: var(--white); color: var(--stone); cursor: pointer; font-family: inherit; transition: all .15s; white-space: nowrap; }
+.care-tab.active { background: var(--bloom); border-color: var(--bloom); color: #fff; }
+.care-tab:hover:not(.active) { border-color: var(--petal2); color: var(--bloom); }
+.care-panel { display: none; }
+.care-panel.active { display: block; animation: fadeIn .2s ease; }
+.care-section { background: var(--bg); border-radius: var(--r-lg); padding: 1.25rem; margin-bottom: 10px; }
+.care-section-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; color: var(--stone); margin-bottom: 8px; }
+.care-section-body { font-size: 13px; color: var(--ink2); line-height: 1.7; }
+.care-section-body strong { color: var(--bloom); }
+.care-highlight { background: var(--petal-lt); border-left: 3px solid var(--petal2); border-radius: 0 var(--r) var(--r) 0; padding: 10px 14px; font-size: 13px; color: var(--bloom); line-height: 1.6; margin-top: 8px; }
+.prop-card { background: var(--white); border: 1.5px solid var(--border2); border-radius: var(--r-lg); padding: 14px 16px; margin-bottom: 10px; }
+.prop-card-header { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+.prop-method { font-size: 14px; font-weight: 700; color: var(--bloom); }
+.prop-difficulty { font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 50px; }
+.prop-difficulty.easy     { background: #e6f4ea; color: #2d6a4f; }
+.prop-difficulty.moderate { background: #fff3e0; color: #8a5200; }
+.prop-difficulty.hard     { background: #fde8e8; color: #8b1a1a; }
+.prop-season { font-size: 11px; color: var(--stone); margin-left: auto; }
+.prop-steps { font-size: 13px; color: var(--ink2); line-height: 1.7; }
+.pest-card { display: flex; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--border2); }
+.pest-card:last-child { border-bottom: none; }
+.pest-icon { font-size: 22px; flex-shrink: 0; }
+.pest-info { flex: 1; }
+.pest-name { font-size: 13px; font-weight: 700; color: var(--bloom); margin-bottom: 2px; }
+.pest-signs { font-size: 12px; color: var(--stone); margin-bottom: 4px; }
+.pest-treatment { font-size: 12px; color: var(--ink2); line-height: 1.5; }
+.seasonal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.seasonal-card { background: var(--white); border: 1.5px solid var(--border2); border-radius: var(--r-lg); padding: 12px 14px; }
+.seasonal-season { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; color: var(--stone); margin-bottom: 6px; display: flex; align-items: center; gap: 6px; }
+.seasonal-text { font-size: 12px; color: var(--ink2); line-height: 1.6; }
+@media(max-width:500px){ .seasonal-grid { grid-template-columns: 1fr; } }
 .pro-tip strong { font-weight: 700; }
 
 /* ── PDF button ── */
@@ -1534,9 +1570,12 @@ textarea { resize: vertical; min-height: 90px; }
         </div>
       </div>
       <div class="layout-control-group">
-        <label class="layout-label">Show spacing</label>
-        <input type="checkbox" id="layout-spacing" checked onchange="redrawCanvas()"
-          style="width:18px;height:18px;cursor:pointer;accent-color:var(--bloom);"/>
+        <label class="layout-label">Show spacing zones</label>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <input type="checkbox" id="layout-spacing" checked onchange="redrawCanvas()"
+            style="width:18px;height:18px;cursor:pointer;accent-color:var(--bloom);"/>
+          <span style="font-size:11px;color:var(--stone);line-height:1.4;">(dashed circles showing<br>how far apart to plant)</span>
+        </div>
       </div>
       <button class="btn btn-ghost" onclick="clearLayout()" style="margin-left:auto;">🗑 Clear</button>
       <button class="btn btn-pdf" onclick="exportLayoutImage()">⬇ Save image</button>
@@ -1552,6 +1591,9 @@ textarea { resize: vertical; min-height: 90px; }
       <div class="layout-sidebar">
         <div class="layout-sidebar-title">Your Plants</div>
         <div class="layout-sidebar-sub">Drag onto canvas or tap to add</div>
+        <div style="background:var(--gold-lt);border:1.5px solid var(--gold);border-radius:var(--r);padding:8px 10px;margin-bottom:10px;font-size:11px;color:#7a5500;line-height:1.5;">
+          🌿 <strong>Circles show each plant at full maturity</strong> — they may look large now but reflect real grown size
+        </div>
         <div id="layout-plant-list" class="layout-plant-list"></div>
         <div id="layout-empty-msg" class="layout-empty-msg" style="display:none;">
           <div>🪴</div>
@@ -1566,7 +1608,6 @@ textarea { resize: vertical; min-height: 90px; }
         <div class="layout-legend">
           <span class="legend-item"><span class="legend-dot" style="background:rgba(46,125,196,.3);border:2px solid var(--sky);"></span> Circle = mature plant size</span>
           <span class="legend-item"><span class="legend-dot" style="background:rgba(212,160,23,.15);border:1.5px dashed var(--gold);"></span> Spacing zone</span>
-          <span style="font-size:11px;color:var(--stone);margin-left:auto;font-style:italic;">Circles represent the plant at full maturity</span>
         </div>
       </div>
     </div>
@@ -2010,6 +2051,104 @@ async function doLookup(){
     const tip=d.pro_tip?`<div class="pro-tip"><strong>💡 Pro tip:</strong> ${d.pro_tip}</div>`:'';
     const noCtx=!hasCtx?`<div style="font-size:12px;color:#7a4e00;padding:9px 14px;background:var(--gold-lt);border-radius:var(--r);border:1px solid var(--gold);margin-bottom:16px;">📋 Add your site profile in the Recommendations tab for personalized ✅ ⚠️ ❌ scoring</div>`:'';
 
+    // Build care guide
+    const cg = d.care_guide || {};
+    const careGuideHtml = cg.planting ? `
+      <div class="care-guide">
+        <div class="care-guide-title">🌿 Full Care Guide</div>
+        <div class="care-tabs">
+          <button class="care-tab active" onclick="switchCareTab(this,'care-planting')">🌱 Planting</button>
+          <button class="care-tab" onclick="switchCareTab(this,'care-watering')">💧 Watering</button>
+          <button class="care-tab" onclick="switchCareTab(this,'care-feeding')">🌿 Feeding</button>
+          <button class="care-tab" onclick="switchCareTab(this,'care-pruning')">✂️ Pruning</button>
+          <button class="care-tab" onclick="switchCareTab(this,'care-propagation')">🔬 Propagation</button>
+          <button class="care-tab" onclick="switchCareTab(this,'care-pests')">🐛 Pests & Disease</button>
+          <button class="care-tab" onclick="switchCareTab(this,'care-seasonal')">📅 Seasonal Care</button>
+          <button class="care-tab" onclick="switchCareTab(this,'care-edibility')">🍽 Harvest & Edibility</button>
+        </div>
+
+        <div class="care-panel active" id="care-planting">
+          ${cg.planting?.when ? `<div class="care-section"><div class="care-section-title">When to plant</div><div class="care-section-body">${cg.planting.when}</div></div>` : ''}
+          ${cg.planting?.how  ? `<div class="care-section"><div class="care-section-title">How to plant</div><div class="care-section-body">${cg.planting.how}</div></div>` : ''}
+          ${cg.planting?.tip  ? `<div class="care-highlight">💡 ${cg.planting.tip}</div>` : ''}
+        </div>
+
+        <div class="care-panel" id="care-watering">
+          ${cg.watering?.frequency ? `<div class="care-section"><div class="care-section-title">How often</div><div class="care-section-body">${cg.watering.frequency}</div></div>` : ''}
+          ${cg.watering?.method   ? `<div class="care-section"><div class="care-section-title">Best method</div><div class="care-section-body">${cg.watering.method}</div></div>` : ''}
+          ${cg.watering?.signs    ? `<div class="care-section"><div class="care-section-title">Warning signs</div><div class="care-section-body">${cg.watering.signs}</div></div>` : ''}
+        </div>
+
+        <div class="care-panel" id="care-feeding">
+          ${cg.feeding?.fertilizer ? `<div class="care-section"><div class="care-section-title">What to use</div><div class="care-section-body">${cg.feeding.fertilizer}</div></div>` : ''}
+          ${cg.feeding?.schedule   ? `<div class="care-section"><div class="care-section-title">Schedule</div><div class="care-section-body">${cg.feeding.schedule}</div></div>` : ''}
+          ${cg.feeding?.tip        ? `<div class="care-highlight">💡 ${cg.feeding.tip}</div>` : ''}
+        </div>
+
+        <div class="care-panel" id="care-pruning">
+          ${cg.pruning?.when ? `<div class="care-section"><div class="care-section-title">When to prune</div><div class="care-section-body">${cg.pruning.when}</div></div>` : ''}
+          ${cg.pruning?.how  ? `<div class="care-section"><div class="care-section-title">How to prune</div><div class="care-section-body">${cg.pruning.how}</div></div>` : ''}
+          ${cg.pruning?.tip  ? `<div class="care-highlight">💡 ${cg.pruning.tip}</div>` : ''}
+        </div>
+
+        <div class="care-panel" id="care-propagation">
+          ${(cg.propagation||[]).map(p=>`
+            <div class="prop-card">
+              <div class="prop-card-header">
+                <span class="prop-method">${p.method}</span>
+                <span class="prop-difficulty ${(p.difficulty||'').toLowerCase()}">${p.difficulty}</span>
+                <span class="prop-season">${p.season||''}</span>
+              </div>
+              <div class="prop-steps">${p.steps}</div>
+            </div>`).join('')}
+        </div>
+
+        <div class="care-panel" id="care-pests">
+          ${(cg.pests_diseases||[]).map(p=>`
+            <div class="pest-card">
+              <div class="pest-icon">🐛</div>
+              <div class="pest-info">
+                <div class="pest-name">${p.name}</div>
+                <div class="pest-signs">Signs: ${p.signs}</div>
+                <div class="pest-treatment">Treatment: ${p.treatment}</div>
+              </div>
+            </div>`).join('')}
+        </div>
+
+        <div class="care-panel" id="care-seasonal">
+          ${cg.seasonal_care ? `<div class="seasonal-grid">
+            <div class="seasonal-card"><div class="seasonal-season">🌸 Spring</div><div class="seasonal-text">${cg.seasonal_care.spring||'N/A'}</div></div>
+            <div class="seasonal-card"><div class="seasonal-season">☀️ Summer</div><div class="seasonal-text">${cg.seasonal_care.summer||'N/A'}</div></div>
+            <div class="seasonal-card"><div class="seasonal-season">🍂 Fall</div><div class="seasonal-text">${cg.seasonal_care.fall||'N/A'}</div></div>
+            <div class="seasonal-card"><div class="seasonal-season">❄️ Winter</div><div class="seasonal-text">${cg.seasonal_care.winter||'N/A'}</div></div>
+          </div>` : ''}
+        </div>
+
+        <div class="care-panel" id="care-edibility">
+          ${cg.edibility ? (cg.edibility.edible === false ? `
+            <div class="care-section" style="text-align:center;padding:2rem;">
+              <div style="font-size:36px;margin-bottom:8px;">🚫</div>
+              <div style="font-size:15px;font-weight:600;color:var(--bloom);margin-bottom:6px;">Not edible</div>
+              <div style="font-size:13px;color:var(--stone);">This plant is not used for food or culinary purposes.</div>
+              ${cg.edibility.caution ? `<div class="care-highlight" style="margin-top:1rem;background:var(--rust-lt);border-color:var(--rust);color:var(--rust);">⚠️ ${cg.edibility.caution}</div>` : ''}
+            </div>` : `
+            <div style="display:flex;align-items:center;gap:10px;padding:12px 16px;background:var(--sage-lt);border:1.5px solid var(--sage);border-radius:var(--r-lg);margin-bottom:12px;">
+              <span style="font-size:24px;">✅</span>
+              <div>
+                <div style="font-size:13px;font-weight:700;color:var(--sage);">Edible plant</div>
+                ${cg.edibility.parts ? `<div style="font-size:12px;color:var(--ink2);">Edible parts: <strong>${cg.edibility.parts}</strong></div>` : ''}
+              </div>
+            </div>
+            ${cg.edibility.harvest_season ? `<div class="care-section"><div class="care-section-title">🗓 When to harvest</div><div class="care-section-body">${cg.edibility.harvest_season}</div></div>` : ''}
+            ${cg.edibility.how_to_harvest ? `<div class="care-section"><div class="care-section-title">✂️ How to harvest</div><div class="care-section-body">${cg.edibility.how_to_harvest}</div></div>` : ''}
+            ${cg.edibility.yield ? `<div class="care-section"><div class="care-section-title">📦 Expected yield</div><div class="care-section-body">${cg.edibility.yield}</div></div>` : ''}
+            ${cg.edibility.storage ? `<div class="care-section"><div class="care-section-title">🧊 Storage</div><div class="care-section-body">${cg.edibility.storage}</div></div>` : ''}
+            ${cg.edibility.culinary_uses ? `<div class="care-section"><div class="care-section-title">🍳 Culinary uses</div><div class="care-section-body">${cg.edibility.culinary_uses}</div></div>` : ''}
+            ${cg.edibility.caution ? `<div class="care-highlight" style="background:var(--gold-lt);border-color:var(--gold);color:#7a5500;">⚠️ <strong>Note:</strong> ${cg.edibility.caution}</div>` : ''}
+          `) : '<div class="care-section" style="color:var(--stone);font-size:13px;">No edibility information available for this plant.</div>'}
+        </div>
+      </div>` : '';
+
     document.getElementById('lookup-results').innerHTML=`
       <div class="fit-card">
         ${strip}
@@ -2022,6 +2161,7 @@ async function doLookup(){
           <div class="fit-summary">${d.summary}</div>
           <div class="req-grid">${reqs}</div>
           ${specials}${tip}
+          ${careGuideHtml}
         </div>
       </div>`;
   }catch(e){
@@ -2764,6 +2904,14 @@ async function identifyPlant() {
     btn.disabled    = false;
     btn.textContent = '🔍 Identify this plant';
   }
+}
+
+function switchCareTab(btn, panelId) {
+  // Deactivate all tabs and panels in this care guide
+  btn.closest('.care-guide').querySelectorAll('.care-tab').forEach(t => t.classList.remove('active'));
+  btn.closest('.care-guide').querySelectorAll('.care-panel').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById(panelId).classList.add('active');
 }
 
 function lookupFromID(plantName) {
