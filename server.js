@@ -1,19 +1,10 @@
-// BloomWise — Full Stack Server
-// Serves frontend + API + Stripe payments from one Railway deployment
-//
-// Railway environment variables:
-//   DATABASE_URL           (auto-set by Railway PostgreSQL)
-//   ANTHROPIC_API_KEY      sk-ant-...
-//   STRIPE_SECRET_KEY      sk_live_... or sk_test_...
-//   STRIPE_WEBHOOK_SECRET  whsec_...
-//   STRIPE_PRICE_ID        price_...
-//   STRIPE_SUCCESS_URL     https://your-app.up.railway.app/?success=1
-//   STRIPE_CANCEL_URL      https://your-app.up.railway.app
-//   GOOGLE_PLACES_API_KEY  (optional — nursery finder)
-//   PERENUAL_API_KEY       (optional — better plant photos)
-//   MODEL                  claude-haiku-4-5-20251001 (optional)
-
 "use strict";
+// BloomWise — Full Stack Server
+// Railway env vars needed:
+//   DATABASE_URL, ANTHROPIC_API_KEY, STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET,
+//   STRIPE_PRICE_ID, STRIPE_SUCCESS_URL, STRIPE_CANCEL_URL,
+//   RESEND_API_KEY, FROM_EMAIL, APP_URL,
+//   GOOGLE_PLACES_API_KEY (optional), PERENUAL_API_KEY (optional), MODEL (optional)
 
 const http   = require("http");
 const https  = require("https");
@@ -23,16 +14,19 @@ const crypto = require("crypto");
 const { Client } = require("pg");
 
 // ── Config ────────────────────────────────────────────────
-const PORT          = process.env.PORT || 3000;
-const ANTHROPIC_KEY = process.env.ANTHROPIC_API_KEY;
-const STRIPE_KEY    = process.env.STRIPE_SECRET_KEY;
-const STRIPE_WEBHOOK_SECRET = process.env.STRIPE_WEBHOOK_SECRET;
-const STRIPE_PRICE_ID       = process.env.STRIPE_PRICE_ID;
-const STRIPE_SUCCESS_URL    = process.env.STRIPE_SUCCESS_URL || `http://localhost:${PORT}/?success=1`;
-const STRIPE_CANCEL_URL     = process.env.STRIPE_CANCEL_URL  || `http://localhost:${PORT}/`;
-const MODEL         = process.env.MODEL || "claude-haiku-4-5-20251001";
-const FRONTEND      = path.join(__dirname, "index.html");
-const FREE_RECS_PER_DAY = 3;
+const PORT               = process.env.PORT || 3000;
+const ANTHROPIC_KEY      = process.env.ANTHROPIC_API_KEY;
+const STRIPE_KEY         = process.env.STRIPE_SECRET_KEY;
+const STRIPE_WEBHOOK_SEC = process.env.STRIPE_WEBHOOK_SECRET;
+const STRIPE_PRICE_ID    = process.env.STRIPE_PRICE_ID;
+const STRIPE_SUCCESS_URL = process.env.STRIPE_SUCCESS_URL || `http://localhost:${PORT}/?success=1`;
+const STRIPE_CANCEL_URL  = process.env.STRIPE_CANCEL_URL  || `http://localhost:${PORT}/`;
+const RESEND_KEY         = process.env.RESEND_API_KEY;
+const FROM_EMAIL         = process.env.FROM_EMAIL || "hello@bloomwise.app";
+const APP_URL            = process.env.APP_URL    || `http://localhost:${PORT}`;
+const MODEL              = process.env.MODEL      || "claude-haiku-4-5-20251001";
+const FRONTEND           = path.join(__dirname, "index.html");
+const FREE_RECS_PER_DAY  = 3;
 
 // ── PostgreSQL ────────────────────────────────────────────
 let db;
@@ -42,7 +36,10 @@ async function connectDB() {
     console.warn("⚠️  DATABASE_URL not set — using in-memory fallback");
     return;
   }
-  db = new Client({ connectionString: process.env.DATABASE_URL, ssl: { rejectUnauthorized: false } });
+  db = new Client({
+    connectionString: process.env.DATABASE_URL,
+    ssl: { rejectUnauthorized: false },
+  });
   await db.connect();
   await db.query(`
     CREATE TABLE IF NOT EXISTS users (
@@ -62,26 +59,40 @@ async function connectDB() {
       plants JSONB NOT NULL DEFAULT '[]'::jsonb,
       updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
     );
+    CREATE TABLE IF NOT EXISTS accounts (
+      id SERIAL PRIMARY KEY,
+      email TEXT UNIQUE NOT NULL,
+      name TEXT,
+      uid TEXT,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    );
+    CREATE TABLE IF NOT EXISTS magic_tokens (
+      token TEXT PRIMARY KEY,
+      email TEXT NOT NULL,
+      uid TEXT,
+      expires_at TIMESTAMPTZ NOT NULL,
+      used BOOLEAN NOT NULL DEFAULT FALSE,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    );
   `);
   console.log("✅ PostgreSQL connected and schema ready");
 }
 
-// In-memory fallback maps
-const _memUsers   = new Map();
-const _memUsage   = new Map();
-const _memGardens = new Map();
+// ── In-memory fallbacks ───────────────────────────────────
+const _mem = { users: new Map(), usage: new Map(), gardens: new Map() };
 
 async function dbIsProUser(uid) {
-  if (!db) return _memUsers.get(uid)?.is_pro || false;
+  if (!db) return _mem.users.get(uid)?.is_pro || false;
   const r = await db.query("SELECT is_pro FROM users WHERE uid=$1", [uid]);
   return r.rows[0]?.is_pro || false;
 }
 
 async function dbSetPro(uid, isPro, customerId = null) {
-  if (!db) { _memUsers.set(uid, { is_pro: isPro }); return; }
+  if (!db) { _mem.users.set(uid, { is_pro: isPro }); return; }
   await db.query(
     `INSERT INTO users (uid, is_pro, stripe_customer_id) VALUES ($1,$2,$3)
-     ON CONFLICT (uid) DO UPDATE SET is_pro=$2, stripe_customer_id=COALESCE($3, users.stripe_customer_id)`,
+     ON CONFLICT (uid) DO UPDATE SET is_pro=$2,
+     stripe_customer_id=COALESCE($3, users.stripe_customer_id)`,
     [uid, isPro, customerId]
   );
 }
@@ -89,10 +100,10 @@ async function dbSetPro(uid, isPro, customerId = null) {
 async function dbCheckFreeLimit(uid) {
   if (!db) {
     const today = new Date().toDateString();
-    const e = _memUsage.get(uid) || { date: today, count: 0 };
+    const e = _mem.usage.get(uid) || { date: today, count: 0 };
     if (e.date !== today) { e.date = today; e.count = 0; }
     e.count++;
-    _memUsage.set(uid, e);
+    _mem.usage.set(uid, e);
     return { allowed: e.count <= FREE_RECS_PER_DAY, used: e.count, limit: FREE_RECS_PER_DAY };
   }
   const r = await db.query(
@@ -106,13 +117,13 @@ async function dbCheckFreeLimit(uid) {
 }
 
 async function dbGetGarden(uid) {
-  if (!db) return _memGardens.get(uid) || [];
+  if (!db) return _mem.gardens.get(uid) || [];
   const r = await db.query("SELECT plants FROM gardens WHERE uid=$1", [uid]);
   return r.rows[0]?.plants || [];
 }
 
 async function dbSaveGarden(uid, plants) {
-  if (!db) { _memGardens.set(uid, plants); return; }
+  if (!db) { _mem.gardens.set(uid, plants); return; }
   await db.query(
     `INSERT INTO gardens (uid, plants, updated_at) VALUES ($1, $2::jsonb, NOW())
      ON CONFLICT (uid) DO UPDATE SET plants=$2::jsonb, updated_at=NOW()`,
@@ -137,7 +148,8 @@ setInterval(() => {
 
 // ── HTTP helpers ──────────────────────────────────────────
 function getIP(req) {
-  return (req.headers["x-forwarded-for"] || req.socket.remoteAddress || "unknown").split(",")[0].trim();
+  return (req.headers["x-forwarded-for"] || req.socket.remoteAddress || "unknown")
+    .split(",")[0].trim();
 }
 
 function sendJSON(res, status, data) {
@@ -168,19 +180,15 @@ function readBodyRaw(req) {
   });
 }
 
-async function readBody(req, maxSize = 25000) {
+async function readBody(req, maxBytes = 25000) {
   const buf = await readBodyRaw(req);
-  if (buf.length > maxSize) throw new Error("Request too large");
+  if (buf.length > maxBytes) throw new Error("Request too large");
   try { return JSON.parse(buf.toString()); }
   catch { throw new Error("Invalid JSON body"); }
 }
 
-async function readBodyLarge(req) {
-  return readBody(req, 10 * 1024 * 1024); // 10MB for image uploads
-}
-
 // ── Anthropic ─────────────────────────────────────────────
-function callAnthropic(messages, maxTokens = 1800) {
+async function callAnthropic(messages, maxTokens = 1800) {
   return new Promise((resolve, reject) => {
     const body = JSON.stringify({ model: MODEL, max_tokens: maxTokens, messages });
     const req = https.request({
@@ -196,9 +204,9 @@ function callAnthropic(messages, maxTokens = 1800) {
       res.on("data", c => data += c);
       res.on("end", () => {
         try {
-          const parsed = JSON.parse(data);
-          if (parsed.error) return reject(new Error(parsed.error.message));
-          resolve((parsed.content || []).map(b => b.text || "").join(""));
+          const p = JSON.parse(data);
+          if (p.error) return reject(new Error(p.error.message));
+          resolve((p.content || []).map(b => b.text || "").join(""));
         } catch (e) { reject(e); }
       });
     });
@@ -282,15 +290,14 @@ Microclimate: ${p.microclimate || "none"} | Water: ${p.water || "not specified"}
 Rainfall: ${p.rainfall || "unknown"} | Irrigation: ${p.irrigation || "none"} | Style: ${p.style || "not specified"}
 Colors: ${p.colors || "no preference"} | Priorities: ${p.priorities || "none"} | Notes: ${p.notes || "none"}
 
-Return a JSON array where each object has exactly these fields:
 [{
   "name": "Common Name",
   "scientific": "Genus species",
-  "sun": "sun requirement (short)",
-  "water": "water requirement (short)",
-  "soil": "ideal soil (short)",
-  "fit": "why it matches this site (5-8 words)",
-  "planting_season": "best planting time e.g. Fall (Sep-Nov)",
+  "sun": "sun requirement",
+  "water": "water requirement",
+  "soil": "ideal soil",
+  "fit": "why it matches (5-8 words)",
+  "planting_season": "e.g. Fall (Sep-Nov)",
   "description": "3 sentences: why it thrives here, standout qualities, one care tip",
   "mature_height": "e.g. 3-4 ft",
   "mature_spread": "e.g. 2-3 ft",
@@ -309,8 +316,8 @@ async function handleLookup(req, res) {
   if (!plant) return sendJSON(res, 400, { error: "plant name required" });
 
   const siteInfo = site
-    ? `User site — Location: ${site.location}, Zone: ${site.zone}, Season: ${site.season}, Sun: ${site.sun}, Soil: ${site.soil}, pH: ${site.ph}, Drainage: ${site.drainage}, Water: ${site.water}, Restrictions: ${site.wrestrict}, Style: ${site.style}, Priorities: ${site.priorities}`
-    : "No site profile provided — give general info and use neutral status for all requirements.";
+    ? `User site — Location: ${site.location}, Zone: ${site.zone}, Season: ${site.season}, Sun: ${site.sun}, Soil: ${site.soil}, pH: ${site.ph}, Drainage: ${site.drainage}, Water: ${site.water}, Restrictions: ${site.wrestrict}, Style: ${site.style}`
+    : "No site profile — give general info, use neutral status for all requirements.";
 
   const prompt = `You are an expert horticulturist. Evaluate "${plant}" as a garden plant.
 ${siteInfo}
@@ -320,20 +327,20 @@ Return ONLY a valid JSON object:
   "scientific": "Genus species",
   "verdict": "green",
   "verdict_label": "Great choice",
-  "summary": "2-3 sentence honest assessment for this site",
+  "summary": "2-3 sentence honest assessment",
   "planting_season": "best season with months",
   "requirements": [
-    {"label": "Sun", "value": "what it needs", "status": "ok", "note": "site match note"},
-    {"label": "Water", "value": "what it needs", "status": "ok", "note": "note"},
-    {"label": "Soil", "value": "what it needs", "status": "ok", "note": "note"},
-    {"label": "Hardiness zone", "value": "zones it thrives in", "status": "ok", "note": "note"},
+    {"label": "Sun", "value": "needs", "status": "ok", "note": "note"},
+    {"label": "Water", "value": "needs", "status": "ok", "note": "note"},
+    {"label": "Soil", "value": "needs", "status": "ok", "note": "note"},
+    {"label": "Hardiness zone", "value": "zones", "status": "ok", "note": "note"},
     {"label": "Maintenance", "value": "low/moderate/high", "status": "neutral", "note": "details"},
     {"label": "Mature size", "value": "height x spread", "status": "neutral", "note": "note"}
   ],
-  "special_requirements": ["req1", "req2", "req3"],
-  "pro_tip": "one practical tip for success"
+  "special_requirements": ["req1", "req2"],
+  "pro_tip": "one practical tip"
 }
-verdict must be green, yellow, or red. status must be ok, warn, bad, or neutral.`;
+verdict: green/yellow/red. status: ok/warn/bad/neutral.`;
 
   const text = await ai(prompt, 1200);
   const result = parseJSON(text, "object");
@@ -341,11 +348,11 @@ verdict must be green, yellow, or red. status must be ok, warn, bad, or neutral.
 }
 
 async function handleIdentifyPlant(req, res) {
-  const { image, mimeType } = await readBodyLarge(req);
+  const { image, mimeType } = await readBody(req, 10 * 1024 * 1024);
   if (!image) return sendJSON(res, 400, { error: "image is required" });
 
   const prompt = `You are an expert botanist. Identify the plant in this photo.
-Return ONLY a valid JSON object, nothing else:
+Return ONLY a valid JSON object:
 {
   "identified": true,
   "common_name": "Common Name",
@@ -353,21 +360,16 @@ Return ONLY a valid JSON object, nothing else:
   "family": "Plant family",
   "confidence": "high",
   "description": "2-3 sentences about this plant",
-  "care": {
-    "sun": "sun requirements",
-    "water": "watering needs",
-    "soil": "soil preference",
-    "hardiness": "USDA zones"
-  },
+  "care": {"sun": "requirements", "water": "needs", "soil": "preference", "hardiness": "USDA zones"},
   "mature_height": "e.g. 3-5 ft",
   "mature_spread": "e.g. 2-4 ft",
   "growth_rate": "slow/moderate/fast",
   "lifespan": "annual/perennial/biennial",
-  "notes": "special characteristics, toxicity warnings, or interesting facts",
+  "notes": "special characteristics or warnings",
   "edible": false,
   "toxic_to_pets": false
 }
-If you cannot identify the plant, return: {"identified": false, "reason": "brief explanation"}
+If you cannot identify it: {"identified": false, "reason": "brief explanation"}
 confidence must be high, medium, or low.`;
 
   const messages = [{
@@ -387,30 +389,23 @@ async function handleShoppingList(req, res) {
   const p = await readBody(req);
   const plantNames = (p.plants || []).map(pl => pl.name).filter(Boolean).join(", ");
 
-  const prompt = `You are an expert horticulturist and garden planner. Generate a practical shopping list for this garden setup. Return ONLY a valid JSON object.
+  const prompt = `You are an expert horticulturist. Generate a practical shopping list for this garden. Return ONLY a valid JSON object.
 
-Client profile:
 Location: ${p.location || "Not specified"} | Zone: ${p.zone || "unknown"} | Sun: ${p.sun || "not specified"}
 Soil: ${p.soil || "not specified"} | Water: ${p.water || "not specified"} | Style: ${p.style || "not specified"}
 Priorities: ${p.priorities || "none"} | Notes: ${p.notes || "none"}
-Plants selected: ${plantNames || "not specified"}
+Plants: ${plantNames || "not specified"}
 
 {
-  "intro": "1-2 sentence summary of what this garden setup needs",
+  "intro": "1-2 sentence summary",
   "categories": [
-    {
-      "name": "Plants",
-      "icon": "🌱",
-      "items": [
-        {"name": "item name", "detail": "quantity or spec", "tip": "brief buying tip", "priority": "essential"}
-      ]
-    },
+    {"name": "Plants", "icon": "🌱", "items": [{"name": "item", "detail": "quantity/spec", "tip": "buying tip", "priority": "essential"}]},
     {"name": "Soil & Amendments", "icon": "🪱", "items": [...]},
     {"name": "Tools", "icon": "🛠️", "items": [...]},
     {"name": "Extras", "icon": "✨", "items": [...]}
   ]
 }
-priority must be "essential" or "optional". Give 3-6 items per category. Be specific with product names where helpful.`;
+priority: "essential" or "optional". 3-6 items per category.`;
 
   const text = await ai(prompt, 2000);
   const list = parseJSON(text, "object");
@@ -421,14 +416,11 @@ async function handlePhotos(req, res) {
   const { name, scientific } = await readBody(req);
   if (!name) return sendJSON(res, 400, { error: "name is required" });
 
-  const PERENUAL_KEY = process.env.PERENUAL_API_KEY;
-
-  // Try Perenual first
-  if (PERENUAL_KEY) {
+  if (process.env.PERENUAL_API_KEY) {
     try {
       for (const q of [scientific, name].filter(Boolean)) {
         const resp = await httpGet(
-          `https://perenual.com/api/species-list?key=${PERENUAL_KEY}&q=${encodeURIComponent(q)}&per_page=3`
+          `https://perenual.com/api/species-list?key=${process.env.PERENUAL_API_KEY}&q=${encodeURIComponent(q)}&per_page=3`
         );
         const photos = [];
         for (const plant of (resp.data || []).slice(0, 3)) {
@@ -444,7 +436,6 @@ async function handlePhotos(req, res) {
     } catch (e) { console.warn("Perenual error:", e.message); }
   }
 
-  // Fall back to Wikipedia
   try {
     const genus = (scientific || "").split(" ")[0];
     const photos = [];
@@ -486,27 +477,34 @@ async function handleZone(req, res) {
         const temps = climate.daily.temperature_2m_min.filter(t => t !== null);
         if (temps.length > 0) minTempC = Math.min(...temps);
       }
-    } catch (e) { /* estimate from latitude below */ }
+    } catch (e) { /* fall through to latitude estimate */ }
 
     if (minTempC === null) {
       const a = Math.abs(latitude);
       minTempC = a < 10 ? 15 : a < 20 ? 5 : a < 30 ? -2 : a < 40 ? -10 : a < 50 ? -20 : a < 60 ? -32 : -45;
     }
 
-    const minTempF = minTempC * 9 / 5 + 32;
+    const F = minTempC * 9 / 5 + 32;
     const RHS = new Set(["GB","IE","NL","BE","FR","DE","AT","CH","DK","NO","SE","FI","IS","PT","ES","IT","PL","CZ","SK","HU","RO","HR","SI","BG","GR","TR"]);
     const AU  = new Set(["AU","NZ"]);
 
     let zoneLabel, system;
     if (AU.has(country)) {
       system = "Australian";
-      zoneLabel = minTempC >= 18 ? "Zone 1 — Tropical" : minTempC >= 10 ? "Zone 2 — Subtropical" : minTempC >= 2 ? "Zone 3 — Warm temperate" : minTempC >= -5 ? "Zone 4 — Cool temperate" : minTempC >= -12 ? "Zone 5 — Cold temperate" : minTempC >= -20 ? "Zone 6 — Alpine" : "Zone 7 — Sub-alpine";
+      zoneLabel = minTempC >= 18 ? "Zone 1 — Tropical" : minTempC >= 10 ? "Zone 2 — Subtropical" :
+                  minTempC >= 2  ? "Zone 3 — Warm temperate" : minTempC >= -5 ? "Zone 4 — Cool temperate" :
+                  minTempC >= -12 ? "Zone 5 — Cold temperate" : minTempC >= -20 ? "Zone 6 — Alpine" : "Zone 7 — Sub-alpine";
     } else if (RHS.has(country)) {
       system = "RHS";
-      zoneLabel = minTempC >= 15 ? "H1a — Heated glasshouse" : minTempC >= 10 ? "H1b — Warm glasshouse" : minTempC >= 5 ? "H1c — Cool glasshouse" : minTempC >= 0 ? "H2 — Half hardy" : minTempC >= -5 ? "H3 — Hardy in sheltered spots" : minTempC >= -10 ? "H4 — Hardy through most of UK" : minTempC >= -15 ? "H5 — Hardy in most places" : minTempC >= -20 ? "H6 — Hardy in all of UK" : "H7 — Very hardy";
+      zoneLabel = minTempC >= 15 ? "H1a — Heated glasshouse" : minTempC >= 10 ? "H1b — Warm glasshouse" :
+                  minTempC >= 5  ? "H1c — Cool glasshouse" : minTempC >= 0  ? "H2 — Half hardy" :
+                  minTempC >= -5 ? "H3 — Hardy in sheltered spots" : minTempC >= -10 ? "H4 — Hardy through most of UK" :
+                  minTempC >= -15 ? "H5 — Hardy in most places" : minTempC >= -20 ? "H6 — Hardy in all of UK" : "H7 — Very hardy";
     } else {
       system = "USDA";
-      zoneLabel = minTempF < -60 ? "Zone 1" : minTempF < -50 ? "Zone 2" : minTempF < -40 ? "Zone 3" : minTempF < -30 ? "Zone 4" : minTempF < -20 ? "Zone 5" : minTempF < -10 ? "Zone 6" : minTempF < 0 ? "Zone 7" : minTempF < 10 ? "Zone 8" : minTempF < 20 ? "Zone 9" : minTempF < 30 ? "Zone 10" : minTempF < 40 ? "Zone 11" : "Zone 12";
+      zoneLabel = F < -60 ? "Zone 1" : F < -50 ? "Zone 2" : F < -40 ? "Zone 3" : F < -30 ? "Zone 4" :
+                  F < -20 ? "Zone 5" : F < -10 ? "Zone 6" : F < 0  ? "Zone 7" : F < 10 ? "Zone 8" :
+                  F < 20  ? "Zone 9" : F < 30  ? "Zone 10" : F < 40 ? "Zone 11" : "Zone 12";
     }
 
     sendJSON(res, 200, { zone: zoneLabel, system, country, displayName, latitude, longitude });
@@ -520,29 +518,25 @@ async function handleNurseries(req, res) {
   const { location } = await readBody(req);
   if (!location) return sendJSON(res, 400, { error: "location required" });
 
-  const PLACES_KEY = process.env.GOOGLE_PLACES_API_KEY;
-  if (!PLACES_KEY) return sendJSON(res, 200, { nurseries: [], error: "Google Places not configured" });
+  const KEY = process.env.GOOGLE_PLACES_API_KEY;
+  if (!KEY) return sendJSON(res, 200, { nurseries: [], error: "Google Places not configured" });
 
   try {
     const geo = await httpGet(
-      `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(location)}&key=${PLACES_KEY}`
+      `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(location)}&key=${KEY}`
     );
     if (!geo.results?.length) return sendJSON(res, 200, { nurseries: [], error: "Location not found" });
 
     const { lat, lng } = geo.results[0].geometry.location;
     const places = await httpGet(
-      `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${lat},${lng}&radius=40000&keyword=plant+nursery&type=store&key=${PLACES_KEY}`
+      `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${lat},${lng}&radius=40000&keyword=plant+nursery&type=store&key=${KEY}`
     );
 
     const nurseries = (places.results || []).slice(0, 10).map(p => ({
-      name:     p.name,
-      address:  p.vicinity,
-      rating:   p.rating || null,
-      reviews:  p.user_ratings_total || 0,
-      open:     p.opening_hours?.open_now ?? null,
-      lat:      p.geometry.location.lat,
-      lng:      p.geometry.location.lng,
-      place_id: p.place_id,
+      name: p.name, address: p.vicinity,
+      rating: p.rating || null, reviews: p.user_ratings_total || 0,
+      open: p.opening_hours?.open_now ?? null,
+      lat: p.geometry.location.lat, lng: p.geometry.location.lng,
     }));
 
     sendJSON(res, 200, { nurseries, center: { lat, lng } });
@@ -560,7 +554,7 @@ async function handleGetGarden(req, res) {
 }
 
 async function handleSaveGarden(req, res) {
-  const { uid, plants } = await readBodyLarge(req); // plants array can be large
+  const { uid, plants } = await readBody(req, 5 * 1024 * 1024);
   if (!uid) return sendJSON(res, 400, { error: "uid required" });
   await dbSaveGarden(uid, plants || []);
   sendJSON(res, 200, { ok: true });
@@ -609,15 +603,15 @@ async function handleVerifySession(req, res) {
 }
 
 async function handleStripeWebhook(req, res) {
-  if (!STRIPE_WEBHOOK_SECRET) return sendJSON(res, 400, { error: "Webhook secret not configured" });
+  if (!STRIPE_WEBHOOK_SEC) return sendJSON(res, 400, { error: "Webhook secret not configured" });
   const rawBody = await readBodyRaw(req);
   const sig = req.headers["stripe-signature"] || "";
 
   try {
     const parts = sig.split(",");
-    const ts  = parts.find(p => p.startsWith("t="))?.slice(2);
-    const v1  = parts.find(p => p.startsWith("v1="))?.slice(3);
-    const expected = crypto.createHmac("sha256", STRIPE_WEBHOOK_SECRET)
+    const ts = parts.find(p => p.startsWith("t="))?.slice(2);
+    const v1 = parts.find(p => p.startsWith("v1="))?.slice(3);
+    const expected = crypto.createHmac("sha256", STRIPE_WEBHOOK_SEC)
       .update(`${ts}.${rawBody}`).digest("hex");
     if (expected !== v1) return sendJSON(res, 400, { error: "Invalid signature" });
   } catch (e) {
@@ -627,14 +621,126 @@ async function handleStripeWebhook(req, res) {
   const event = JSON.parse(rawBody.toString());
   if (event.type === "checkout.session.completed") {
     const uid = event.data.object.metadata?.uid;
-    const cid = event.data.object.customer;
-    if (uid) await dbSetPro(uid, true, cid);
+    if (uid) await dbSetPro(uid, true, event.data.object.customer);
   }
   if (event.type === "customer.subscription.deleted") {
     const uid = event.data.object.metadata?.uid;
     if (uid) await dbSetPro(uid, false);
   }
   sendJSON(res, 200, { received: true });
+}
+
+// ── Auth — Magic Link ─────────────────────────────────────
+async function handleSendMagicLink(req, res) {
+  if (!RESEND_KEY) return sendJSON(res, 500, { error: "Email not configured — add RESEND_API_KEY to Railway" });
+
+  const { email, uid } = await readBody(req);
+  if (!email || !email.includes("@")) return sendJSON(res, 400, { error: "Valid email required" });
+
+  const token    = crypto.randomBytes(32).toString("hex");
+  const expires  = new Date(Date.now() + 15 * 60 * 1000);
+  const cleanEmail = email.toLowerCase().trim();
+
+  if (db) {
+    await db.query(
+      "INSERT INTO magic_tokens (token, email, uid, expires_at) VALUES ($1,$2,$3,$4)",
+      [token, cleanEmail, uid || null, expires]
+    );
+  }
+
+  const link = `${APP_URL}/auth/verify?token=${token}`;
+  const html = `
+    <div style="font-family:sans-serif;max-width:480px;margin:0 auto;padding:32px 24px;">
+      <h1 style="font-size:26px;color:#1a5c96;margin-bottom:8px;">🌸 BloomWise</h1>
+      <p style="font-size:15px;color:#2a4260;margin-bottom:24px;">Click the button below to sign in to your BloomWise account. This link expires in 15 minutes and can only be used once.</p>
+      <a href="${link}" style="display:inline-block;background:linear-gradient(135deg,#1a4d7a,#2e7dc4);color:#fff;text-decoration:none;padding:14px 32px;border-radius:50px;font-size:15px;font-weight:600;">Sign in to BloomWise</a>
+      <p style="font-size:12px;color:#8a9eb0;margin-top:28px;">If you didn't request this email, you can safely ignore it.<br><br>Or copy this link: ${link}</p>
+    </div>`;
+
+  const emailBody = JSON.stringify({
+    from: `BloomWise <${FROM_EMAIL}>`,
+    to: [cleanEmail],
+    subject: "Your BloomWise login link",
+    html,
+  });
+
+  await new Promise((resolve, reject) => {
+    const r = https.request({
+      hostname: "api.resend.com", path: "/emails", method: "POST",
+      headers: {
+        "Authorization": `Bearer ${RESEND_KEY}`,
+        "Content-Type": "application/json",
+        "Content-Length": Buffer.byteLength(emailBody),
+      },
+    }, (apiRes) => {
+      let d = "";
+      apiRes.on("data", c => d += c);
+      apiRes.on("end", () => {
+        const parsed = JSON.parse(d);
+        if (parsed.id) resolve(parsed);
+        else reject(new Error(parsed.message || "Email send failed"));
+      });
+    });
+    r.on("error", reject);
+    r.write(emailBody);
+    r.end();
+  });
+
+  sendJSON(res, 200, { ok: true });
+}
+
+async function handleVerifyToken(req, res) {
+  const { token } = await readBody(req);
+  if (!token) return sendJSON(res, 400, { error: "Token required" });
+  if (!db)    return sendJSON(res, 500, { error: "Database not configured" });
+
+  const r = await db.query(
+    "SELECT * FROM magic_tokens WHERE token=$1 AND used=FALSE AND expires_at > NOW()",
+    [token]
+  );
+  if (!r.rows.length) return sendJSON(res, 400, { error: "Invalid or expired link — please request a new one" });
+
+  const { email, uid: anonUid } = r.rows[0];
+  await db.query("UPDATE magic_tokens SET used=TRUE WHERE token=$1", [token]);
+
+  // Find or create account
+  let acct = await db.query("SELECT * FROM accounts WHERE email=$1", [email]);
+  if (!acct.rows.length) {
+    acct = await db.query(
+      "INSERT INTO accounts (email, uid) VALUES ($1,$2) RETURNING *",
+      [email, anonUid]
+    );
+  }
+  const account = acct.rows[0];
+
+  // Migrate anonymous garden if account doesn't have one yet
+  if (anonUid && db) {
+    const hasGarden = await db.query("SELECT 1 FROM gardens WHERE uid=$1", [email]);
+    if (!hasGarden.rows.length) {
+      const anonGarden = await db.query("SELECT plants FROM gardens WHERE uid=$1", [anonUid]);
+      if (anonGarden.rows.length) {
+        await db.query(
+          "INSERT INTO gardens (uid, plants) VALUES ($1,$2) ON CONFLICT (uid) DO NOTHING",
+          [email, anonGarden.rows[0].plants]
+        );
+      }
+    }
+    // Migrate pro status
+    const anonPro = await db.query("SELECT is_pro FROM users WHERE uid=$1", [anonUid]);
+    if (anonPro.rows[0]?.is_pro) {
+      await db.query(
+        "INSERT INTO users (uid, is_pro) VALUES ($1,TRUE) ON CONFLICT (uid) DO UPDATE SET is_pro=TRUE",
+        [email]
+      );
+    }
+  }
+
+  sendJSON(res, 200, {
+    ok: true,
+    email,
+    uid: email, // email is the stable UID for logged-in users
+    name: account.name || email.split("@")[0],
+  });
 }
 
 // ══════════════════════════════════════════════════════════
@@ -644,7 +750,6 @@ async function handleStripeWebhook(req, res) {
 const server = http.createServer(async (req, res) => {
   const url = req.url.split("?")[0].replace(/\/+$/, "") || "/";
 
-  // Log API requests
   if (url !== "/" && url !== "/health") {
     console.log(`[${new Date().toISOString()}] ${req.method} ${url}`);
   }
@@ -659,34 +764,42 @@ const server = http.createServer(async (req, res) => {
     return res.end();
   }
 
-  // GET — serve frontend or health check
+  // GET
   if (req.method === "GET") {
     if (url === "/health") return sendJSON(res, 200, { status: "ok", model: MODEL, db: !!db });
+    if (url === "/auth/verify") {
+      const token = req.url.split("?token=")[1]?.split("&")[0] || "";
+      res.writeHead(302, { "Location": `/?verify=${encodeURIComponent(token)}` });
+      return res.end();
+    }
     return sendHTML(res);
   }
 
-  // POST — API
+  // POST
   if (req.method === "POST") {
 
-    // Stripe webhook — raw body, skip JSON parsing
+    // Stripe webhook — raw body only
     if (url === "/stripe-webhook") {
       try { await handleStripeWebhook(req, res); }
       catch (e) { sendJSON(res, 500, { error: e.message }); }
       return;
     }
 
-    // Free routes — no Anthropic needed, no rate limit
+    // Free routes — no Anthropic needed
     const FREE = {
-      "/photos":          handlePhotos,
-      "/zone":            handleZone,
-      "/check-pro":       handleCheckPro,
-      "/create-checkout": handleCreateCheckout,
-      "/verify-session":  handleVerifySession,
-      "/garden/get":      handleGetGarden,
-      "/garden/save":     handleSaveGarden,
-      "/shopping-list":   handleShoppingList,
-      "/nurseries":       handleNurseries,
+      "/photos":             handlePhotos,
+      "/zone":               handleZone,
+      "/check-pro":          handleCheckPro,
+      "/create-checkout":    handleCreateCheckout,
+      "/verify-session":     handleVerifySession,
+      "/garden/get":         handleGetGarden,
+      "/garden/save":        handleSaveGarden,
+      "/shopping-list":      handleShoppingList,
+      "/nurseries":          handleNurseries,
+      "/auth/send-link":     handleSendMagicLink,
+      "/auth/verify-token":  handleVerifyToken,
     };
+
     if (FREE[url]) {
       try { await FREE[url](req, res); }
       catch (e) {
@@ -698,7 +811,7 @@ const server = http.createServer(async (req, res) => {
 
     // AI routes — need API key + rate limit
     if (!ANTHROPIC_KEY) {
-      return sendJSON(res, 500, { error: "ANTHROPIC_API_KEY not configured in Railway environment variables" });
+      return sendJSON(res, 500, { error: "ANTHROPIC_API_KEY not set in Railway environment variables" });
     }
     if (isRateLimited(getIP(req))) {
       return sendJSON(res, 429, { error: "Too many requests — please wait a moment and try again" });
@@ -709,6 +822,7 @@ const server = http.createServer(async (req, res) => {
       "/lookup":          handleLookup,
       "/identify-plant":  handleIdentifyPlant,
     };
+
     if (AI[url]) {
       try { await AI[url](req, res); }
       catch (e) {
@@ -731,18 +845,16 @@ connectDB()
       console.log(`
   ╔══════════════════════════════════════════════╗
   ║         🌸  BloomWise Server                 ║
-  ║                                              ║
   ║   http://localhost:${PORT}                      ║
   ║                                              ║
-  ║   Anthropic:  ${ANTHROPIC_KEY        ? "✅ configured" : "❌ ANTHROPIC_API_KEY missing"}    ║
-  ║   Stripe:     ${STRIPE_KEY           ? "✅ configured" : "⚠️  not set"}                  ║
-  ║   Database:   ${process.env.DATABASE_URL ? "✅ PostgreSQL" : "⚠️  in-memory fallback"}         ║
-  ║   Perenual:   ${process.env.PERENUAL_API_KEY ? "✅ configured" : "⚠️  not set"}                  ║
-  ║   Places:     ${process.env.GOOGLE_PLACES_API_KEY ? "✅ configured" : "⚠️  not set"}                  ║
-  ║                                              ║
-  ║   Free tier:  ${FREE_RECS_PER_DAY} recs/day per user         ║
-  ╚══════════════════════════════════════════════╝
-      `);
+  ║   Anthropic: ${ANTHROPIC_KEY  ? "✅" : "❌ ANTHROPIC_API_KEY missing"}                    ║
+  ║   Stripe:    ${STRIPE_KEY     ? "✅" : "⚠️  not set"}                         ║
+  ║   Database:  ${process.env.DATABASE_URL ? "✅ PostgreSQL" : "⚠️  in-memory"}              ║
+  ║   Email:     ${RESEND_KEY     ? "✅ Resend" : "⚠️  RESEND_API_KEY not set"}               ║
+  ║   Perenual:  ${process.env.PERENUAL_API_KEY ? "✅" : "⚠️  not set"}                    ║
+  ║   Places:    ${process.env.GOOGLE_PLACES_API_KEY ? "✅" : "⚠️  not set"}                    ║
+  ║   Free tier: ${FREE_RECS_PER_DAY} recs/day                       ║
+  ╚══════════════════════════════════════════════╝`);
     });
   })
   .catch(err => {
