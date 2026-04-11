@@ -688,13 +688,13 @@ async function handleCreateCheckout(req, res) {
   if (!uid) return sendJSON(res, 400, { error: "uid required" });
 
   const session = await stripeReq("POST", "/v1/checkout/sessions", {
-    mode: "subscription",
+    mode: "payment",                          // one-time, not subscription
     "line_items[0][price]": STRIPE_PRICE_ID,
     "line_items[0][quantity]": "1",
     success_url: `${STRIPE_SUCCESS_URL}&uid=${uid}&session_id={CHECKOUT_SESSION_ID}`,
     cancel_url: STRIPE_CANCEL_URL,
     "metadata[uid]": uid,
-    "subscription_data[metadata][uid]": uid,
+    "payment_intent_data[metadata][uid]": uid, // one-time payment metadata
   });
 
   if (session.error) return sendJSON(res, 400, { error: session.error.message });
@@ -732,13 +732,17 @@ async function handleStripeWebhook(req, res) {
   }
 
   const event = JSON.parse(rawBody.toString());
+
+  // One-time payment completed
   if (event.type === "checkout.session.completed") {
     const uid = event.data.object.metadata?.uid;
     if (uid) await dbSetPro(uid, true, event.data.object.customer);
   }
-  if (event.type === "customer.subscription.deleted") {
+
+  // Also handle payment_intent for redundancy
+  if (event.type === "payment_intent.succeeded") {
     const uid = event.data.object.metadata?.uid;
-    if (uid) await dbSetPro(uid, false);
+    if (uid) await dbSetPro(uid, true);
   }
   sendJSON(res, 200, { received: true });
 }
