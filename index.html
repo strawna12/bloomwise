@@ -1534,15 +1534,6 @@ textarea { resize: vertical; min-height: 90px; }
         </div>
       </div>
       <div class="layout-control-group">
-        <label class="layout-label">Scale (ft/grid)</label>
-        <select id="layout-scale" class="layout-num-input" style="width:90px;" onchange="redrawCanvas()">
-          <option value="1">1 ft</option>
-          <option value="2">2 ft</option>
-          <option value="5" selected>5 ft</option>
-          <option value="10">10 ft</option>
-        </select>
-      </div>
-      <div class="layout-control-group">
         <label class="layout-label">Show spacing</label>
         <input type="checkbox" id="layout-spacing" checked onchange="redrawCanvas()"
           style="width:18px;height:18px;cursor:pointer;accent-color:var(--bloom);"/>
@@ -1573,8 +1564,9 @@ textarea { resize: vertical; min-height: 90px; }
       <div class="layout-canvas-wrap">
         <canvas id="layout-canvas" class="layout-canvas"></canvas>
         <div class="layout-legend">
-          <span class="legend-item"><span class="legend-dot" style="background:rgba(46,125,196,.3);border:2px solid var(--sky);"></span> Plant spread</span>
+          <span class="legend-item"><span class="legend-dot" style="background:rgba(46,125,196,.3);border:2px solid var(--sky);"></span> Circle = mature plant size</span>
           <span class="legend-item"><span class="legend-dot" style="background:rgba(212,160,23,.15);border:1.5px dashed var(--gold);"></span> Spacing zone</span>
+          <span style="font-size:11px;color:var(--stone);margin-left:auto;font-style:italic;">Circles represent the plant at full maturity</span>
         </div>
       </div>
     </div>
@@ -2965,11 +2957,8 @@ let layoutInited   = false;
 let layoutMapImg   = null;  // satellite image as HTMLImageElement
 let layoutMapMeta  = null;  // { lat, lng, zoom, metersPerPx }
 
-// px per foot based on scale dropdown
-function getPxPerFt() {
-  const s = parseFloat(document.getElementById('layout-scale')?.value || 5);
-  return 40 / s; // 40px per grid cell regardless of scale unit
-}
+// px per foot on blank canvas (fixed at 40px = 5ft grid squares = 8px/ft)
+function getPxPerFt() { return 8; }
 
 function getCanvas() { return document.getElementById('layout-canvas'); }
 function getCtx()    { return getCanvas().getContext('2d'); }
