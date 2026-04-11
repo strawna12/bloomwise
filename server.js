@@ -261,13 +261,18 @@ function parseJSON(text, type = "array") {
 }
 
 // ── HTTP GET helper ───────────────────────────────────────
-function httpGet(url) {
+function httpGet(url, timeoutMs = 8000) {
   return new Promise((resolve, reject) => {
-    https.get(url, { headers: { "User-Agent": "BloomWise/1.0" } }, (res) => {
+    const req = https.get(url, { headers: { "User-Agent": "BloomWise/1.0" } }, (res) => {
       let data = "";
       res.on("data", c => data += c);
       res.on("end", () => { try { resolve(JSON.parse(data)); } catch (e) { reject(e); } });
-    }).on("error", reject);
+    });
+    req.on("error", reject);
+    req.setTimeout(timeoutMs, () => {
+      req.destroy();
+      reject(new Error(`Request timed out after ${timeoutMs}ms`));
+    });
   });
 }
 
@@ -571,7 +576,8 @@ async function handleZone(req, res) {
     let minTempC = null;
     try {
       const climate = await httpGet(
-        `https://climate-api.open-meteo.com/v1/climate?latitude=${latitude}&longitude=${longitude}&start_date=1991-01-01&end_date=2020-12-31&models=EC_Earth3P_HR&daily=temperature_2m_min&timezone=auto`
+        `https://climate-api.open-meteo.com/v1/climate?latitude=${latitude}&longitude=${longitude}&start_date=1991-01-01&end_date=2020-12-31&models=EC_Earth3P_HR&daily=temperature_2m_min&timezone=auto`,
+        5000  // 5s timeout — fall back to latitude estimate if slow
       );
       if (climate.daily?.temperature_2m_min) {
         const temps = climate.daily.temperature_2m_min.filter(t => t !== null);
@@ -644,6 +650,35 @@ async function handleNurseries(req, res) {
     console.warn("Nursery error:", e.message);
     sendJSON(res, 200, { nurseries: [], error: e.message });
   }
+}
+
+async function handleGeocode(req, res) {
+  const { location } = await readBody(req);
+  if (!location) return sendJSON(res, 400, { error: "location is required" });
+  try {
+    const geo = await httpGet(
+      `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(location)}&count=1&language=en&format=json`
+    );
+    if (!geo.results?.length) return sendJSON(res, 200, { found: false });
+    const { latitude, longitude, name, admin1, country_code } = geo.results[0];
+    const displayName = [name, admin1, country_code].filter(Boolean).join(", ");
+    sendJSON(res, 200, { found: true, latitude, longitude, displayName });
+  } catch(e) {
+    sendJSON(res, 200, { found: false, error: e.message });
+  }
+}
+
+async function handleMapImage(req, res) {
+  const { lat, lng, zoom, w, h } = await readBody(req);
+  const KEY = process.env.GOOGLE_STATIC_MAPS_KEY || process.env.GOOGLE_PLACES_API_KEY;
+
+  if (!KEY) return sendJSON(res, 200, { url: null, error: "No Maps API key configured" });
+
+  const width  = Math.min(Math.round(w) || 640, 640);
+  const height = Math.min(Math.round(h) || 400, 640);
+
+  const url = `https://maps.googleapis.com/maps/api/staticmap?center=${lat},${lng}&zoom=${zoom}&size=${width}x${height}&maptype=satellite&key=${KEY}`;
+  sendJSON(res, 200, { url });
 }
 
 async function handleGetGarden(req, res) {
@@ -923,6 +958,8 @@ const server = http.createServer(async (req, res) => {
 
     // Free routes — no Anthropic needed
     const FREE = {
+      "/map-image":           handleMapImage,
+      "/geocode":             handleGeocode,
       "/photos":              handlePhotos,
       "/zone":                handleZone,
       "/check-pro":           handleCheckPro,
