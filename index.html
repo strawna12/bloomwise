@@ -878,6 +878,42 @@ textarea { resize: vertical; min-height: 90px; }
   border-radius: var(--r-lg); padding: 1.5rem; text-align: center;
   font-size: 14px; color: #7a5500; line-height: 1.6;
 }
+
+/* ── Login modal ── */
+.login-modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(10,20,40,.6);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 200; padding: 1.5rem;
+}
+.login-modal {
+  background: var(--white); border-radius: var(--r-xl);
+  padding: 2.5rem; max-width: 400px; width: 100%;
+  box-shadow: 0 24px 64px rgba(10,20,40,.25); text-align: center;
+}
+.login-modal-icon { font-size: 44px; margin-bottom: 12px; }
+.login-modal-title { font-family:'Cormorant Garamond',serif; font-size: 26px; color: var(--bloom); font-weight: 600; margin-bottom: 8px; }
+.login-modal-sub { font-size: 14px; color: var(--stone); line-height: 1.6; margin-bottom: 1.5rem; }
+.login-input { width: 100%; padding: 13px 16px; font-size: 15px; border: 1.5px solid var(--border); border-radius: var(--r); font-family: inherit; margin-bottom: 12px; outline: none; transition: border-color .2s; }
+.login-input:focus { border-color: var(--petal2); }
+.login-submit { width: 100%; padding: 14px; font-size: 15px; font-weight: 700; border-radius: 50px; cursor: pointer; font-family: inherit; background: linear-gradient(135deg,#1a4d7a,#2e7dc4); color: #fff; border: none; margin-bottom: 10px; transition: opacity .15s; }
+.login-submit:hover { opacity: .88; }
+.login-submit:disabled { opacity: .6; cursor: not-allowed; }
+.login-dismiss { font-size: 12px; color: var(--stone); cursor: pointer; background: none; border: none; font-family: inherit; text-decoration: underline; }
+.login-success { font-size: 14px; color: var(--sage); background: var(--sage-lt); border: 1px solid var(--sage); border-radius: var(--r); padding: 12px 16px; margin-bottom: 12px; line-height: 1.6; }
+.login-error { font-size: 13px; color: var(--rust); background: var(--rust-lt); border: 1px solid var(--rust); border-radius: var(--r); padding: 10px 14px; margin-bottom: 12px; }
+
+/* ── User bar ── */
+.user-bar { display: none; background: var(--white); border: 1.5px solid var(--border2); border-radius: var(--r-lg); padding: 10px 16px; margin-bottom: 1.25rem; align-items: center; gap: 12px; box-shadow: var(--sh); }
+.user-bar.show { display: flex; }
+.user-avatar { width: 34px; height: 34px; border-radius: 50%; background: linear-gradient(135deg,#1a4d7a,#2e7dc4); color: #fff; font-size: 14px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.user-info { flex: 1; min-width: 0; }
+.user-name { font-size: 13px; font-weight: 600; color: var(--bloom); }
+.user-email { font-size: 11px; color: var(--stone); }
+.btn-signout { font-size: 12px; color: var(--stone); cursor: pointer; background: none; border: 1px solid var(--border); border-radius: 50px; padding: 5px 12px; font-family: inherit; transition: all .15s; }
+.btn-signout:hover { border-color: var(--rust); color: var(--rust); }
+.btn-signin { font-size: 13px; font-weight: 600; color: var(--sky); cursor: pointer; background: none; border: 1.5px solid var(--sky); border-radius: 50px; padding: 6px 16px; font-family: inherit; transition: all .15s; margin-left: auto; }
+.btn-signin:hover { background: var(--sky-lt); }
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
@@ -906,7 +942,34 @@ textarea { resize: vertical; min-height: 90px; }
     <button class="btn-upgrade" onclick="showUpgradeModal()">⚡ Upgrade to Pro</button>
   </div>
 
-  <!-- Upgrade modal -->
+  <!-- User bar — shows when logged in -->
+  <div class="user-bar" id="user-bar">
+    <div class="user-avatar" id="user-avatar">?</div>
+    <div class="user-info">
+      <div class="user-name" id="user-name">Loading…</div>
+      <div class="user-email" id="user-email"></div>
+    </div>
+    <button class="btn-signout" onclick="signOut()">Sign out</button>
+  </div>
+
+  <!-- Sign-in button — shows when NOT logged in -->
+  <div id="signin-bar" style="display:none;text-align:right;margin-bottom:1rem;">
+    <button class="btn-signin" onclick="showLoginModal()">🔑 Sign in to save your garden</button>
+  </div>
+
+  <!-- Login modal -->
+  <div class="login-modal-overlay" id="login-modal" style="display:none;" onclick="if(event.target===this)hideLoginModal()">
+    <div class="login-modal">
+      <div class="login-modal-icon">🌸</div>
+      <div class="login-modal-title">Sign in to BloomWise</div>
+      <div class="login-modal-sub">Enter your email and we'll send you a magic link — no password needed. Your garden syncs across all your devices.</div>
+      <div id="login-msg"></div>
+      <input type="email" class="login-input" id="login-email" placeholder="you@example.com" onkeydown="if(event.key==='Enter')sendMagicLink()"/>
+      <button class="login-submit" id="login-submit-btn" onclick="sendMagicLink()">✉️ Send me a login link</button>
+      <br/>
+      <button class="login-dismiss" onclick="hideLoginModal()">Maybe later</button>
+    </div>
+  </div>
   <div class="modal-overlay" id="upgrade-modal" style="display:none;" onclick="if(event.target===this)hideUpgradeModal()">
     <div class="modal-box">
       <div class="modal-icon">🌸</div>
@@ -1552,12 +1615,17 @@ async function generateRecs(){
 
     document.getElementById('results').innerHTML=`<div class="loading"><div class="loader"></div><div class="loading-text">Loading photos…</div></div>`;
 
-    const cards=await Promise.all(plants.map(async pl=>{
+    // Store plants in a global cache — avoids JSON.stringify in onclick (breaks on apostrophes/quotes)
+    window._plantCache = {};
+
+    const cards=await Promise.all(plants.map(async (pl, idx)=>{
       const photos=await getPhotos(pl.name,pl.scientific);
       pl.photo = photos[0]||null;
+      window._plantCache[idx] = pl;
+
       const inGarden = garden.find(g=>g.name===pl.name);
-      const addBtnState = inGarden ? 'added" disabled' : '"';
       const addBtnText = inGarden ? '✓ In garden' : '+ Add to garden';
+      const addBtnDisabled = inGarden ? 'disabled' : '';
       const specsHtml = (pl.mature_height||pl.mature_spread||pl.spacing||pl.growth_rate||pl.lifespan) ? `
             <div class="plant-specs">
               ${pl.mature_height  ? `<div class="spec-chip"><div class="spec-label">Height</div><div class="spec-val">${pl.mature_height}</div></div>` : ''}
@@ -1581,8 +1649,8 @@ async function generateRecs(){
             </div>
             ${specsHtml}
             <div class="plant-desc">${pl.description}</div>
-            <button class="add-to-garden-btn ${inGarden?'added':''}" data-name="${pl.name}"
-              onclick='addToGarden(${JSON.stringify(pl)}, this)'>${addBtnText}</button>
+            <button class="add-to-garden-btn ${inGarden?'added':''}" data-idx="${idx}" data-name="${pl.name}" ${addBtnDisabled}
+              onclick="addToGarden(window._plantCache[this.dataset.idx], this)">${addBtnText}</button>
           </div>
         </div>`;
     }));
@@ -1661,7 +1729,7 @@ function getUserId(){
   }
   return id;
 }
-const USER_ID = getUserId();
+let USER_ID = getUserId();
 let garden = [];
 
 async function loadGardenFromDB(){
@@ -1726,32 +1794,45 @@ async function clearGarden(){
   });
 }
 
-function renderPlanner(){
+async function renderPlanner(){
   const empty   = document.getElementById('planner-empty');
   const grid    = document.getElementById('planner-grid');
   const actions = document.getElementById('planner-actions');
   if(garden.length===0){ empty.style.display='block'; grid.innerHTML=''; actions.style.display='none'; return; }
   empty.style.display='none'; actions.style.display='flex';
-  grid.innerHTML = garden.map(pl=>{
-    const photo = pl.photo
-      ? `<img class="pc-photo" src="${pl.photo}" alt="${pl.name}" onerror="this.outerHTML='<div class=\'pc-photo-placeholder\'>No photo</div>'">`
-      : `<div class="pc-photo-placeholder">No photo available</div>`;
+
+  // Render cards immediately with placeholders
+  grid.innerHTML = garden.map((pl,idx)=>{
     const safeName = pl.name.replace(/'/g, "\'");
-    return `<div class="planner-card">
-      ${photo}
+    return `<div class="planner-card" id="pcard-${idx}">
+      <div class="pc-photo-placeholder" id="pphoto-${idx}" style="display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--stone);">Loading…</div>
       <div class="pc-body">
         <div class="pc-name">${pl.name}</div>
-        <div class="pc-sci">${pl.scientific}</div>
+        <div class="pc-sci">${pl.scientific||''}</div>
         <div class="pc-season">${seasonEmoji(pl.planting_season)} ${pl.planting_season||'Spring or Fall'}</div>
         <div class="pc-tags">
-          <span class="pc-tag">☀️ ${pl.sun}</span>
-          <span class="pc-tag">💧 ${pl.water}</span>
-          <span class="pc-tag">🌱 ${pl.soil}</span>
+          <span class="pc-tag">☀️ ${pl.sun||''}</span>
+          <span class="pc-tag">💧 ${pl.water||''}</span>
+          <span class="pc-tag">🌱 ${pl.soil||''}</span>
         </div>
         <button class="pc-remove" onclick="removeFromGarden('${safeName}')">Remove from garden</button>
       </div>
     </div>`;
   }).join('');
+
+  // Fetch photos async and swap in
+  garden.forEach(async (pl, idx) => {
+    const el = document.getElementById(`pphoto-${idx}`);
+    if (!el) return;
+    try {
+      const photos = await getPhotos(pl.name, pl.scientific||pl.name);
+      if (photos && photos[0]) {
+        el.outerHTML = `<img class="pc-photo" src="${photos[0]}" alt="${pl.name}" loading="lazy" onerror="this.outerHTML='<div class=\'pc-photo-placeholder\'>No photo</div>'">`;
+      } else {
+        el.textContent = 'No photo available';
+      }
+    } catch(e) { el.textContent = 'No photo available'; }
+  });
 }
 
 // ── PDF Export ───────────────────────────────────────────
@@ -2378,9 +2459,120 @@ function lookupFromID(plantName) {
   doLookup();
 }
 
+// ── Auth — Magic Link ─────────────────────────────────────
+let currentUser = null; // { email, uid, name } when logged in
+
+function showLoginModal()  { document.getElementById('login-modal').style.display = 'flex'; document.getElementById('login-email').focus(); }
+function hideLoginModal()  { document.getElementById('login-modal').style.display = 'none'; document.getElementById('login-msg').innerHTML = ''; }
+
+async function sendMagicLink() {
+  const email = document.getElementById('login-email').value.trim();
+  if (!email || !email.includes('@')) {
+    document.getElementById('login-msg').innerHTML = '<div class="login-error">Please enter a valid email address</div>';
+    return;
+  }
+  const btn = document.getElementById('login-submit-btn');
+  btn.disabled = true; btn.textContent = 'Sending…';
+  document.getElementById('login-msg').innerHTML = '';
+  try {
+    await apiCall('/auth/send-link', { email, uid: USER_ID });
+    document.getElementById('login-msg').innerHTML = `
+      <div class="login-success">
+        ✅ Check your email!<br>
+        We sent a login link to <strong>${email}</strong>.<br>
+        Click the link to sign in — it expires in 15 minutes.
+      </div>`;
+    btn.textContent = '✉️ Resend link';
+    btn.disabled = false;
+  } catch(e) {
+    document.getElementById('login-msg').innerHTML = `<div class="login-error">${e.message}</div>`;
+    btn.disabled = false; btn.textContent = '✉️ Send me a login link';
+  }
+}
+
+async function handleVerifyFromURL() {
+  const params = new URLSearchParams(window.location.search);
+  const token = params.get('verify');
+  if (!token) return;
+
+  // Clean the URL
+  window.history.replaceState({}, '', '/');
+
+  try {
+    const data = await apiCall('/auth/verify-token', { token });
+    if (data.ok) {
+      signIn(data);
+      showToast('✅ Signed in successfully! Your garden is syncing…');
+    }
+  } catch(e) {
+    showToast('⚠️ Login link expired or already used. Please request a new one.', 'warn');
+  }
+}
+
+function signIn(user) {
+  currentUser = user;
+  localStorage.setItem('bloomwise-user', JSON.stringify(user));
+
+  // Update USER_ID to the email so garden saves to the right account
+  // (We keep the original anonymous UID in localStorage for fallback)
+  window.USER_ID = user.uid; // override the module-level USER_ID
+
+  // Update UI
+  const initial = (user.name || user.email || '?')[0].toUpperCase();
+  document.getElementById('user-avatar').textContent = initial;
+  document.getElementById('user-name').textContent = user.name || user.email.split('@')[0];
+  document.getElementById('user-email').textContent = user.email;
+  document.getElementById('user-bar').classList.add('show');
+  document.getElementById('signin-bar').style.display = 'none';
+  hideLoginModal();
+
+  // Reload garden from the logged-in account
+  loadGardenFromDB();
+  initProStatus();
+}
+
+function signOut() {
+  currentUser = null;
+  localStorage.removeItem('bloomwise-user');
+  window.USER_ID = getUserId(); // revert to anonymous UID
+
+  document.getElementById('user-bar').classList.remove('show');
+  document.getElementById('signin-bar').style.display = 'block';
+  garden = [];
+  renderPlanner();
+  updatePlannerBadge();
+  showToast('Signed out');
+}
+
+function showToast(msg, type = 'ok') {
+  const t = document.createElement('div');
+  t.style.cssText = `position:fixed;bottom:24px;left:50%;transform:translateX(-50%);
+    background:${type==='warn'?'#7a4e00':'#1a5c96'};color:#fff;
+    padding:12px 24px;border-radius:50px;font-size:14px;font-weight:500;
+    z-index:9999;box-shadow:0 4px 20px rgba(0,0,0,.2);white-space:nowrap;`;
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 4000);
+}
+
+function initAuth() {
+  // Restore session from localStorage
+  const saved = localStorage.getItem('bloomwise-user');
+  if (saved) {
+    try { signIn(JSON.parse(saved)); return; } catch(e) { localStorage.removeItem('bloomwise-user'); }
+  }
+  // Show sign-in prompt for anonymous users (after a delay)
+  setTimeout(() => {
+    if (!currentUser) document.getElementById('signin-bar').style.display = 'block';
+  }, 3000);
+  // Check if returning from magic link
+  handleVerifyFromURL();
+}
+
 renderTracker(0);
-loadGardenFromDB(); // loads from Railway PostgreSQL (falls back to localStorage)
-initProStatus();   // checks pro status and sets up usage bar
+loadGardenFromDB();
+initProStatus();
+initAuth();
 </script>
 </body>
 </html>
