@@ -12,6 +12,7 @@ const fs     = require("fs");
 const path   = require("path");
 const crypto = require("crypto");
 const { Client } = require("pg");
+const bcrypt     = require("bcryptjs");
 
 // ── Config ────────────────────────────────────────────────
 const PORT               = process.env.PORT || 3000;
@@ -49,10 +50,11 @@ async function connectDB() {
       created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
     );
     CREATE TABLE IF NOT EXISTS usage (
-      uid TEXT NOT NULL,
+      uid        TEXT NOT NULL,
       usage_date DATE NOT NULL DEFAULT CURRENT_DATE,
-      rec_count INTEGER NOT NULL DEFAULT 0,
-      PRIMARY KEY (uid, usage_date)
+      rec_count  INTEGER NOT NULL DEFAULT 0,
+      feature    TEXT NOT NULL DEFAULT 'recommendations',
+      PRIMARY KEY (uid, usage_date, feature)
     );
     CREATE TABLE IF NOT EXISTS gardens (
       uid TEXT PRIMARY KEY,
@@ -60,18 +62,27 @@ async function connectDB() {
       updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
     );
     CREATE TABLE IF NOT EXISTS accounts (
-      id SERIAL PRIMARY KEY,
-      email TEXT UNIQUE NOT NULL,
-      name TEXT,
-      uid TEXT,
+      id            SERIAL PRIMARY KEY,
+      email         TEXT UNIQUE NOT NULL,
+      name          TEXT,
+      password_hash TEXT,
+      uid           TEXT,
+      created_at    TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    );
+    CREATE TABLE IF NOT EXISTS sessions (
+      token      TEXT PRIMARY KEY,
+      email      TEXT NOT NULL,
+      uid        TEXT NOT NULL,
+      expires_at TIMESTAMPTZ NOT NULL,
       created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
     );
+    -- Magic tokens kept for optional future use
     CREATE TABLE IF NOT EXISTS magic_tokens (
-      token TEXT PRIMARY KEY,
-      email TEXT NOT NULL,
-      uid TEXT,
+      token      TEXT PRIMARY KEY,
+      email      TEXT NOT NULL,
+      uid        TEXT,
       expires_at TIMESTAMPTZ NOT NULL,
-      used BOOLEAN NOT NULL DEFAULT FALSE,
+      used       BOOLEAN NOT NULL DEFAULT FALSE,
       created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
     );
   `);
@@ -97,24 +108,45 @@ async function dbSetPro(uid, isPro, customerId = null) {
   );
 }
 
-async function dbCheckFreeLimit(uid) {
+// ── Free tier limits ──────────────────────────────────────
+const FREE_LIMITS = {
+  recommendations: 3,   // per week
+  lookup:          2,   // per week
+  identify:        3,   // per week
+};
+
+async function dbCheckLimit(uid, feature) {
+  const limit = FREE_LIMITS[feature];
   if (!db) {
-    const today = new Date().toDateString();
-    const e = _mem.usage.get(uid) || { date: today, count: 0 };
-    if (e.date !== today) { e.date = today; e.count = 0; }
+    const week  = getWeekKey();
+    const key   = `${uid}:${feature}`;
+    const e     = _mem.usage.get(key) || { week, count: 0 };
+    if (e.week !== week) { e.week = week; e.count = 0; }
     e.count++;
-    _mem.usage.set(uid, e);
-    return { allowed: e.count <= FREE_RECS_PER_DAY, used: e.count, limit: FREE_RECS_PER_DAY };
+    _mem.usage.set(key, e);
+    return { allowed: e.count <= limit, used: e.count, limit, feature };
   }
   const r = await db.query(
-    `INSERT INTO usage (uid, usage_date, rec_count) VALUES ($1, CURRENT_DATE, 1)
-     ON CONFLICT (uid, usage_date) DO UPDATE SET rec_count = usage.rec_count + 1
+    `INSERT INTO usage (uid, usage_date, rec_count, feature)
+     VALUES ($1, date_trunc('week', CURRENT_DATE), 1, $2)
+     ON CONFLICT (uid, usage_date, feature)
+     DO UPDATE SET rec_count = usage.rec_count + 1
      RETURNING rec_count`,
-    [uid]
+    [uid, feature]
   );
   const count = r.rows[0].rec_count;
-  return { allowed: count <= FREE_RECS_PER_DAY, used: count, limit: FREE_RECS_PER_DAY };
+  return { allowed: count <= limit, used: count, limit, feature };
 }
+
+function getWeekKey() {
+  const d = new Date();
+  const day = d.getDay();
+  const diff = d.getDate() - day + (day === 0 ? -6 : 1); // Monday
+  return new Date(d.setDate(diff)).toDateString();
+}
+
+// Keep old name as alias
+async function dbCheckFreeLimit(uid) { return dbCheckLimit(uid, 'recommendations'); }
 
 async function dbGetGarden(uid) {
   if (!db) return _mem.gardens.get(uid) || [];
@@ -275,7 +307,7 @@ async function handleRecommendations(req, res) {
     if (!allowed) {
       return sendJSON(res, 402, {
         error: "free_limit_reached",
-        message: `You've used all ${limit} free recommendations today. Upgrade to BloomWise Pro for unlimited access.`,
+        message: `You've used all ${limit} free recommendations this week. Upgrade to BloomWise Pro for unlimited access.`,
         used, limit,
       });
     }
@@ -312,8 +344,21 @@ Colors: ${p.colors || "no preference"} | Priorities: ${p.priorities || "none"} |
 }
 
 async function handleLookup(req, res) {
-  const { plant, site } = await readBody(req);
+  const { plant, site, uid } = await readBody(req);
   if (!plant) return sendJSON(res, 400, { error: "plant name required" });
+
+  const isPro = uid ? await dbIsProUser(uid) : false;
+  if (!isPro) {
+    const { allowed, used, limit } = await dbCheckLimit(uid || 'anonymous', 'lookup');
+    if (!allowed) {
+      return sendJSON(res, 402, {
+        error: "free_limit_reached",
+        feature: "lookup",
+        message: `You've used all ${limit} free plant lookups this week. Upgrade to Pro for unlimited access.`,
+        used, limit,
+      });
+    }
+  }
 
   const siteInfo = site
     ? `User site — Location: ${site.location}, Zone: ${site.zone}, Season: ${site.season}, Sun: ${site.sun}, Soil: ${site.soil}, pH: ${site.ph}, Drainage: ${site.drainage}, Water: ${site.water}, Restrictions: ${site.wrestrict}, Style: ${site.style}`
@@ -348,8 +393,21 @@ verdict: green/yellow/red. status: ok/warn/bad/neutral.`;
 }
 
 async function handleIdentifyPlant(req, res) {
-  const { image, mimeType } = await readBody(req, 10 * 1024 * 1024);
+  const { image, mimeType, uid } = await readBody(req, 10 * 1024 * 1024);
   if (!image) return sendJSON(res, 400, { error: "image is required" });
+
+  const isPro = uid ? await dbIsProUser(uid) : false;
+  if (!isPro) {
+    const { allowed, used, limit } = await dbCheckLimit(uid || 'anonymous', 'identify');
+    if (!allowed) {
+      return sendJSON(res, 402, {
+        error: "free_limit_reached",
+        feature: "identify",
+        message: `You've used all ${limit} free plant identifications this week. Upgrade to Pro for unlimited access.`,
+        used, limit,
+      });
+    }
+  }
 
   const prompt = `You are an expert botanist with decades of experience identifying plants from photographs. Carefully examine every detail of this image — leaf shape, leaf margins, venation pattern, stem structure, flower form, color, texture, growth habit, and any other visible characteristics.
 
@@ -419,6 +477,16 @@ confidence must be high, medium, or low.`;
 
 async function handleShoppingList(req, res) {
   const p = await readBody(req);
+
+  const isPro = p.uid ? await dbIsProUser(p.uid) : false;
+  if (!isPro) {
+    return sendJSON(res, 402, {
+      error: "free_limit_reached",
+      feature: "shopping",
+      message: "The shopping list is a Pro feature. Upgrade to BloomWise Pro for unlimited access.",
+      limit: 0,
+    });
+  }
   const plantNames = (p.plants || []).map(pl => pl.name).filter(Boolean).join(", ");
 
   const prompt = `You are an expert horticulturist. Generate a practical shopping list for this garden. Return ONLY a valid JSON object.
@@ -588,6 +656,19 @@ async function handleGetGarden(req, res) {
 async function handleSaveGarden(req, res) {
   const { uid, plants } = await readBody(req, 5 * 1024 * 1024);
   if (!uid) return sendJSON(res, 400, { error: "uid required" });
+
+  const isPro = await dbIsProUser(uid);
+  const MAX_FREE_GARDEN = 6;
+
+  if (!isPro && plants && plants.length > MAX_FREE_GARDEN) {
+    return sendJSON(res, 402, {
+      error: "free_limit_reached",
+      feature: "garden",
+      message: `Free accounts can save up to ${MAX_FREE_GARDEN} plants. Upgrade to Pro for unlimited garden size.`,
+      limit: MAX_FREE_GARDEN,
+    });
+  }
+
   await dbSaveGarden(uid, plants || []);
   sendJSON(res, 200, { ok: true });
 }
@@ -662,117 +743,141 @@ async function handleStripeWebhook(req, res) {
   sendJSON(res, 200, { received: true });
 }
 
-// ── Auth — Magic Link ─────────────────────────────────────
-async function handleSendMagicLink(req, res) {
-  if (!RESEND_KEY) return sendJSON(res, 500, { error: "Email not configured — add RESEND_API_KEY to Railway" });
+// ── Auth — Email / Password ───────────────────────────────
 
-  const { email, uid } = await readBody(req);
-  if (!email || !email.includes("@")) return sendJSON(res, 400, { error: "Valid email required" });
+function generateSessionToken() {
+  return crypto.randomBytes(32).toString("hex");
+}
 
-  const token    = crypto.randomBytes(32).toString("hex");
-  const expires  = new Date(Date.now() + 15 * 60 * 1000);
+async function createSession(email, uid) {
+  const token    = generateSessionToken();
+  const expires  = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000); // 30 days
+  if (db) {
+    await db.query(
+      "INSERT INTO sessions (token, email, uid, expires_at) VALUES ($1,$2,$3,$4)",
+      [token, email, uid, expires]
+    );
+  }
+  return token;
+}
+
+async function handleSignup(req, res) {
+  const { email, password, name, uid } = await readBody(req);
+
+  if (!email || !email.includes("@"))
+    return sendJSON(res, 400, { error: "Valid email required" });
+  if (!password || password.length < 8)
+    return sendJSON(res, 400, { error: "Password must be at least 8 characters" });
+
   const cleanEmail = email.toLowerCase().trim();
 
   if (db) {
-    await db.query(
-      "INSERT INTO magic_tokens (token, email, uid, expires_at) VALUES ($1,$2,$3,$4)",
-      [token, cleanEmail, uid || null, expires]
-    );
+    const existing = await db.query("SELECT id FROM accounts WHERE email=$1", [cleanEmail]);
+    if (existing.rows.length)
+      return sendJSON(res, 409, { error: "An account with this email already exists" });
   }
 
-  const link = `${APP_URL}/auth/verify?token=${token}`;
-  const html = `
-    <div style="font-family:sans-serif;max-width:480px;margin:0 auto;padding:32px 24px;">
-      <h1 style="font-size:26px;color:#1a5c96;margin-bottom:8px;">🌸 BloomWise</h1>
-      <p style="font-size:15px;color:#2a4260;margin-bottom:24px;">Click the button below to sign in to your BloomWise account. This link expires in 15 minutes and can only be used once.</p>
-      <a href="${link}" style="display:inline-block;background:linear-gradient(135deg,#1a4d7a,#2e7dc4);color:#fff;text-decoration:none;padding:14px 32px;border-radius:50px;font-size:15px;font-weight:600;">Sign in to BloomWise</a>
-      <p style="font-size:12px;color:#8a9eb0;margin-top:28px;">If you didn't request this email, you can safely ignore it.<br><br>Or copy this link: ${link}</p>
-    </div>`;
+  const hash = await bcrypt.hash(password, 12);
 
-  const emailBody = JSON.stringify({
-    from: `BloomWise <${FROM_EMAIL}>`,
-    to: [cleanEmail],
-    subject: "Your BloomWise login link",
-    html,
+  let accountUid = uid || cleanEmail;
+  if (db) {
+    const r = await db.query(
+      "INSERT INTO accounts (email, name, password_hash, uid) VALUES ($1,$2,$3,$4) RETURNING *",
+      [cleanEmail, name || cleanEmail.split("@")[0], hash, accountUid]
+    );
+    accountUid = r.rows[0].uid || cleanEmail;
+  }
+
+  // Migrate anonymous garden if they had one
+  if (uid && uid !== cleanEmail && db) {
+    const anonGarden = await db.query("SELECT plants FROM gardens WHERE uid=$1", [uid]);
+    if (anonGarden.rows.length) {
+      await db.query(
+        "INSERT INTO gardens (uid, plants) VALUES ($1,$2) ON CONFLICT (uid) DO NOTHING",
+        [cleanEmail, anonGarden.rows[0].plants]
+      );
+    }
+    // Migrate pro status
+    const anonPro = await db.query("SELECT is_pro FROM users WHERE uid=$1", [uid]);
+    if (anonPro.rows[0]?.is_pro) {
+      await db.query(
+        "INSERT INTO users (uid, is_pro) VALUES ($1,TRUE) ON CONFLICT (uid) DO UPDATE SET is_pro=TRUE",
+        [cleanEmail]
+      );
+    }
+  }
+
+  const token = await createSession(cleanEmail, cleanEmail);
+  sendJSON(res, 200, {
+    ok: true,
+    token,
+    email: cleanEmail,
+    uid: cleanEmail,
+    name: name || cleanEmail.split("@")[0],
   });
-
-  await new Promise((resolve, reject) => {
-    const r = https.request({
-      hostname: "api.resend.com", path: "/emails", method: "POST",
-      headers: {
-        "Authorization": `Bearer ${RESEND_KEY}`,
-        "Content-Type": "application/json",
-        "Content-Length": Buffer.byteLength(emailBody),
-      },
-    }, (apiRes) => {
-      let d = "";
-      apiRes.on("data", c => d += c);
-      apiRes.on("end", () => {
-        const parsed = JSON.parse(d);
-        if (parsed.id) resolve(parsed);
-        else reject(new Error(parsed.message || "Email send failed"));
-      });
-    });
-    r.on("error", reject);
-    r.write(emailBody);
-    r.end();
-  });
-
-  sendJSON(res, 200, { ok: true });
 }
 
-async function handleVerifyToken(req, res) {
+async function handleLogin(req, res) {
+  const { email, password } = await readBody(req);
+
+  if (!email || !password)
+    return sendJSON(res, 400, { error: "Email and password required" });
+
+  const cleanEmail = email.toLowerCase().trim();
+
+  if (!db) return sendJSON(res, 500, { error: "Database not configured" });
+
+  const r = await db.query("SELECT * FROM accounts WHERE email=$1", [cleanEmail]);
+  if (!r.rows.length)
+    return sendJSON(res, 401, { error: "No account found with this email" });
+
+  const account = r.rows[0];
+  if (!account.password_hash)
+    return sendJSON(res, 401, { error: "This account uses a different sign-in method" });
+
+  const valid = await bcrypt.compare(password, account.password_hash);
+  if (!valid)
+    return sendJSON(res, 401, { error: "Incorrect password" });
+
+  const token = await createSession(cleanEmail, cleanEmail);
+  sendJSON(res, 200, {
+    ok: true,
+    token,
+    email: cleanEmail,
+    uid: cleanEmail,
+    name: account.name || cleanEmail.split("@")[0],
+  });
+}
+
+async function handleVerifySession(req, res) {
   const { token } = await readBody(req);
   if (!token) return sendJSON(res, 400, { error: "Token required" });
   if (!db)    return sendJSON(res, 500, { error: "Database not configured" });
 
   const r = await db.query(
-    "SELECT * FROM magic_tokens WHERE token=$1 AND used=FALSE AND expires_at > NOW()",
+    "SELECT * FROM sessions WHERE token=$1 AND expires_at > NOW()",
     [token]
   );
-  if (!r.rows.length) return sendJSON(res, 400, { error: "Invalid or expired link — please request a new one" });
+  if (!r.rows.length) return sendJSON(res, 401, { error: "Session expired — please sign in again" });
 
-  const { email, uid: anonUid } = r.rows[0];
-  await db.query("UPDATE magic_tokens SET used=TRUE WHERE token=$1", [token]);
+  const { email, uid } = r.rows[0];
+  const acct = await db.query("SELECT name FROM accounts WHERE email=$1", [email]);
+  const name = acct.rows[0]?.name || email.split("@")[0];
 
-  // Find or create account
-  let acct = await db.query("SELECT * FROM accounts WHERE email=$1", [email]);
-  if (!acct.rows.length) {
-    acct = await db.query(
-      "INSERT INTO accounts (email, uid) VALUES ($1,$2) RETURNING *",
-      [email, anonUid]
-    );
+  sendJSON(res, 200, { ok: true, email, uid, name });
+}
+
+async function handleSignout(req, res) {
+  const { token } = await readBody(req);
+  if (token && db) {
+    await db.query("DELETE FROM sessions WHERE token=$1", [token]);
   }
-  const account = acct.rows[0];
+  sendJSON(res, 200, { ok: true });
+}
 
-  // Migrate anonymous garden if account doesn't have one yet
-  if (anonUid && db) {
-    const hasGarden = await db.query("SELECT 1 FROM gardens WHERE uid=$1", [email]);
-    if (!hasGarden.rows.length) {
-      const anonGarden = await db.query("SELECT plants FROM gardens WHERE uid=$1", [anonUid]);
-      if (anonGarden.rows.length) {
-        await db.query(
-          "INSERT INTO gardens (uid, plants) VALUES ($1,$2) ON CONFLICT (uid) DO NOTHING",
-          [email, anonGarden.rows[0].plants]
-        );
-      }
-    }
-    // Migrate pro status
-    const anonPro = await db.query("SELECT is_pro FROM users WHERE uid=$1", [anonUid]);
-    if (anonPro.rows[0]?.is_pro) {
-      await db.query(
-        "INSERT INTO users (uid, is_pro) VALUES ($1,TRUE) ON CONFLICT (uid) DO UPDATE SET is_pro=TRUE",
-        [email]
-      );
-    }
-  }
-
-  sendJSON(res, 200, {
-    ok: true,
-    email,
-    uid: email, // email is the stable UID for logged-in users
-    name: account.name || email.split("@")[0],
-  });
+// Keep magic link send for optional future use — currently unused
+async function handleSendMagicLink(req, res) {
+  sendJSON(res, 200, { ok: true, message: "Magic links not active — use email/password login" });
 }
 
 // ══════════════════════════════════════════════════════════
@@ -799,11 +904,6 @@ const server = http.createServer(async (req, res) => {
   // GET
   if (req.method === "GET") {
     if (url === "/health") return sendJSON(res, 200, { status: "ok", model: MODEL, db: !!db });
-    if (url === "/auth/verify") {
-      const token = req.url.split("?token=")[1]?.split("&")[0] || "";
-      res.writeHead(302, { "Location": `/?verify=${encodeURIComponent(token)}` });
-      return res.end();
-    }
     return sendHTML(res);
   }
 
@@ -819,17 +919,19 @@ const server = http.createServer(async (req, res) => {
 
     // Free routes — no Anthropic needed
     const FREE = {
-      "/photos":             handlePhotos,
-      "/zone":               handleZone,
-      "/check-pro":          handleCheckPro,
-      "/create-checkout":    handleCreateCheckout,
-      "/verify-session":     handleVerifySession,
-      "/garden/get":         handleGetGarden,
-      "/garden/save":        handleSaveGarden,
-      "/shopping-list":      handleShoppingList,
-      "/nurseries":          handleNurseries,
-      "/auth/send-link":     handleSendMagicLink,
-      "/auth/verify-token":  handleVerifyToken,
+      "/photos":              handlePhotos,
+      "/zone":                handleZone,
+      "/check-pro":           handleCheckPro,
+      "/create-checkout":     handleCreateCheckout,
+      "/verify-session":      handleVerifySession,
+      "/garden/get":          handleGetGarden,
+      "/garden/save":         handleSaveGarden,
+      "/shopping-list":       handleShoppingList,
+      "/nurseries":           handleNurseries,
+      "/auth/signup":         handleSignup,
+      "/auth/login":          handleLogin,
+      "/auth/verify-session": handleVerifySession,
+      "/auth/signout":        handleSignout,
     };
 
     if (FREE[url]) {
@@ -882,7 +984,6 @@ connectDB()
   ║   Anthropic: ${ANTHROPIC_KEY  ? "✅" : "❌ ANTHROPIC_API_KEY missing"}                    ║
   ║   Stripe:    ${STRIPE_KEY     ? "✅" : "⚠️  not set"}                         ║
   ║   Database:  ${process.env.DATABASE_URL ? "✅ PostgreSQL" : "⚠️  in-memory"}              ║
-  ║   Email:     ${RESEND_KEY     ? "✅ Resend" : "⚠️  RESEND_API_KEY not set"}               ║
   ║   Perenual:  ${process.env.PERENUAL_API_KEY ? "✅" : "⚠️  not set"}                    ║
   ║   Places:    ${process.env.GOOGLE_PLACES_API_KEY ? "✅" : "⚠️  not set"}                    ║
   ║   Free tier: ${FREE_RECS_PER_DAY} recs/day                       ║
