@@ -726,7 +726,19 @@ textarea { resize: vertical; min-height: 90px; }
   padding: 0; border-style: solid; border-color: var(--petal2);
   background: #000; overflow: hidden;
 }
-.identify-icon { font-size: 52px; line-height: 1; }
+.identify-btns {
+  display: flex; gap: 10px; justify-content: center;
+  flex-wrap: wrap; margin: 12px 0 8px;
+}
+.identify-source-btn {
+  padding: 9px 20px; font-size: 13px; font-weight: 600;
+  border-radius: 50px; cursor: pointer; font-family: inherit;
+  background: var(--white); border: 1.5px solid var(--border);
+  color: var(--bloom); transition: all .15s;
+}
+.identify-source-btn:hover { background: var(--petal-lt); border-color: var(--petal2); }
+.identify-hint { font-size: 12px; color: var(--stone); display: block; }
+
 .identify-prompt { font-size: 14px; color: var(--stone); line-height: 1.6; }
 .identify-prompt strong { color: var(--bloom); }
 .identify-preview {
@@ -1253,15 +1265,20 @@ textarea { resize: vertical; min-height: 90px; }
       <p>Take a photo or upload an image — Claude will identify the plant instantly</p>
     </div>
     <div class="section-card" style="text-align:center;">
-      <div class="identify-drop" id="identify-drop" onclick="document.getElementById('identify-input').click()" ondragover="event.preventDefault();this.classList.add('drag-over')" ondragleave="this.classList.remove('drag-over')" ondrop="handleIdentifyDrop(event)">
+      <div class="identify-drop" id="identify-drop" ondragover="event.preventDefault();this.classList.add('drag-over')" ondragleave="this.classList.remove('drag-over')" ondrop="handleIdentifyDrop(event)">
         <div class="identify-icon" id="identify-icon">📷</div>
         <div class="identify-prompt" id="identify-prompt">
-          <strong>Take or upload a photo</strong><br>
-          <span>Tap to open camera · Drag &amp; drop an image · or click to browse</span>
+          <strong>Identify a plant from a photo</strong><br>
+          <div class="identify-btns">
+            <button class="identify-source-btn" onclick="document.getElementById('identify-camera').click()">📷 Take photo</button>
+            <button class="identify-source-btn" onclick="document.getElementById('identify-input').click()">🖼 Choose from library</button>
+          </div>
+          <span class="identify-hint">or drag &amp; drop an image here</span>
         </div>
         <img id="identify-preview" class="identify-preview" style="display:none;" alt="Plant preview"/>
       </div>
-      <input type="file" id="identify-input" accept="image/*" capture="environment" style="display:none;" onchange="handleIdentifyFile(event)"/>
+      <input type="file" id="identify-input" accept="image/*" style="display:none;" onchange="handleIdentifyFile(event)"/>
+      <input type="file" id="identify-camera" accept="image/*" capture="environment" style="display:none;" onchange="handleIdentifyFile(event)"/>
       <div style="margin-top:1.25rem;display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
         <button class="btn btn-primary" id="identify-btn" onclick="identifyPlant()" style="display:none;">🔍 Identify this plant</button>
         <button class="btn btn-ghost" onclick="resetIdentify()" id="identify-reset" style="display:none;">✕ Clear</button>
@@ -2337,7 +2354,6 @@ function loadIdentifyImage(file) {
       document.getElementById('identify-icon').style.display   = 'none';
       document.getElementById('identify-prompt').style.display = 'none';
       drop.classList.add('has-image');
-      drop.onclick = null;
       document.getElementById('identify-btn').style.display   = 'inline-flex';
       document.getElementById('identify-reset').style.display = 'inline-flex';
       document.getElementById('identify-results').innerHTML = '';
@@ -2350,18 +2366,18 @@ function loadIdentifyImage(file) {
 function resetIdentify() {
   identifyImageData = null;
   identifyMimeType  = null;
-  const drop   = document.getElementById('identify-drop');
+  const drop    = document.getElementById('identify-drop');
   const preview = document.getElementById('identify-preview');
   preview.style.display = 'none';
   preview.src = '';
   document.getElementById('identify-icon').style.display   = 'block';
   document.getElementById('identify-prompt').style.display = 'block';
   drop.classList.remove('has-image');
-  drop.onclick = () => document.getElementById('identify-input').click();
   document.getElementById('identify-btn').style.display   = 'none';
   document.getElementById('identify-reset').style.display = 'none';
   document.getElementById('identify-results').innerHTML = '';
-  document.getElementById('identify-input').value = '';
+  document.getElementById('identify-input').value  = '';
+  document.getElementById('identify-camera').value = '';
 }
 
 async function identifyPlant() {
