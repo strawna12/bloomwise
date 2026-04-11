@@ -1698,7 +1698,9 @@ function updatePlannerBadge(){
 
 async function addToGarden(plant, btn){
   if(garden.find(p=>p.name===plant.name)) return;
-  garden.push(plant);
+  // Strip the photo URL before saving — re-fetched from server when displayed
+  const { photo, ...plantData } = plant;
+  garden.push(plantData);
   btn.classList.add('added');
   btn.textContent='✓ In garden';
   btn.disabled=true;
