@@ -351,7 +351,10 @@ async function handleIdentifyPlant(req, res) {
   const { image, mimeType } = await readBody(req, 10 * 1024 * 1024);
   if (!image) return sendJSON(res, 400, { error: "image is required" });
 
-  const prompt = `You are an expert botanist. Identify the plant in this photo.
+  const prompt = `You are an expert botanist with decades of experience identifying plants from photographs. Carefully examine every detail of this image — leaf shape, leaf margins, venation pattern, stem structure, flower form, color, texture, growth habit, and any other visible characteristics.
+
+Be precise and specific. If you can identify the plant to species level, do so. If you can only identify to genus, say so clearly.
+
 Return ONLY a valid JSON object:
 {
   "identified": true,
@@ -359,6 +362,7 @@ Return ONLY a valid JSON object:
   "scientific_name": "Genus species",
   "family": "Plant family",
   "confidence": "high",
+  "confidence_reason": "brief explanation of what visual features confirm the ID",
   "description": "2-3 sentences about this plant",
   "care": {"sun": "requirements", "water": "needs", "soil": "preference", "hardiness": "USDA zones"},
   "mature_height": "e.g. 3-5 ft",
@@ -367,9 +371,10 @@ Return ONLY a valid JSON object:
   "lifespan": "annual/perennial/biennial",
   "notes": "special characteristics or warnings",
   "edible": false,
-  "toxic_to_pets": false
+  "toxic_to_pets": false,
+  "similar_species": "any plants this could be confused with"
 }
-If you cannot identify it: {"identified": false, "reason": "brief explanation"}
+If you cannot identify with reasonable confidence: {"identified": false, "reason": "what you can see but why ID is uncertain"}
 confidence must be high, medium, or low.`;
 
   const messages = [{
@@ -380,7 +385,34 @@ confidence must be high, medium, or low.`;
     ],
   }];
 
-  const text = await callAnthropic(messages, 1000);
+  // Use Sonnet for vision — significantly better plant ID accuracy than Haiku
+  const VISION_MODEL = process.env.VISION_MODEL || "claude-sonnet-4-6";
+  const text = await new Promise((resolve, reject) => {
+    const body = JSON.stringify({ model: VISION_MODEL, max_tokens: 1200, messages });
+    const req2 = https.request({
+      hostname: "api.anthropic.com", path: "/v1/messages", method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-api-key": ANTHROPIC_KEY,
+        "anthropic-version": "2023-06-01",
+        "Content-Length": Buffer.byteLength(body),
+      },
+    }, (res) => {
+      let data = "";
+      res.on("data", c => data += c);
+      res.on("end", () => {
+        try {
+          const p = JSON.parse(data);
+          if (p.error) return reject(new Error(p.error.message));
+          resolve((p.content || []).map(b => b.text || "").join(""));
+        } catch (e) { reject(e); }
+      });
+    });
+    req2.on("error", reject);
+    req2.write(body);
+    req2.end();
+  });
+
   const plant = parseJSON(text, "object");
   sendJSON(res, 200, { plant });
 }
