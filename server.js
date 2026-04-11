@@ -388,11 +388,56 @@ Return ONLY a valid JSON object:
     {"label": "Mature size", "value": "height x spread", "status": "neutral", "note": "note"}
   ],
   "special_requirements": ["req1", "req2"],
-  "pro_tip": "one practical tip"
+  "pro_tip": "one practical tip",
+  "care_guide": {
+    "planting": {
+      "when": "best time of year to plant with months",
+      "how": "step by step planting instructions in 3-5 sentences — hole depth, spacing, soil prep, initial watering",
+      "tip": "one key planting tip most people miss"
+    },
+    "watering": {
+      "frequency": "how often e.g. twice a week in summer, once a week in winter",
+      "method": "best watering method e.g. deep watering at base, avoid wetting foliage",
+      "signs": "signs of overwatering and underwatering to watch for"
+    },
+    "feeding": {
+      "fertilizer": "what type of fertilizer to use",
+      "schedule": "when and how often to feed",
+      "tip": "one feeding tip"
+    },
+    "pruning": {
+      "when": "best time to prune",
+      "how": "how to prune — what to cut, how much, what tools",
+      "tip": "one pruning tip"
+    },
+    "propagation": [
+      {"method": "e.g. Division", "difficulty": "Easy", "season": "best season", "steps": "2-3 sentence how-to"},
+      {"method": "e.g. Stem cuttings", "difficulty": "Moderate", "season": "best season", "steps": "2-3 sentence how-to"}
+    ],
+    "pests_diseases": [
+      {"name": "pest or disease name", "signs": "what to look for", "treatment": "how to treat"}
+    ],
+    "seasonal_care": {
+      "spring": "what to do in spring",
+      "summer": "what to do in summer",
+      "fall": "what to do in fall",
+      "winter": "what to do in winter / how to overwinter"
+    },
+    "edibility": {
+      "edible": true,
+      "parts": "which parts are edible e.g. leaves, fruit, roots, flowers — or null if not edible",
+      "harvest_season": "when to harvest e.g. Summer through Fall, or null if not applicable",
+      "how_to_harvest": "how to harvest — what to look for, how to pick, tools needed — or null",
+      "yield": "expected yield per plant e.g. 5-10 lbs of fruit per season — or null",
+      "storage": "how to store after harvest — or null",
+      "culinary_uses": "how to use in cooking/eating — or null",
+      "caution": "any parts that are toxic or preparation notes — or null if fully safe"
+    }
+  }
 }
-verdict: green/yellow/red. status: ok/warn/bad/neutral.`;
+verdict: green/yellow/red. status: ok/warn/bad/neutral. difficulty: Easy/Moderate/Hard. Set edibility.edible to false and all other edibility fields to null if the plant is not edible.`;
 
-  const text = await ai(prompt, 1200);
+  const text = await ai(prompt, 2500);
   const result = parseJSON(text, "object");
   sendJSON(res, 200, { result });
 }
