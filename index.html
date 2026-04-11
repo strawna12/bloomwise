@@ -2425,12 +2425,14 @@ async function identifyPlant() {
           <div class="id-meta">
             <span class="id-badge" style="background:${confColor}">${plant.confidence} confidence</span>
           </div>
+          ${plant.confidence_reason ? `<div style="font-size:12px;color:#b8d8f4;margin-top:8px;line-height:1.5;">🔍 ${plant.confidence_reason}</div>` : ''}
         </div>
         <div class="id-body">
           <p class="id-desc">${plant.description || ''}</p>
           ${specsHtml ? `<div class="id-specs">${specsHtml}</div>` : ''}
           ${careHtml  ? `<div class="id-care">${careHtml}</div>` : ''}
           ${flagsHtml ? `<div class="id-flags">${flagsHtml}</div>` : ''}
+          ${plant.similar_species ? `<div class="id-notes" style="background:var(--sky-lt);border-color:var(--sky);color:var(--sky);">⚠️ <strong>Could also be:</strong> ${plant.similar_species}</div>` : ''}
           ${plant.notes ? `<div class="id-notes">💡 ${plant.notes}</div>` : ''}
           <div class="id-actions">
             <button class="btn btn-primary" onclick="lookupFromID('${plant.common_name.replace(/'/g,"\\'")}')">
