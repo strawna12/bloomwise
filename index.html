@@ -1130,7 +1130,7 @@ textarea { resize: vertical; min-height: 90px; }
         <input type="password" class="login-input" id="login-password" placeholder="Password" autocomplete="current-password" onkeydown="if(event.key==='Enter')submitLogin()"/>
         <button class="login-submit" id="login-submit-btn" onclick="submitLogin()">Sign In</button>
         <div style="text-align:center;margin-top:8px;">
-          <a href="mailto:hello@growbloomwise.com?subject=Password Reset Request" style="font-size:12px;color:var(--stone);text-decoration:none;border-bottom:1px solid var(--border);">Forgot your password? Contact support</a>
+          <a href="#" onclick="this.href='mai'+'lto:hello@grow'+'bloomwise.com?subject=Password Reset';return true;" style="font-size:12px;color:var(--stone);text-decoration:none;border-bottom:1px solid var(--border);">Forgot your password? Contact support</a>
         </div>
       </div>
 
@@ -2996,7 +2996,7 @@ async function loadMapForAddress() {
   try {
     // Geocode via dedicated fast endpoint (no climate API, just lat/lng)
     const geo = await apiCall('/geocode', { location: addr });
-    if (!geo.found) throw new Error('Address not found — try being more specific, e.g. "123 Main St, Tampa FL"');
+    if (!geo.found) throw new Error('Address not found — try including your city and state, e.g. "123 Main St, Tampa, FL 33601"');
 
     const { latitude: lat, longitude: lng, displayName } = geo;
     const zoom = 19; // close enough to see a house lot
