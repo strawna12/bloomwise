@@ -2229,27 +2229,37 @@ function handleIdentifyDrop(event) {
 }
 
 function loadIdentifyImage(file) {
-  identifyMimeType = file.type || 'image/jpeg';
+  identifyMimeType = 'image/jpeg'; // always compress to JPEG
   const reader = new FileReader();
   reader.onload = (e) => {
-    const dataUrl = e.target.result;
-    identifyImageData = dataUrl.split(',')[1]; // base64 only
+    // Compress the image using a canvas before sending
+    const img = new Image();
+    img.onload = () => {
+      const MAX = 1024; // max dimension in pixels
+      let { width, height } = img;
+      if (width > MAX || height > MAX) {
+        if (width > height) { height = Math.round(height * MAX / width); width = MAX; }
+        else { width = Math.round(width * MAX / height); height = MAX; }
+      }
+      const canvas = document.createElement('canvas');
+      canvas.width = width; canvas.height = height;
+      canvas.getContext('2d').drawImage(img, 0, 0, width, height);
+      const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
+      identifyImageData = dataUrl.split(',')[1];
 
-    const preview = document.getElementById('identify-preview');
-    const drop    = document.getElementById('identify-drop');
-    const icon    = document.getElementById('identify-icon');
-    const prompt  = document.getElementById('identify-prompt');
-
-    preview.src = dataUrl;
-    preview.style.display = 'block';
-    icon.style.display    = 'none';
-    prompt.style.display  = 'none';
-    drop.classList.add('has-image');
-    drop.onclick = null; // don't re-open picker when clicking preview
-
-    document.getElementById('identify-btn').style.display   = 'inline-flex';
-    document.getElementById('identify-reset').style.display = 'inline-flex';
-    document.getElementById('identify-results').innerHTML = '';
+      const preview = document.getElementById('identify-preview');
+      const drop    = document.getElementById('identify-drop');
+      preview.src = dataUrl;
+      preview.style.display = 'block';
+      document.getElementById('identify-icon').style.display   = 'none';
+      document.getElementById('identify-prompt').style.display = 'none';
+      drop.classList.add('has-image');
+      drop.onclick = null;
+      document.getElementById('identify-btn').style.display   = 'inline-flex';
+      document.getElementById('identify-reset').style.display = 'inline-flex';
+      document.getElementById('identify-results').innerHTML = '';
+    };
+    img.src = e.target.result;
   };
   reader.readAsDataURL(file);
 }
