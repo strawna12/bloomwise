@@ -412,7 +412,7 @@ Plants selected: ${plantNames || "not specified"}
 }
 priority must be "essential" or "optional". Give 3-6 items per category. Be specific with product names where helpful.`;
 
-  const text = await ai(prompt, 1400);
+  const text = await ai(prompt, 2000);
   const list = parseJSON(text, "object");
   sendJSON(res, 200, { list });
 }
@@ -560,7 +560,7 @@ async function handleGetGarden(req, res) {
 }
 
 async function handleSaveGarden(req, res) {
-  const { uid, plants } = await readBody(req);
+  const { uid, plants } = await readBodyLarge(req); // plants array can be large
   if (!uid) return sendJSON(res, 400, { error: "uid required" });
   await dbSaveGarden(uid, plants || []);
   sendJSON(res, 200, { ok: true });
