@@ -521,7 +521,15 @@ textarea { resize: vertical; min-height: 90px; }
   background: var(--gold-lt); border: 1px solid var(--gold); color: #7a5500;
   font-weight: 600; margin-bottom: 10px; display: inline-flex; gap: 4px; align-items: center;
 }
+.planner-card .pc-research {
+  flex: 1; padding: 8px; font-size: 12px; font-weight: 600;
+  border: 1.5px solid var(--sky); border-radius: var(--r);
+  background: var(--sky-lt); cursor: pointer; color: var(--sky);
+  font-family: inherit; transition: all .15s;
+}
+.planner-card .pc-research:hover { background: var(--sky); color: #fff; }
 .planner-card .pc-remove {
+  flex: 1;
   width: 100%; padding: 8px; font-size: 12px; font-weight: 500;
   border: 1px solid var(--border); border-radius: var(--r);
   background: none; cursor: pointer; color: var(--stone);
@@ -885,6 +893,81 @@ textarea { resize: vertical; min-height: 90px; }
   font-weight: 500; white-space: nowrap;
 }
 .nursery-directions:hover { text-decoration: underline; }
+/* ── Garden Layout Planner ── */
+.layout-controls {
+  display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+  background: var(--white); border: 1.5px solid var(--border2);
+  border-radius: var(--r-lg); padding: 12px 18px;
+  margin-bottom: 1rem; box-shadow: var(--sh);
+}
+.layout-control-group { display: flex; flex-direction: column; gap: 3px; }
+.layout-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--stone); }
+.layout-num-input {
+  width: 72px; padding: 6px 10px; font-size: 14px; font-weight: 600;
+  border: 1.5px solid var(--border); border-radius: var(--r);
+  font-family: inherit; color: var(--bloom); background: var(--bg); outline: none;
+}
+.layout-addr-input {
+  flex: 1; padding: 8px 12px; font-size: 13px;
+  border: 1.5px solid var(--border); border-radius: var(--r);
+  font-family: inherit; color: var(--ink); background: var(--bg); outline: none;
+  transition: border-color .2s;
+}
+.layout-addr-input:focus { border-color: var(--petal2); background: var(--white); }
+
+
+.layout-workspace {
+  display: flex; gap: 16px; align-items: flex-start;
+}
+.layout-sidebar {
+  width: 160px; flex-shrink: 0;
+  background: var(--white); border: 1.5px solid var(--border2);
+  border-radius: var(--r-lg); padding: 12px; box-shadow: var(--sh);
+}
+.layout-sidebar-title { font-size: 12px; font-weight: 700; color: var(--bloom); margin-bottom: 2px; }
+.layout-sidebar-sub { font-size: 10px; color: var(--stone); margin-bottom: 10px; }
+.layout-plant-list { display: flex; flex-direction: column; gap: 6px; }
+.layout-plant-chip {
+  display: flex; align-items: center; gap: 8px;
+  padding: 7px 10px; border-radius: var(--r);
+  background: var(--bg); border: 1.5px solid var(--border);
+  cursor: grab; user-select: none; transition: all .15s;
+  font-size: 12px; font-weight: 500; color: var(--ink2);
+}
+.layout-plant-chip:hover { border-color: var(--petal2); background: var(--petal-lt); color: var(--bloom); }
+.layout-plant-chip:active { cursor: grabbing; }
+.layout-plant-dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
+.layout-empty-msg { text-align: center; font-size: 12px; color: var(--stone); line-height: 1.8; padding: 8px 0; }
+
+.layout-canvas-wrap { flex: 1; min-width: 0; }
+.layout-canvas {
+  width: 100%; border-radius: var(--r-lg);
+  border: 2px solid var(--border); cursor: crosshair;
+  touch-action: none; display: block;
+  box-shadow: var(--sh);
+}
+.layout-legend {
+  display: flex; gap: 16px; margin-top: 8px; flex-wrap: wrap;
+}
+.legend-item { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--stone); }
+.legend-dot { width: 14px; height: 14px; border-radius: 50%; display: inline-block; flex-shrink: 0; }
+
+.layout-selected-info {
+  background: var(--white); border: 1.5px solid var(--petal2);
+  border-radius: var(--r-lg); padding: 12px 16px;
+  margin-top: 12px; display: flex; align-items: center; gap: 12px;
+  font-size: 13px; box-shadow: var(--sh); flex-wrap: wrap;
+}
+.layout-selected-info strong { color: var(--bloom); }
+.layout-selected-info span { color: var(--stone); flex: 1; }
+
+@media(max-width:600px){
+  .layout-workspace { flex-direction: column; }
+  .layout-sidebar { width: 100%; }
+  .layout-plant-list { flex-direction: row; flex-wrap: wrap; }
+  .layout-plant-chip { flex: 1; min-width: 120px; }
+}
+
 .nursery-missing {
   background: var(--gold-lt); border: 1.5px solid var(--gold);
   border-radius: var(--r-lg); padding: 1.5rem; text-align: center;
@@ -1046,6 +1129,9 @@ textarea { resize: vertical; min-height: 90px; }
         <input type="email" class="login-input" id="login-email" placeholder="Email address" autocomplete="email"/>
         <input type="password" class="login-input" id="login-password" placeholder="Password" autocomplete="current-password" onkeydown="if(event.key==='Enter')submitLogin()"/>
         <button class="login-submit" id="login-submit-btn" onclick="submitLogin()">Sign In</button>
+        <div style="text-align:center;margin-top:8px;">
+          <a href="mailto:hello@growbloomwise.com?subject=Password Reset Request" style="font-size:12px;color:var(--stone);text-decoration:none;border-bottom:1px solid var(--border);">Forgot your password? Contact support</a>
+        </div>
       </div>
 
       <!-- Sign Up form -->
@@ -1132,6 +1218,7 @@ textarea { resize: vertical; min-height: 90px; }
     <button class="tab" onclick="switchTab('lookup')">🔍 Plant Lookup</button>
     <button class="tab" onclick="switchTab('identify')">📸 Identify</button>
     <button class="tab" onclick="switchTab('planner')">🌱 My Garden <span id="planner-count" class="planner-badge" style="display:none;"></span></button>
+    <button class="tab" onclick="switchTab('layout')">🗺 Layout Planner</button>
     <button class="tab" onclick="switchTab('shop')">🛒 Shopping List</button>
     <button class="tab" onclick="switchTab('nurseries')">📍 Nurseries</button>
   </div>
@@ -1429,6 +1516,77 @@ textarea { resize: vertical; min-height: 90px; }
     </div>
   </div>
 
+  <!-- GARDEN LAYOUT PLANNER TAB -->
+  <div class="tab-panel" id="tab-layout">
+    <div class="lookup-hero" style="margin-bottom:1.25rem;">
+      <h2>🗺 Garden Layout Planner</h2>
+      <p>Drag your saved plants onto the canvas and arrange your perfect garden</p>
+    </div>
+
+    <!-- Controls bar -->
+    <div class="layout-controls">
+      <div class="layout-control-group" style="flex:1;min-width:200px;">
+        <label class="layout-label">Your address</label>
+        <div style="display:flex;gap:8px;">
+          <input type="text" id="layout-address" placeholder="e.g. 123 Main St, Tampa FL"
+            class="layout-addr-input" onkeydown="if(event.key==='Enter')loadMapForAddress()"/>
+          <button class="btn btn-primary" style="white-space:nowrap;padding:8px 14px;font-size:13px;" onclick="loadMapForAddress()">📍 Load map</button>
+        </div>
+      </div>
+      <div class="layout-control-group">
+        <label class="layout-label">Scale (ft/grid)</label>
+        <select id="layout-scale" class="layout-num-input" style="width:90px;" onchange="redrawCanvas()">
+          <option value="1">1 ft</option>
+          <option value="2">2 ft</option>
+          <option value="5" selected>5 ft</option>
+          <option value="10">10 ft</option>
+        </select>
+      </div>
+      <div class="layout-control-group">
+        <label class="layout-label">Show spacing</label>
+        <input type="checkbox" id="layout-spacing" checked onchange="redrawCanvas()"
+          style="width:18px;height:18px;cursor:pointer;accent-color:var(--bloom);"/>
+      </div>
+      <button class="btn btn-ghost" onclick="clearLayout()" style="margin-left:auto;">🗑 Clear</button>
+      <button class="btn btn-pdf" onclick="exportLayoutImage()">⬇ Save image</button>
+    </div>
+
+    <!-- Map status bar -->
+    <div id="layout-map-bar" style="display:none;background:var(--sage-lt);border:1px solid var(--sage);border-radius:var(--r);padding:8px 14px;margin-bottom:10px;font-size:13px;color:var(--sage);"></div>
+
+    <!-- Main layout area -->
+    <div class="layout-workspace">
+
+      <!-- Plant sidebar -->
+      <div class="layout-sidebar">
+        <div class="layout-sidebar-title">Your Plants</div>
+        <div class="layout-sidebar-sub">Drag onto canvas or tap to add</div>
+        <div id="layout-plant-list" class="layout-plant-list"></div>
+        <div id="layout-empty-msg" class="layout-empty-msg" style="display:none;">
+          <div>🪴</div>
+          <div>Add plants to My Garden first</div>
+          <button class="btn btn-primary" style="margin-top:10px;font-size:12px;padding:8px 16px;" onclick="switchTab('planner')">Go to My Garden</button>
+        </div>
+      </div>
+
+      <!-- Canvas -->
+      <div class="layout-canvas-wrap">
+        <canvas id="layout-canvas" class="layout-canvas"></canvas>
+        <div class="layout-legend">
+          <span class="legend-item"><span class="legend-dot" style="background:rgba(46,125,196,.3);border:2px solid var(--sky);"></span> Plant spread</span>
+          <span class="legend-item"><span class="legend-dot" style="background:rgba(212,160,23,.15);border:1.5px dashed var(--gold);"></span> Spacing zone</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Selected plant info -->
+    <div id="layout-selected-info" class="layout-selected-info" style="display:none;">
+      <strong id="lsi-name"></strong>
+      <span id="lsi-details"></span>
+      <button class="btn btn-ghost" style="font-size:12px;padding:6px 14px;" onclick="removeSelectedFromLayout()">Remove</button>
+    </div>
+  </div>
+
   <!-- SHOPPING LIST TAB -->
   <div class="tab-panel" id="tab-shop">
     <div class="lookup-hero">
@@ -1653,13 +1811,14 @@ function goStep(n){
 }
 
 function switchTab(t){
-  const tabs  =['rec','lookup','identify','planner','shop','nurseries'];
-  const panels=['tab-rec','tab-lookup','tab-identify','tab-planner','tab-shop','tab-nurseries'];
+  const tabs  =['rec','lookup','identify','planner','layout','shop','nurseries'];
+  const panels=['tab-rec','tab-lookup','tab-identify','tab-planner','tab-layout','tab-shop','tab-nurseries'];
   document.querySelectorAll('.tab').forEach((el,i)=>el.classList.toggle('active',tabs[i]===t));
   document.querySelectorAll('.tab-panel').forEach((el,i)=>el.classList.toggle('active',panels[i]==='tab-'+t));
   if(t==='lookup')updateCtx();
   if(t==='planner')renderPlanner();
   if(t==='nurseries')loadNurseries();
+  if(t==='layout')initLayout();
 }
 
 function updateCtx(){
@@ -1973,7 +2132,10 @@ async function renderPlanner(){
           <span class="pc-tag">💧 ${pl.water||''}</span>
           <span class="pc-tag">🌱 ${pl.soil||''}</span>
         </div>
-        <button class="pc-remove" onclick="removeFromGarden('${safeName}')">Remove from garden</button>
+        <div style="display:flex;gap:6px;margin-top:10px;">
+          <button class="pc-research" onclick="lookupFromID('${safeName}')">🔍 Research</button>
+          <button class="pc-remove" onclick="removeFromGarden('${safeName}')">Remove</button>
+        </div>
       </div>
     </div>`;
   }).join('');
@@ -2788,6 +2950,421 @@ async function initAuth() {
     } catch { localStorage.removeItem(SESSION_KEY); }
   }
 }
+
+// ── Garden Layout Planner ─────────────────────────────────
+const LAYOUT_COLORS = [
+  '#2e7dc4','#5a8c68','#c8872a','#8b6abf',
+  '#b85840','#1a5c96','#3a7d5a','#9b6e32'
+];
+
+let layoutPlants   = [];
+let layoutDragging = null;
+let layoutSelected = null;
+let layoutOffset   = { x: 0, y: 0 };
+let layoutInited   = false;
+let layoutMapImg   = null;  // satellite image as HTMLImageElement
+let layoutMapMeta  = null;  // { lat, lng, zoom, metersPerPx }
+
+// px per foot based on scale dropdown
+function getPxPerFt() {
+  const s = parseFloat(document.getElementById('layout-scale')?.value || 5);
+  return 40 / s; // 40px per grid cell regardless of scale unit
+}
+
+function getCanvas() { return document.getElementById('layout-canvas'); }
+function getCtx()    { return getCanvas().getContext('2d'); }
+
+function resizeCanvas() {
+  const canvas = getCanvas();
+  const wrap   = canvas.parentElement;
+  canvas.width  = wrap.clientWidth;
+  canvas.height = Math.round(wrap.clientWidth * 0.6); // 5:3 ratio
+  redrawCanvas();
+}
+
+function ftToPx(ft) { return ft * getPxPerFt(); }
+
+// ── Address → satellite map ────────────────────────────────
+async function loadMapForAddress() {
+  const addr = document.getElementById('layout-address').value.trim();
+  if (!addr) return;
+
+  const bar = document.getElementById('layout-map-bar');
+  bar.style.display = 'block';
+  bar.textContent = '📍 Loading your property…';
+
+  try {
+    // Geocode via dedicated fast endpoint (no climate API, just lat/lng)
+    const geo = await apiCall('/geocode', { location: addr });
+    if (!geo.found) throw new Error('Address not found — try being more specific, e.g. "123 Main St, Tampa FL"');
+
+    const { latitude: lat, longitude: lng, displayName } = geo;
+    const zoom = 19; // close enough to see a house lot
+
+    // Google Static Maps satellite image
+    // We proxy this through the server to hide the API key
+    const W = getCanvas().width;
+    const H = getCanvas().height;
+    const mapUrl = await fetchSatelliteMap(lat, lng, zoom, W, H);
+
+    if (mapUrl) {
+      const img = new Image();
+      img.crossOrigin = 'anonymous';
+      img.onload = () => {
+        layoutMapImg  = img;
+        // At zoom 19, Google Static Maps: ~0.149 meters/px at equator
+        // Adjust for latitude: metersPerPx = 0.149 * cos(lat * PI/180)
+        const metersPerPx = 0.149 * Math.cos(lat * Math.PI / 180);
+        layoutMapMeta = { lat, lng, zoom, metersPerPx };
+        bar.textContent = `✅ Loaded: ${displayName || addr} · 1 pixel ≈ ${metersPerPx.toFixed(2)}m`;
+        bar.style.background = 'var(--sage-lt)';
+        bar.style.borderColor = 'var(--sage)';
+        bar.style.color = 'var(--sage)';
+        redrawCanvas();
+      };
+      img.onerror = () => {
+        bar.textContent = '⚠️ Map image unavailable — using grid only. Add GOOGLE_STATIC_MAPS_KEY to Railway.';
+        bar.style.background = 'var(--gold-lt)';
+        bar.style.borderColor = 'var(--gold)';
+        bar.style.color = '#7a5500';
+        layoutMapImg  = null;
+        layoutMapMeta = { lat, lng, zoom, metersPerPx: 0.149 * Math.cos(lat * Math.PI / 180) };
+        redrawCanvas();
+      };
+      img.src = mapUrl;
+    } else {
+      bar.textContent = `📍 Located: ${displayName || addr} · Map image requires GOOGLE_STATIC_MAPS_KEY in Railway`;
+      bar.style.background = 'var(--gold-lt)';
+      bar.style.borderColor = 'var(--gold)';
+      bar.style.color = '#7a5500';
+      layoutMapMeta = { lat, lng, zoom, metersPerPx: 0.149 * Math.cos(lat * Math.PI / 180) };
+      redrawCanvas();
+    }
+  } catch(e) {
+    bar.textContent = '❌ ' + e.message;
+    bar.style.background = 'var(--rust-lt)';
+    bar.style.borderColor = 'var(--rust)';
+    bar.style.color = 'var(--rust)';
+  }
+}
+
+async function fetchSatelliteMap(lat, lng, zoom, w, h) {
+  try {
+    const data = await apiCall('/map-image', { lat, lng, zoom, w, h });
+    return data.url || null;
+  } catch(e) {
+    return null;
+  }
+}
+
+function getMetersPerFt() { return 0.3048; }
+
+function pxToFt(px) {
+  if (layoutMapMeta) {
+    // Convert px → meters → feet
+    const meters = px * layoutMapMeta.metersPerPx;
+    return meters / getMetersPerFt();
+  }
+  return px / getPxPerFt();
+}
+
+// ── Canvas rendering ───────────────────────────────────────
+function redrawCanvas() {
+  const canvas = getCanvas();
+  const ctx    = getCtx();
+  const W = canvas.width, H = canvas.height;
+  const showSpacing = document.getElementById('layout-spacing')?.checked !== false;
+
+  ctx.clearRect(0, 0, W, H);
+
+  if (layoutMapImg) {
+    // Draw satellite image as background
+    ctx.drawImage(layoutMapImg, 0, 0, W, H);
+    // Subtle dark overlay to make plants more visible
+    ctx.fillStyle = 'rgba(0,0,0,.18)';
+    ctx.fillRect(0, 0, W, H);
+  } else {
+    // Green grass grid
+    ctx.fillStyle = '#e8f4e8';
+    ctx.fillRect(0, 0, W, H);
+
+    const gridPx = layoutMapMeta
+      ? getMetersPerFt() / layoutMapMeta.metersPerPx  // 1ft in px
+      : getPxPerFt();
+
+    ctx.strokeStyle = 'rgba(100,150,100,.2)';
+    ctx.lineWidth = 0.5;
+    for (let x = 0; x <= W; x += gridPx) {
+      ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke();
+    }
+    for (let y = 0; y <= H; y += gridPx) {
+      ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
+    }
+    ctx.fillStyle = 'rgba(80,120,80,.5)';
+    ctx.font = '10px Jost, sans-serif';
+    ctx.fillText('1 square = 1 ft', 6, H - 6);
+  }
+
+  // Spacing zones
+  if (showSpacing) {
+    layoutPlants.forEach(pl => {
+      const r = ftToPxOnMap(pl.spread / 2);
+      const spacingR = ftToPxOnMap((pl.spacing || pl.spread * 1.2) / 2);
+      ctx.beginPath();
+      ctx.arc(pl.x, pl.y, spacingR, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(212,160,23,.15)';
+      ctx.fill();
+      ctx.strokeStyle = 'rgba(212,160,23,.5)';
+      ctx.setLineDash([4, 3]);
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+      ctx.setLineDash([]);
+    });
+  }
+
+  // Plants
+  layoutPlants.forEach(pl => {
+    const r = ftToPxOnMap(pl.spread / 2);
+    const isSelected = layoutSelected && layoutSelected.id === pl.id;
+
+    ctx.beginPath();
+    ctx.arc(pl.x, pl.y, r, 0, Math.PI * 2);
+    ctx.fillStyle = pl.color + '66';
+    ctx.fill();
+    ctx.strokeStyle = isSelected ? '#fff' : pl.color;
+    ctx.lineWidth   = isSelected ? 3 : 2;
+    if (isSelected) { ctx.shadowColor = pl.color; ctx.shadowBlur = 14; }
+    ctx.stroke();
+    ctx.shadowBlur = 0;
+
+    // Center dot
+    ctx.beginPath();
+    ctx.arc(pl.x, pl.y, Math.min(r * 0.25, 8), 0, Math.PI * 2);
+    ctx.fillStyle = pl.color;
+    ctx.fill();
+
+    // Label with background for readability on satellite
+    const label = pl.name.length > 14 ? pl.name.slice(0, 13) + '…' : pl.name;
+    const fontSize = Math.max(9, Math.min(13, r * 0.4));
+    ctx.font = `bold ${fontSize}px Jost, sans-serif`;
+    ctx.textAlign = 'center';
+    const textY = pl.y + r + fontSize + 2;
+    const textW = ctx.measureText(label).width + 6;
+    ctx.fillStyle = 'rgba(0,0,0,.55)';
+    ctx.beginPath();
+    ctx.roundRect(pl.x - textW/2, textY - fontSize, textW, fontSize + 4, 3);
+    ctx.fill();
+    ctx.fillStyle = '#fff';
+    ctx.fillText(label, pl.x, textY);
+    ctx.textAlign = 'left';
+  });
+
+  // Border
+  ctx.strokeStyle = 'rgba(100,130,160,.4)';
+  ctx.lineWidth   = 2;
+  ctx.setLineDash([]);
+  ctx.strokeRect(0, 0, W, H);
+}
+
+// Convert feet to pixels — uses map scale if loaded, otherwise grid scale
+function ftToPxOnMap(ft) {
+  if (layoutMapMeta) {
+    return (ft * getMetersPerFt()) / layoutMapMeta.metersPerPx;
+  }
+  return ft * getPxPerFt();
+}
+
+// ── Layout init & interactions ─────────────────────────────
+function initLayout() {
+  // Pre-fill address from location tab if available
+  if (!document.getElementById('layout-address').value) {
+    const loc = document.getElementById('location')?.value?.trim();
+    if (loc) document.getElementById('layout-address').value = loc;
+  }
+
+  if (layoutInited) { populateLayoutSidebar(); resizeCanvas(); return; }
+  layoutInited = true;
+
+  populateLayoutSidebar();
+  resizeCanvas();
+
+  const canvas = getCanvas();
+
+  canvas.addEventListener('mousedown',  onLayoutPointerDown);
+  canvas.addEventListener('mousemove',  onLayoutPointerMove);
+  canvas.addEventListener('mouseup',    onLayoutPointerUp);
+  canvas.addEventListener('mouseleave', onLayoutPointerUp);
+  canvas.addEventListener('touchstart',  e => { e.preventDefault(); onLayoutPointerDown(e.touches[0]); }, { passive: false });
+  canvas.addEventListener('touchmove',   e => { e.preventDefault(); onLayoutPointerMove(e.touches[0]); }, { passive: false });
+  canvas.addEventListener('touchend',    e => { e.preventDefault(); onLayoutPointerUp(); });
+
+  window.addEventListener('resize', () => {
+    if (document.getElementById('tab-layout').classList.contains('active')) resizeCanvas();
+  });
+}
+
+function populateLayoutSidebar() {
+  const list     = document.getElementById('layout-plant-list');
+  const emptyMsg = document.getElementById('layout-empty-msg');
+  list.innerHTML = '';
+
+  if (!garden.length) {
+    list.style.display = 'none'; emptyMsg.style.display = 'block'; return;
+  }
+  list.style.display = 'flex'; emptyMsg.style.display = 'none';
+
+  garden.forEach((pl, idx) => {
+    const color = LAYOUT_COLORS[idx % LAYOUT_COLORS.length];
+    const chip  = document.createElement('div');
+    chip.className = 'layout-plant-chip';
+    chip.draggable = true;
+    chip.innerHTML = `<span class="layout-plant-dot" style="background:${color}"></span>${pl.name}`;
+    chip.dataset.idx = idx;
+
+    chip.addEventListener('dragstart', e => { e.dataTransfer.setData('plantIdx', idx); });
+    chip.addEventListener('click', () => {
+      const canvas = getCanvas();
+      addPlantToLayout(pl, idx, canvas.width / 2, canvas.height / 2, color);
+    });
+    list.appendChild(chip);
+  });
+
+  const canvas = getCanvas();
+  canvas.addEventListener('dragover', e => e.preventDefault());
+  canvas.addEventListener('drop', e => {
+    e.preventDefault();
+    const idx   = parseInt(e.dataTransfer.getData('plantIdx'));
+    const pl    = garden[idx];
+    const rect  = canvas.getBoundingClientRect();
+    const color = LAYOUT_COLORS[idx % LAYOUT_COLORS.length];
+    addPlantToLayout(pl, idx, e.clientX - rect.left, e.clientY - rect.top, color);
+  });
+}
+
+function parseSpread(pl) {
+  const s = pl.mature_spread || pl.spread || '2 ft';
+  const ft = s.match(/([\d.]+)\s*(?:to|-)\s*([\d.]+)\s*ft/i);
+  if (ft) return (parseFloat(ft[1]) + parseFloat(ft[2])) / 2;
+  const ftS = s.match(/([\d.]+)\s*ft/i);
+  if (ftS) return parseFloat(ftS[1]);
+  const inches = s.match(/([\d.]+)\s*in/i);
+  if (inches) return parseFloat(inches[1]) / 12;
+  return 2;
+}
+
+function parseSpacingFt(pl) {
+  const s = pl.spacing || '';
+  const m = s.match(/([\d.]+)/);
+  if (!m) return parseSpread(pl) * 1.3;
+  return parseFloat(m[1]) / 12;
+}
+
+function addPlantToLayout(pl, idx, x, y, color) {
+  const id      = `${pl.name}-${Date.now()}`;
+  const spread  = parseSpread(pl);
+  const spacing = parseSpacingFt(pl);
+  layoutPlants.push({ id, name: pl.name, scientific: pl.scientific, x, y, spread, spacing, color });
+  selectLayoutPlant(id);
+  redrawCanvas();
+  saveLayout();
+}
+
+function getCanvasPos(e) {
+  const canvas = getCanvas();
+  const rect   = canvas.getBoundingClientRect();
+  return {
+    x: (e.clientX - rect.left) * (canvas.width / rect.width),
+    y: (e.clientY - rect.top)  * (canvas.height / rect.height),
+  };
+}
+
+function onLayoutPointerDown(e) {
+  const pos = getCanvasPos(e);
+  for (let i = layoutPlants.length - 1; i >= 0; i--) {
+    const pl = layoutPlants[i];
+    const r  = ftToPxOnMap(pl.spread / 2);
+    const dx = pos.x - pl.x, dy = pos.y - pl.y;
+    if (Math.sqrt(dx*dx + dy*dy) <= r + 8) {
+      layoutDragging = pl;
+      layoutOffset   = { x: dx, y: dy };
+      selectLayoutPlant(pl.id);
+      return;
+    }
+  }
+  layoutSelected = null;
+  document.getElementById('layout-selected-info').style.display = 'none';
+  redrawCanvas();
+}
+
+function onLayoutPointerMove(e) {
+  if (!layoutDragging) return;
+  const canvas = getCanvas();
+  const pos    = getCanvasPos(e);
+  layoutDragging.x = Math.max(0, Math.min(canvas.width,  pos.x - layoutOffset.x));
+  layoutDragging.y = Math.max(0, Math.min(canvas.height, pos.y - layoutOffset.y));
+  redrawCanvas();
+}
+
+function onLayoutPointerUp() {
+  if (layoutDragging) saveLayout();
+  layoutDragging = null;
+}
+
+function selectLayoutPlant(id) {
+  layoutSelected = layoutPlants.find(p => p.id === id) || null;
+  const info = document.getElementById('layout-selected-info');
+  if (layoutSelected) {
+    const spreadFt = layoutSelected.spread.toFixed(1);
+    const spacingIn = (layoutSelected.spacing * 12).toFixed(0);
+    document.getElementById('lsi-name').textContent = layoutSelected.name;
+    document.getElementById('lsi-details').textContent =
+      `${layoutSelected.scientific || ''} · Spread: ${spreadFt} ft · Spacing: ${spacingIn} in`;
+    info.style.display = 'flex';
+  } else {
+    info.style.display = 'none';
+  }
+  redrawCanvas();
+}
+
+function removeSelectedFromLayout() {
+  if (!layoutSelected) return;
+  layoutPlants = layoutPlants.filter(p => p.id !== layoutSelected.id);
+  layoutSelected = null;
+  document.getElementById('layout-selected-info').style.display = 'none';
+  redrawCanvas();
+  saveLayout();
+}
+
+function clearLayout() {
+  if (!layoutPlants.length) return;
+  if (!confirm('Clear the garden layout?')) return;
+  layoutPlants = [];
+  layoutSelected = null;
+  document.getElementById('layout-selected-info').style.display = 'none';
+  redrawCanvas();
+  saveLayout();
+}
+
+function saveLayout() {
+  try { localStorage.setItem('bloomwise-layout', JSON.stringify(layoutPlants)); } catch(e) {}
+}
+
+function loadLayout() {
+  try {
+    const saved = localStorage.getItem('bloomwise-layout');
+    if (saved) layoutPlants = JSON.parse(saved);
+  } catch(e) { layoutPlants = []; }
+}
+
+function exportLayoutImage() {
+  const canvas = getCanvas();
+  const link   = document.createElement('a');
+  link.download = 'bloomwise-garden-layout.png';
+  link.href = canvas.toDataURL('image/png');
+  link.click();
+}
+
+loadLayout();
 
 renderTracker(0);
 loadGardenFromDB();
