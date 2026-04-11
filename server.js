@@ -655,17 +655,36 @@ async function handleNurseries(req, res) {
 async function handleGeocode(req, res) {
   const { location } = await readBody(req);
   if (!location) return sendJSON(res, 400, { error: "location is required" });
+
+  const KEY = process.env.GOOGLE_PLACES_API_KEY;
+
+  // Try Google Geocoding first (handles full street addresses)
+  if (KEY) {
+    try {
+      const geo = await httpGet(
+        `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(location)}&key=${KEY}`
+      );
+      if (geo.results?.length) {
+        const { lat, lng } = geo.results[0].geometry.location;
+        const displayName  = geo.results[0].formatted_address;
+        return sendJSON(res, 200, { found: true, latitude: lat, longitude: lng, displayName });
+      }
+    } catch(e) { console.warn("Google geocode error:", e.message); }
+  }
+
+  // Fall back to Open-Meteo (city names only, no API key needed)
   try {
     const geo = await httpGet(
       `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(location)}&count=1&language=en&format=json`
     );
-    if (!geo.results?.length) return sendJSON(res, 200, { found: false });
-    const { latitude, longitude, name, admin1, country_code } = geo.results[0];
-    const displayName = [name, admin1, country_code].filter(Boolean).join(", ");
-    sendJSON(res, 200, { found: true, latitude, longitude, displayName });
-  } catch(e) {
-    sendJSON(res, 200, { found: false, error: e.message });
-  }
+    if (geo.results?.length) {
+      const { latitude, longitude, name, admin1, country_code } = geo.results[0];
+      const displayName = [name, admin1, country_code].filter(Boolean).join(", ");
+      return sendJSON(res, 200, { found: true, latitude, longitude, displayName });
+    }
+  } catch(e) { console.warn("Open-Meteo geocode error:", e.message); }
+
+  sendJSON(res, 200, { found: false });
 }
 
 async function handleMapImage(req, res) {
