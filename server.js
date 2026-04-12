@@ -802,7 +802,9 @@ async function handleSaveGarden(req, res) {
     });
   }
 
-  await dbSaveGarden(uid, plants || []);
+  // Ensure plants is always a valid array before saving
+  const safePlants = Array.isArray(plants) ? plants : [];
+  await dbSaveGarden(uid, safePlants);
   sendJSON(res, 200, { ok: true });
 }
 
@@ -930,8 +932,8 @@ async function handleSignup(req, res) {
     const anonGarden = await db.query("SELECT plants FROM gardens WHERE uid=$1", [uid]);
     if (anonGarden.rows.length) {
       await db.query(
-        "INSERT INTO gardens (uid, plants) VALUES ($1,$2) ON CONFLICT (uid) DO NOTHING",
-        [cleanEmail, anonGarden.rows[0].plants]
+        "INSERT INTO gardens (uid, plants) VALUES ($1,$2::jsonb) ON CONFLICT (uid) DO NOTHING",
+        [cleanEmail, JSON.stringify(anonGarden.rows[0].plants || [])]
       );
     }
     // Migrate pro status
