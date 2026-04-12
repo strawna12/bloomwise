@@ -415,6 +415,29 @@ verdict: green/yellow/red. status: ok/warn/bad/neutral.`;
   sendJSON(res, 200, { result });
 }
 
+async function handleGardenAdvisor(req, res) {
+  const { question, context } = await readBody(req);
+  if (!question) return sendJSON(res, 400, { error: "question required" });
+
+  const prompt = `You are an expert permaculture designer, organic gardener, and horticulturist with decades of hands-on experience. Answer the following gardening question with practical, actionable advice.
+
+${context ? `Gardener's context: ${context}` : ''}
+
+Question: ${question}
+
+Provide a thorough, expert answer. Include:
+- Direct practical advice they can act on immediately
+- Organic/natural solutions where relevant (especially for pest control)
+- Specific plant names, techniques, or products where helpful
+- Any important warnings or common mistakes to avoid
+- A quick "bottom line" summary at the end
+
+Write in a warm, knowledgeable tone — like advice from an experienced gardening mentor. Use markdown formatting with **bold** for key terms and bullet points for lists.`;
+
+  const text = await ai(prompt, 1500);
+  sendJSON(res, 200, { answer: text });
+}
+
 async function handleLookupCare(req, res) {
   const { plant } = await readBody(req);
   if (!plant) return sendJSON(res, 400, { error: "plant name required" });
@@ -1188,10 +1211,11 @@ const server = http.createServer(async (req, res) => {
     }
 
     const AI = {
-      "/recommendations": handleRecommendations,
-      "/lookup":          handleLookup,
-      "/lookup-care":     handleLookupCare,
-      "/identify-plant":  handleIdentifyPlant,
+      "/recommendations":  handleRecommendations,
+      "/lookup":           handleLookup,
+      "/lookup-care":      handleLookupCare,
+      "/identify-plant":   handleIdentifyPlant,
+      "/garden-advisor":   handleGardenAdvisor,
     };
 
     if (AI[url]) {
