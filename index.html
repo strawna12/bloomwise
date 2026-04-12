@@ -1568,18 +1568,12 @@ textarea { resize: vertical; min-height: 90px; }
         </div>
       </div>
       <div class="layout-control-group">
-        <label class="layout-label">Scale (ft/grid)</label>
-        <select id="layout-scale" class="layout-num-input" style="width:90px;" onchange="redrawCanvas()">
-          <option value="1">1 ft</option>
-          <option value="2">2 ft</option>
-          <option value="5" selected>5 ft</option>
-          <option value="10">10 ft</option>
-        </select>
-      </div>
-      <div class="layout-control-group">
-        <label class="layout-label">Show spacing</label>
-        <input type="checkbox" id="layout-spacing" checked onchange="redrawCanvas()"
-          style="width:18px;height:18px;cursor:pointer;accent-color:var(--bloom);"/>
+        <label class="layout-label">Show spacing zones</label>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <input type="checkbox" id="layout-spacing" checked onchange="redrawCanvas()"
+            style="width:18px;height:18px;cursor:pointer;accent-color:var(--bloom);"/>
+          <span style="font-size:11px;color:var(--stone);line-height:1.4;">(dashed circles showing<br>how far apart to plant)</span>
+        </div>
       </div>
       <button class="btn btn-ghost" onclick="clearLayout()" style="margin-left:auto;">🗑 Clear</button>
       <button class="btn btn-pdf" onclick="exportLayoutImage()">⬇ Save image</button>
@@ -1595,6 +1589,9 @@ textarea { resize: vertical; min-height: 90px; }
       <div class="layout-sidebar">
         <div class="layout-sidebar-title">Your Plants</div>
         <div class="layout-sidebar-sub">Drag onto canvas or tap to add</div>
+        <div style="background:var(--gold-lt);border:1px solid var(--gold);border-radius:var(--r);padding:8px 10px;margin-bottom:10px;font-size:11px;color:#7a5500;line-height:1.5;">
+          🌳 <strong>Note:</strong> Circles show each plant at <strong>full maturity</strong>, not its size when planted.
+        </div>
         <div id="layout-plant-list" class="layout-plant-list"></div>
         <div id="layout-empty-msg" class="layout-empty-msg" style="display:none;">
           <div>🪴</div>
@@ -1607,7 +1604,7 @@ textarea { resize: vertical; min-height: 90px; }
       <div class="layout-canvas-wrap">
         <canvas id="layout-canvas" class="layout-canvas"></canvas>
         <div class="layout-legend">
-          <span class="legend-item"><span class="legend-dot" style="background:rgba(46,125,196,.3);border:2px solid var(--sky);"></span> Plant spread</span>
+          <span class="legend-item"><span class="legend-dot" style="background:rgba(46,125,196,.3);border:2px solid var(--sky);"></span> Mature plant size</span>
           <span class="legend-item"><span class="legend-dot" style="background:rgba(212,160,23,.15);border:1.5px dashed var(--gold);"></span> Spacing zone</span>
         </div>
       </div>
@@ -3008,11 +3005,8 @@ let layoutInited   = false;
 let layoutMapImg   = null;  // satellite image as HTMLImageElement
 let layoutMapMeta  = null;  // { lat, lng, zoom, metersPerPx }
 
-// px per foot based on scale dropdown
-function getPxPerFt() {
-  const s = parseFloat(document.getElementById('layout-scale')?.value || 5);
-  return 40 / s; // 40px per grid cell regardless of scale unit
-}
+// px per foot on blank canvas — fixed scale (8px per foot)
+function getPxPerFt() { return 8; }
 
 function getCanvas() { return document.getElementById('layout-canvas'); }
 function getCtx()    { return getCanvas().getContext('2d'); }
