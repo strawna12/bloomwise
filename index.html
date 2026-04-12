@@ -452,6 +452,25 @@ textarea { resize: vertical; min-height: 90px; }
 .special-box li { font-size: 12px; color: var(--lavender); line-height: 1.75; }
 .pro-tip { background: var(--petal-lt); border: 1px solid var(--petal2); border-radius: var(--r); padding: 14px 16px; font-size: 13px; color: var(--bloom); line-height: 1.65; }
 
+/* ── Planting Calendar ─────────────────────────────────── */
+.cal-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; }
+.cal-month { background: var(--cal-bg, var(--bg)); border: 1.5px solid var(--cal-border, var(--border)); border-radius: var(--r-lg); overflow: hidden; cursor: pointer; transition: box-shadow .2s; }
+.cal-month-header { display: flex; align-items: center; gap: 8px; padding: 12px 16px; }
+.cal-month-name { font-weight: 600; font-size: 14px; color: var(--cal-text, var(--bloom)); flex: 1; }
+.cal-season-tag { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; color: var(--cal-text, var(--stone)); opacity: .7; }
+.cal-chevron { font-size: 10px; color: var(--cal-text, var(--stone)); transition: transform .2s; opacity: .6; }
+.cal-month-body { padding: 0 16px 14px; }
+.cal-section { margin-bottom: 10px; }
+.cal-section-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; color: var(--cal-text, var(--stone)); margin-bottom: 4px; opacity: .8; }
+.cal-item { font-size: 12px; color: var(--ink2); line-height: 1.7; padding-left: 10px; position: relative; }
+.cal-item::before { content: '·'; position: absolute; left: 0; color: var(--cal-border, var(--petal2)); }
+.cal-tip { background: rgba(255,255,255,.6); border-radius: var(--r); padding: 8px 12px; font-size: 12px; color: var(--cal-text, var(--bloom)); line-height: 1.6; margin-top: 8px; font-style: italic; }
+.lesson-count-badge { font-size: 12px; text-align: right; margin-bottom: 1rem; }
+.pro-lesson-card { border-color: var(--gold) !important; background: linear-gradient(135deg, #fff 80%, var(--gold-lt)) !important; }
+.pro-lesson-card:hover { border-color: var(--gold) !important; box-shadow: 0 6px 24px rgba(200,135,42,.15) !important; }
+.pro-lesson-badge { font-size: 10px; font-weight: 700; background: var(--gold-lt); color: #7a4e00; border: 1px solid var(--gold); border-radius: 50px; padding: 1px 7px; margin-left: 6px; vertical-align: middle; white-space: nowrap; }
+.academy-tag.tag-pro { background: var(--gold-lt); color: #7a4e00; border-color: var(--gold); }
+
 /* ── Garden Academy ────────────────────────────────────── */
 .academy-hero {
   background: linear-gradient(135deg, #1a3a1f 0%, #2d6a35 50%, #4a9e55 100%);
@@ -1280,10 +1299,12 @@ textarea { resize: vertical; min-height: 90px; }
           <div class="pricing-feature"><span class="pf-icon">🔍</span><span class="pf-text"><strong>2</strong> plant lookups/week</span></div>
           <div class="pricing-feature"><span class="pf-icon">📸</span><span class="pf-text"><strong>3</strong> plant IDs/week</span></div>
           <div class="pricing-feature"><span class="pf-icon">🌱</span><span class="pf-text">Garden up to <strong>6 plants</strong></span></div>
-          <div class="pricing-feature"><span class="pf-icon">🛒</span><span class="pf-text"><strong>🔒</strong> Shopping list (Pro only)</span></div>
-          <div class="pricing-feature"><span class="pf-icon">📍</span><span class="pf-text">Nursery finder</span></div>
+          <div class="pricing-feature"><span class="pf-icon">🎓</span><span class="pf-text"><strong>3</strong> Academy lessons/month</span></div>
+          <div class="pricing-feature locked"><span class="pf-icon">🔒</span><span class="pf-text">AI Garden Advisor</span></div>
+          <div class="pricing-feature locked"><span class="pf-icon">🔒</span><span class="pf-text">Seasonal planting calendar</span></div>
+          <div class="pricing-feature locked"><span class="pf-icon">🔒</span><span class="pf-text">Shopping list</span></div>
           <div class="pricing-feature locked"><span class="pf-icon">🔒</span><span class="pf-text">PDF export</span></div>
-          <div class="pricing-feature locked"><span class="pf-icon">🔒</span><span class="pf-text">International zones</span></div>
+          <div class="pricing-feature"><span class="pf-icon">📍</span><span class="pf-text">Nursery finder</span></div>
         </div>
         <div class="pricing-col pro-col">
           <div class="pricing-col-header">
@@ -1294,10 +1315,12 @@ textarea { resize: vertical; min-height: 90px; }
           <div class="pricing-feature"><span class="pf-icon">✅</span><span class="pf-text"><strong>Unlimited</strong> plant lookups</span></div>
           <div class="pricing-feature"><span class="pf-icon">✅</span><span class="pf-text"><strong>Unlimited</strong> plant IDs</span></div>
           <div class="pricing-feature"><span class="pf-icon">✅</span><span class="pf-text"><strong>Unlimited</strong> garden size</span></div>
-          <div class="pricing-feature"><span class="pf-icon">✅</span><span class="pf-text"><strong>Unlimited</strong> shopping lists</span></div>
-          <div class="pricing-feature"><span class="pf-icon">✅</span><span class="pf-text">Nursery finder</span></div>
+          <div class="pricing-feature"><span class="pf-icon">✅</span><span class="pf-text"><strong>Unlimited</strong> Academy lessons</span></div>
+          <div class="pricing-feature"><span class="pf-icon">✅</span><span class="pf-text">AI Garden Advisor</span></div>
+          <div class="pricing-feature"><span class="pf-icon">✅</span><span class="pf-text">Personalised planting calendar</span></div>
+          <div class="pricing-feature"><span class="pf-icon">✅</span><span class="pf-text">Unlimited shopping lists</span></div>
           <div class="pricing-feature"><span class="pf-icon">✅</span><span class="pf-text">PDF export (picks + garden)</span></div>
-          <div class="pricing-feature"><span class="pf-icon">✅</span><span class="pf-text">International zone detection</span></div>
+          <div class="pricing-feature"><span class="pf-icon">✅</span><span class="pf-text">Nursery finder</span></div>
         </div>
       </div>
       <div class="pricing-actions">
@@ -1735,6 +1758,7 @@ textarea { resize: vertical; min-height: 90px; }
     </div>
 
     <!-- Topic grid -->
+    <div id="lesson-count-badge" class="lesson-count-badge"></div>
     <div class="academy-grid" id="academy-grid">
 
       <div class="academy-card" onclick="openLesson('pest-control')">
@@ -1818,6 +1842,88 @@ textarea { resize: vertical; min-height: 90px; }
         </div>
       </div>
 
+      <!-- Pro lessons -->
+      <div class="academy-card pro-lesson-card" onclick="openProLesson('advanced-pruning')">
+        <div class="academy-icon">✂️</div>
+        <div class="academy-card-body">
+          <div class="academy-card-title">Advanced Pruning Techniques <span class="pro-lesson-badge">⚡ Pro</span></div>
+          <div class="academy-card-desc">Species-by-species pruning guides — roses, fruit trees, shrubs, climbers, and ornamentals</div>
+          <div class="academy-tag-row"><span class="academy-tag tag-pro">Pro</span></div>
+        </div>
+      </div>
+
+      <div class="academy-card pro-lesson-card" onclick="openProLesson('mushrooms')">
+        <div class="academy-icon">🍄</div>
+        <div class="academy-card-body">
+          <div class="academy-card-title">Growing Mushrooms <span class="pro-lesson-badge">⚡ Pro</span></div>
+          <div class="academy-card-desc">Oyster, shiitake, lion's mane — indoors, outdoors, on logs and straw bales</div>
+          <div class="academy-tag-row"><span class="academy-tag tag-pro">Pro</span></div>
+        </div>
+      </div>
+
+      <div class="academy-card pro-lesson-card" onclick="openProLesson('market-garden')">
+        <div class="academy-icon">🌾</div>
+        <div class="academy-card-body">
+          <div class="academy-card-title">Market Garden Planning <span class="pro-lesson-badge">⚡ Pro</span></div>
+          <div class="academy-card-desc">Bed layouts, crop selection, yield planning, and selling at farmers markets</div>
+          <div class="academy-tag-row"><span class="academy-tag tag-pro">Pro</span></div>
+        </div>
+      </div>
+
+      <div class="academy-card pro-lesson-card" onclick="openProLesson('chickens')">
+        <div class="academy-icon">🐔</div>
+        <div class="academy-card-body">
+          <div class="academy-card-title">Integrating Chickens <span class="pro-lesson-badge">⚡ Pro</span></div>
+          <div class="academy-card-desc">Using chickens for pest control, fertiliser, and soil building — coop design and rotation</div>
+          <div class="academy-tag-row"><span class="academy-tag tag-pro">Pro</span></div>
+        </div>
+      </div>
+
+      <div class="academy-card pro-lesson-card" onclick="openProLesson('preserving')">
+        <div class="academy-icon">🫙</div>
+        <div class="academy-card-body">
+          <div class="academy-card-title">Preserving & Fermenting <span class="pro-lesson-badge">⚡ Pro</span></div>
+          <div class="academy-card-desc">Canning, pickling, fermenting, dehydrating — turn your harvest glut into year-round food</div>
+          <div class="academy-tag-row"><span class="academy-tag tag-pro">Pro</span></div>
+        </div>
+      </div>
+
+      <div class="academy-card pro-lesson-card" onclick="openProLesson('season-extension')">
+        <div class="academy-icon">🌡️</div>
+        <div class="academy-card-body">
+          <div class="academy-card-title">Season Extension <span class="pro-lesson-badge">⚡ Pro</span></div>
+          <div class="academy-card-desc">Polytunnels, cold frames, cloches, row covers, and grow lights — harvest 12 months a year</div>
+          <div class="academy-tag-row"><span class="academy-tag tag-pro">Pro</span></div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Seasonal planting calendar -->
+    <div class="advisor-section" style="margin-bottom:1.5rem;">
+      <div class="advisor-header">
+        <div>
+          <div class="advisor-title">📅 Personalised Planting Calendar</div>
+          <div class="advisor-sub">Month-by-month guide for your exact location and zone</div>
+        </div>
+        <span class="pro-badge-inline">⚡ Pro</span>
+      </div>
+      <div id="calendar-output"></div>
+      <div id="calendar-cta">
+        <p style="font-size:13px;color:var(--stone);margin-bottom:1rem;line-height:1.7;">
+          Get a personalised 12-month calendar showing exactly what to sow, plant, and harvest each month — tailored to your location, zone, and garden goals.
+        </p>
+        <button class="btn btn-primary" id="calendar-btn" onclick="generateCalendar()" style="width:100%;">
+          📅 Generate my planting calendar
+        </button>
+        <div style="font-size:11px;color:var(--stone);text-align:center;margin-top:6px;">Pro feature — fills in your location from the Recommendations tab</div>
+      </div>
+      <div class="advisor-lock" id="calendar-lock" style="display:none;">
+        <div class="lock-icon">📅</div>
+        <div class="lock-title">Personalised Planting Calendar</div>
+        <div class="lock-sub">Get your custom month-by-month planting guide with Pro</div>
+        <button class="btn btn-primary" onclick="showPricingModal()">Upgrade to Pro — $4.99</button>
+      </div>
     </div>
 
     <!-- AI Garden Advisor -->
@@ -3715,6 +3821,7 @@ function mdToHtml(text) {
 let advisorHistory = [];
 
 function initAdvisorUI() {
+  // Advisor
   if (IS_PRO) {
     document.getElementById('advisor-lock').style.display = 'none';
     document.getElementById('advisor-input-wrap').style.display = 'block';
@@ -3724,6 +3831,15 @@ function initAdvisorUI() {
     document.getElementById('advisor-lock').style.display = 'flex';
     document.getElementById('advisor-input-wrap').style.display = 'none';
   }
+  // Calendar
+  const calLock = document.getElementById('calendar-lock');
+  const calCta  = document.getElementById('calendar-cta');
+  if (calLock && calCta) {
+    calLock.style.display = IS_PRO ? 'none' : 'flex';
+    calCta.style.display  = IS_PRO ? 'block' : 'none';
+  }
+  // Lesson badge
+  updateLessonBadge();
 }
 
 function askAdvisor(question) {
@@ -3896,7 +4012,274 @@ const LESSONS = {
 
 };
 
+const FREE_LESSON_LIMIT = 3;
+
+function getLessonViews() {
+  try {
+    const stored = JSON.parse(localStorage.getItem('bw-lesson-views') || '{}');
+    const month = new Date().toISOString().slice(0, 7);
+    if (stored.month !== month) return { month, count: 0, seen: [] };
+    return stored;
+  } catch { return { month: new Date().toISOString().slice(0, 7), count: 0, seen: [] }; }
+}
+
+function saveLessonViews(data) {
+  localStorage.setItem('bw-lesson-views', JSON.stringify(data));
+}
+
+function updateLessonBadge() {
+  const badge = document.getElementById('lesson-count-badge');
+  if (!badge) return;
+  if (IS_PRO) { badge.style.display = 'none'; return; }
+  const views = getLessonViews();
+  const remaining = Math.max(0, FREE_LESSON_LIMIT - views.count);
+  badge.style.display = 'block';
+  badge.textContent = `${remaining} free lesson${remaining !== 1 ? 's' : ''} remaining this month`;
+  badge.style.color = remaining === 0 ? 'var(--rust)' : 'var(--stone)';
+}
+
+function showLessonGate() {
+  const modal = document.getElementById('lesson-modal');
+  document.getElementById('lesson-content').innerHTML = `
+    <div style="text-align:center;padding:2rem 1rem;">
+      <div style="font-size:52px;margin-bottom:1rem;">🔒</div>
+      <h2 style="font-family:'Cormorant Garamond',serif;font-size:28px;color:var(--bloom);margin-bottom:10px;">
+        You've read your 3 free lessons
+      </h2>
+      <p style="font-size:14px;color:var(--stone);line-height:1.7;margin-bottom:1.5rem;max-width:380px;margin-left:auto;margin-right:auto;">
+        Upgrade to Pro for unlimited access to all Academy lessons, the AI Garden Advisor, and your personalised planting calendar.
+      </p>
+      <div style="background:var(--sage-lt);border:1px solid var(--sage);border-radius:var(--r-lg);padding:1rem 1.5rem;margin-bottom:1.5rem;text-align:left;max-width:340px;margin-left:auto;margin-right:auto;">
+        <div style="font-size:12px;font-weight:700;color:var(--sage);text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px;">Pro includes:</div>
+        <div style="font-size:13px;color:var(--ink2);line-height:1.9;">
+          ✅ All 9 Academy lessons (+ more coming)<br>
+          ✅ AI Garden Advisor — ask anything<br>
+          ✅ Personalised planting calendar<br>
+          ✅ Unlimited recommendations & lookups<br>
+          ✅ Unlimited garden size & shopping list
+        </div>
+      </div>
+      <button class="btn btn-primary" style="width:100%;max-width:340px;padding:14px;" onclick="closeLesson();showPricingModal()">
+        🌻 Upgrade to Pro — $4.99 one-time
+      </button>
+      <div style="margin-top:10px;">
+        <button style="background:none;border:none;color:var(--stone);font-size:12px;cursor:pointer;font-family:inherit;" onclick="closeLesson()">Maybe later</button>
+      </div>
+    </div>`;
+  modal.style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+}
+
+// ── Seasonal Planting Calendar ────────────────────────────
+async function generateCalendar() {
+  if (!IS_PRO) { showPricingModal(); return; }
+  const p = prof();
+  if (p.location === 'Not specified' && !p.zone) {
+    document.getElementById('calendar-output').innerHTML =
+      '<div class="error-box">Please fill in your location in the Recommendations tab first so we can personalise your calendar.</div>';
+    return;
+  }
+  const btn = document.getElementById('calendar-btn');
+  btn.disabled = true;
+  btn.textContent = '⏳ Generating your calendar…';
+  document.getElementById('calendar-output').innerHTML =
+    '<div class="loading"><div class="loader"></div><div class="loading-text">Creating your personalised planting calendar…</div><div class="loading-sub">This takes about 15 seconds</div></div>';
+
+  const prompt = `You are an expert horticulturist. Create a detailed month-by-month planting calendar for this gardener.
+
+Gardener profile:
+Location: ${p.location} | Zone: ${p.zone} | Climate: ${p.climate}
+Sun: ${p.sun} | Soil: ${p.soil} | Water: ${p.water}
+Style: ${p.style} | Priorities: ${p.priorities}
+Notes: ${p.notes}
+
+Return ONLY a valid JSON object, nothing else:
+{
+  "title": "Personalised Planting Calendar for [location]",
+  "zone": "${p.zone}",
+  "months": [
+    {
+      "month": "January",
+      "emoji": "❄️",
+      "season": "Winter",
+      "sow_indoors": ["list of what to sow indoors this month"],
+      "sow_outdoors": ["list of what to direct sow outdoors"],
+      "plant_out": ["what to plant out/transplant"],
+      "harvest": ["what is ready to harvest"],
+      "tasks": ["2-3 key garden tasks for this month"],
+      "tip": "one practical tip specific to this month and their location"
+    }
+  ]
+}
+Include all 12 months. Tailor specifically to their zone, climate, and priorities. If they prefer edibles, focus on vegetables. If ornamental, focus on flowers. Be specific with variety suggestions where helpful.`;
+
+  try {
+    const data = await apiCall('/garden-advisor', { question: prompt, context: '' });
+    const cal = JSON.parse(data.answer.replace(/```json|```/gi, '').trim());
+    renderCalendar(cal);
+  } catch(e) {
+    document.getElementById('calendar-output').innerHTML =
+      `<div class="error-box"><strong>Could not generate calendar:</strong> ${e.message}</div>`;
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '📅 Generate my planting calendar';
+  }
+}
+
+function renderCalendar(cal) {
+  const seasonColors = {
+    'Winter':  { bg: '#e6f2fa', border: '#4a85b0', text: '#1a4a6e', emoji: '❄️' },
+    'Spring':  { bg: '#fce8f0', border: '#e8789a', text: '#7a1a3a', emoji: '🌸' },
+    'Summer':  { bg: '#fdf3dc', border: '#c8872a', text: '#7a4e00', emoji: '☀️' },
+    'Autumn':  { bg: '#fbeee8', border: '#b85840', text: '#6b2a14', emoji: '🍂' },
+    'Fall':    { bg: '#fbeee8', border: '#b85840', text: '#6b2a14', emoji: '🍂' },
+  };
+
+  const months = cal.months || [];
+  const html = `
+    <div style="margin-bottom:1.5rem;">
+      <div style="font-family:'Cormorant Garamond',serif;font-size:24px;color:var(--bloom);font-weight:600;margin-bottom:4px;">${cal.title}</div>
+      <div style="font-size:13px;color:var(--stone);">${cal.zone} · Tap any month to see full details</div>
+    </div>
+    <div class="cal-grid">
+      ${months.map((m, i) => {
+        const sc = seasonColors[m.season] || seasonColors['Spring'];
+        return `<div class="cal-month" style="--cal-bg:${sc.bg};--cal-border:${sc.border};--cal-text:${sc.text};" onclick="toggleCalMonth(this)">
+          <div class="cal-month-header">
+            <span class="cal-month-name">${m.emoji || sc.emoji} ${m.month}</span>
+            <span class="cal-season-tag">${m.season}</span>
+            <span class="cal-chevron">▼</span>
+          </div>
+          <div class="cal-month-body" style="display:none;">
+            ${m.sow_indoors?.length ? `<div class="cal-section"><div class="cal-section-label">🌱 Sow indoors</div>${m.sow_indoors.map(x=>`<div class="cal-item">${x}</div>`).join('')}</div>` : ''}
+            ${m.sow_outdoors?.length ? `<div class="cal-section"><div class="cal-section-label">🌍 Sow outdoors</div>${m.sow_outdoors.map(x=>`<div class="cal-item">${x}</div>`).join('')}</div>` : ''}
+            ${m.plant_out?.length ? `<div class="cal-section"><div class="cal-section-label">🪴 Plant out</div>${m.plant_out.map(x=>`<div class="cal-item">${x}</div>`).join('')}</div>` : ''}
+            ${m.harvest?.length ? `<div class="cal-section"><div class="cal-section-label">🧺 Harvest</div>${m.harvest.map(x=>`<div class="cal-item">${x}</div>`).join('')}</div>` : ''}
+            ${m.tasks?.length ? `<div class="cal-section"><div class="cal-section-label">🔧 Key tasks</div>${m.tasks.map(x=>`<div class="cal-item">${x}</div>`).join('')}</div>` : ''}
+            ${m.tip ? `<div class="cal-tip">💡 ${m.tip}</div>` : ''}
+          </div>
+        </div>`;
+      }).join('')}
+    </div>`;
+  document.getElementById('calendar-output').innerHTML = html;
+  // Auto-open current month
+  const currentMonth = new Date().toLocaleString('default', { month: 'long' });
+  document.querySelectorAll('.cal-month').forEach(el => {
+    if (el.querySelector('.cal-month-name')?.textContent.includes(currentMonth)) {
+      toggleCalMonth(el);
+    }
+  });
+}
+
+function toggleCalMonth(el) {
+  const body = el.querySelector('.cal-month-body');
+  const chev = el.querySelector('.cal-chevron');
+  const open = body.style.display !== 'none';
+  body.style.display = open ? 'none' : 'block';
+  chev.style.transform = open ? '' : 'rotate(180deg)';
+  el.style.boxShadow = open ? '' : 'var(--sh-md)';
+}
+
+function openProLesson(id) {
+  if (!IS_PRO) { showLessonGate(); return; }
+  openLesson(id);
+}
+
+const PRO_LESSONS = {
+
+  'advanced-pruning': {
+    title: '✂️ Advanced Pruning Techniques',
+    intro: 'Pruning is as much art as science. Get it right and you\'ll have healthier plants, better flowers, and more fruit. Get it wrong and you can set a plant back years. This guide covers species-specific techniques beyond the basics.',
+    sections: [
+      { h: 'Roses — The Full Guide', body: `<ul class="lesson-ul"><li><strong>Hybrid teas & grandifloras:</strong> Hard prune in late winter/early spring to 3–5 strong outward-facing canes, cut to 15–20cm. Remove all weak, twiggy, and crossing stems. Cut just above an outward-facing bud at 45°.</li><li><strong>Floribundas:</strong> Less severe — prune to about 30–45cm, keeping more stems for the cluster effect.</li><li><strong>Climbing roses:</strong> Remove 1–2 of the oldest canes entirely each year. Tie new canes horizontally to encourage flowering along their length (vertical canes produce flowers only at the tip).</li><li><strong>Rambling roses:</strong> Prune after flowering (summer) — they bloom on old wood. Remove flowered stems at ground level, tie in new growth.</li><li><strong>Shrub & old garden roses:</strong> Light pruning only — remove dead/diseased wood and thin for airflow. Hard pruning reduces flowering.</li></ul><div class="lesson-tip">💡 "If in doubt, prune less" applies especially to old garden roses — many bloom exclusively on old wood.</div>` },
+      { h: 'Wisteria — Two-Phase Pruning', body: `<p class="lesson-p">Wisteria is pruned twice yearly — the only way to control its vigour and maximise flowering:</p><ul class="lesson-ul"><li><strong>Summer (July–August):</strong> Cut all new whippy growth back to 5–6 leaves from the main framework. This builds the flowering spurs.</li><li><strong>Winter (January–February):</strong> Cut those same shoots back again to 2–3 buds. These become next year's flower buds.</li></ul><div class="lesson-warning">⚠️ Never let wisteria grow unchecked for more than one season — it can cause structural damage to buildings and will flower poorly.</div>` },
+      { h: 'Fruit Bushes', body: `<ul class="lesson-ul"><li><strong>Blackcurrants:</strong> Remove 1/3 of the oldest (darkest) stems at ground level each winter. They fruit best on one-year-old wood.</li><li><strong>Redcurrants & gooseberries:</strong> Trained on a framework of permanent branches. Prune side shoots to 1–2 buds in winter; tip leaders by 1/4.</li><li><strong>Blueberries:</strong> Remove a few of the oldest, thickest stems each year once the bush is 5+ years old. Minimal pruning in early years.</li><li><strong>Raspberries (summer-fruiting):</strong> After harvest, cut all fruited canes to ground level. Tie in the new green canes for next year.</li><li><strong>Raspberries (autumn-fruiting):</strong> Cut all canes to ground in February — they fruit on new season growth.</li></ul>` },
+      { h: 'Ornamental Shrubs by Flowering Time', body: `<ul class="lesson-ul"><li><strong>Spring-flowering shrubs</strong> (forsythia, lilac, philadelphus, weigela): Prune immediately after flowering — they bloom on old wood. Pruning in winter removes flower buds.</li><li><strong>Summer-flowering shrubs</strong> (buddleja, lavatera, hardy fuchsia): Prune hard in spring — they bloom on new wood. Cut buddleja to 30–60cm.</li><li><strong>Hydrangeas (mophead/lacecap):</strong> Deadhead only in spring — remove old flower heads just above the first pair of fat buds. Never hard prune.</li><li><strong>Hydrangeas (paniculata & arborescens):</strong> Hard prune in spring — they bloom on new wood.</li></ul><div class="lesson-tip">💡 The rule of thumb: if it flowers before June, prune after flowering. If it flowers after June, prune in late winter/early spring.</div>` },
+      { h: 'Rejuvenation Pruning', body: `<p class="lesson-p">For overgrown, neglected shrubs, rejuvenation pruning can transform them over 2–3 years without the shock of cutting everything at once:</p><ul class="lesson-ul"><li><strong>Year 1:</strong> Remove 1/3 of the oldest, thickest stems at ground level</li><li><strong>Year 2:</strong> Remove another 1/3 of the remaining old wood</li><li><strong>Year 3:</strong> Remove the final old stems; the plant is now running on new vigorous growth</li></ul><p class="lesson-p">This works for most deciduous shrubs including buddleja, philadelphus, forsythia, and overgrown roses. Evergreens are generally less tolerant of hard pruning.</p>` },
+    ]
+  },
+
+  'mushrooms': {
+    title: '🍄 Growing Mushrooms',
+    intro: 'Mushrooms are the most space-efficient crop you can grow — a single log or straw bale can produce for years. They grow in shady spots where vegetables won\'t, turning garden waste into gourmet food.',
+    sections: [
+      { h: 'Choosing Your Mushroom', body: `<ul class="lesson-ul"><li><strong>Oyster mushrooms</strong> (Pleurotus ostreatus): Easiest beginner mushroom. Grows on straw bales, cardboard, coffee grounds, or hardwood logs. Fast — first flush in 2–4 weeks.</li><li><strong>Shiitake</strong> (Lentinula edodes): Grows on hardwood logs (oak, beech, hornbeam). Slower — 6–12 months to first flush — but logs produce for 4–6 years.</li><li><strong>Lion's mane</strong> (Hericium erinaceus): Striking white pom-pom. Grows on hardwood logs or supplemented sawdust blocks. Excellent flavour.</li><li><strong>Wine caps</strong> (Stropharia rugosoannulata): Grown directly in wood chip beds in the garden. Extremely productive and low maintenance.</li><li><strong>Oyster (pink/yellow/golden varieties):</strong> Same culture as grey oyster but prefer slightly warmer temperatures.</li></ul>` },
+      { h: 'Log Inoculation (Shiitake & Oyster)', body: `<ul class="lesson-ul"><li><strong>Best wood:</strong> Freshly cut hardwood logs, 10–15cm diameter, 60–90cm long. Oak is ideal for shiitake. Avoid pine and other conifers.</li><li><strong>Drill holes:</strong> Drill holes 2.5cm deep in a diamond pattern, 10–15cm apart, all over the log.</li><li><strong>Insert spawn:</strong> Tap plug spawn into each hole. Cover immediately with melted cheese wax to seal.</li><li><strong>Incubation:</strong> Stack logs in a shady, humid spot for 6–12 months. Keep moist — soak in water for 24 hours in dry spells.</li><li><strong>Fruiting:</strong> "Shock" the log by soaking in cold water for 12–24 hours. Fruiting should begin within 1–2 weeks.</li><li><strong>Yield:</strong> Each log will produce multiple flushes per year for 4–6 years.</li></ul>` },
+      { h: 'Straw Bale Growing (Oyster)', body: `<ul class="lesson-ul"><li><strong>Pasteurise the straw:</strong> Submerge in hot water (70–80°C) for 1–2 hours, or soak in a lime solution (pH 12) overnight. This kills competing moulds.</li><li><strong>Cool and inoculate:</strong> When straw cools to room temperature, layer with oyster mushroom grain spawn throughout the bale.</li><li><strong>Seal:</strong> Place in a plastic bag with small holes, or wrap in breathable polypropylene.</li><li><strong>Incubate:</strong> Keep at 18–25°C for 2–3 weeks until the straw turns white with mycelium.</li><li><strong>Fruit:</strong> Move to a cooler location with indirect light and high humidity. Mist twice daily. First flush in 1–2 weeks.</li></ul><div class="lesson-tip">💡 Used coffee grounds from a café are a perfect oyster mushroom substrate — free, already pasteurised, and nutrient-rich.</div>` },
+      { h: 'Wine Cap Beds (Outdoors)', body: `<p class="lesson-p">Wine cap mushrooms are the easiest outdoor variety — you literally spread spawn on wood chips and let them colonise the garden:</p><ul class="lesson-ul"><li>Layer 10–15cm of hardwood chips in a shaded bed</li><li>Spread grain spawn evenly through the chips and water well</li><li>Top with another 5cm of chips</li><li>Keep moist. Colonisation takes 2–6 months.</li><li>First fruiting usually occurs in the following spring or autumn</li><li>The bed will produce for several years with no further effort</li></ul><p class="lesson-p">Wine caps are excellent companions in vegetable and herb gardens — the mycelium network improves soil structure and nutrient availability for surrounding plants.</p>` },
+      { h: 'Harvesting & Storage', body: `<ul class="lesson-ul"><li>Harvest oysters just before the caps fully flatten — when edges are still slightly curled under</li><li>Harvest shiitake when caps are 50–70% open</li><li>Twist and pull — don't cut, which leaves a stub that can rot and contaminate future flushes</li><li>Fresh mushrooms last 3–7 days refrigerated in a paper bag (never plastic — they sweat and deteriorate)</li><li>Dry excess harvest at 40°C in a dehydrator or low oven until completely crisp — dried mushrooms last years and have intensified flavour</li></ul>` },
+    ]
+  },
+
+  'market-garden': {
+    title: '🌾 Market Garden Planning',
+    intro: 'A market garden is a small-scale intensive vegetable operation designed to generate income. The key insight from modern market gardeners like Jean-Martin Fortier is that a fraction of an acre, managed intensively, can generate significant revenue.',
+    sections: [
+      { h: 'The Market Garden Model', body: `<ul class="lesson-ul"><li><strong>Scale:</strong> A 1,000–5,000 sq ft plot is enough to start. Many successful market gardeners work less than half an acre.</li><li><strong>Intensive beds:</strong> 30-inch (75cm) permanent raised beds, never walked on. Dense planting maximises yield per square foot.</li><li><strong>High-value crops:</strong> Focus on crops with high $ per sq ft — salad mix, herbs, microgreens, cherry tomatoes, peppers, edible flowers.</li><li><strong>Multiple harvests:</strong> Succession planting ensures something is always ready to sell.</li></ul><div class="lesson-tip">💡 The Paperpot transplanter and Jang seeder are the two tools that most dramatically reduce labour time in a small market garden.</div>` },
+      { h: 'Crop Selection by Profitability', body: `<ul class="lesson-ul"><li><strong>Tier 1 — Highest value:</strong> Microgreens ($20–50/lb), salad mix ($8–12/lb), basil ($6–10/bunch), edible flowers, specialty herbs</li><li><strong>Tier 2 — Good value:</strong> Cherry tomatoes, peppers, cucumbers, beans, specialty lettuce heads, bunching herbs</li><li><strong>Tier 3 — Volume crops:</strong> Zucchini, kale, Swiss chard, large tomatoes — good sellers but lower margin per sq ft</li><li><strong>Avoid for small scale:</strong> Corn, pumpkins, potatoes, melons — too much space for the return</li></ul>` },
+      { h: 'Bed Planning & Layout', body: `<ul class="lesson-ul"><li>Plan your beds in a spreadsheet or diagram before the season starts</li><li>Group crops by family to manage rotation — brassicas together, alliums together, nightshades together</li><li>Place perennial crops (asparagus, rhubarb, perennial herbs) in permanent beds away from annual rotation</li><li>Allow at least 18–24 inches between bed centres for wheelbarrow access</li><li>Orient beds north-south to maximise even sunlight distribution</li></ul>` },
+      { h: 'Selling Your Produce', body: `<ul class="lesson-ul"><li><strong>Farmers markets:</strong> Highest prices but requires time, display, and consistent attendance</li><li><strong>CSA (Community Supported Agriculture):</strong> Customers pay upfront for a weekly box — predictable income, reduces selling time</li><li><strong>Restaurants:</strong> Chefs pay premium for specialty items, consistent quality, and reliable supply</li><li><strong>Farm stand:</strong> Sell from your property if permitted — low overhead but requires foot traffic</li><li><strong>Online ordering:</strong> Many small farms now use simple order forms (Google Forms + Stripe) for pre-orders</li></ul><div class="lesson-tip">💡 Start with one selling channel and do it well. Farmers markets are ideal for learning what sells in your area before committing to wholesale or CSA.</div>` },
+      { h: 'Record Keeping', body: `<p class="lesson-p">Good records are what separate profitable market gardens from hobby gardens. Track:</p><ul class="lesson-ul"><li>What you planted, when, and in which bed (enables rotation planning)</li><li>Harvest weights by crop and week</li>  <li>Revenue by crop — helps identify what is actually profitable</li><li>Input costs — seeds, amendments, packaging</li><li>Hours worked — reveals true labour costs per crop</li></ul>` },
+    ]
+  },
+
+  'chickens': {
+    title: '🐔 Integrating Chickens into the Garden',
+    intro: 'Chickens and gardens are a natural partnership — chickens provide pest control, fertiliser, and soil cultivation while the garden provides them with foraging opportunities. The key is management: keeping them where you want them, when you want them.',
+    sections: [
+      { h: 'What Chickens Do for Your Garden', body: `<ul class="lesson-ul"><li><strong>Pest control:</strong> Scratch and peck for slugs, grubs, beetles, and their larvae — often more effective than any pesticide</li><li><strong>Fertiliser:</strong> Chicken manure is one of the highest-nitrogen manures available. Even their bedding (deep litter) is excellent compost material</li><li><strong>Soil cultivation:</strong> Their scratching breaks up compacted soil and works organic matter into the surface</li><li><strong>Weed control:</strong> They eat weed seeds and seedlings</li><li><strong>Composting:</strong> Run chickens through your compost heap — they turn it, add nitrogen, and destroy pests</li></ul>` },
+      { h: 'The Chicken Tractor System', body: `<p class="lesson-p">A chicken tractor is a portable, bottomless coop that can be moved around the garden. Park it on a bed you want to clear — the chickens will eat every weed, scratch up the soil, and fertilise it in a few days. Move it on, and the bed is ready to plant.</p><ul class="lesson-ul"><li>Build from lightweight timber and chicken wire — must be easy for one person to move</li><li>Include a sheltered sleeping area, nest boxes, water, and feed</li><li>Move every 2–4 days depending on flock size and bed size</li><li>Leave the bed to rest 2–3 weeks after chickens before planting</li></ul>` },
+      { h: 'Rotational Grazing Design', body: `<ul class="lesson-ul"><li>Divide the garden into zones — chicken zone and no-chicken zone</li><li>After harvest, open the beds to chickens for clean-up before the next planting cycle</li><li>Orchard integration: chickens under fruit trees eat coddling moth larvae and fallen fruit that would otherwise harbour disease</li><li>Never let chickens into growing beds — they will eat everything</li><li>Use temporary electric netting to flexibly manage access</li></ul>` },
+      { h: 'Manure Management', body: `<ul class="lesson-ul"><li>Fresh chicken manure is too high in nitrogen and ammonia to apply directly — it burns plants</li><li><strong>Compost first:</strong> Add coop cleanings to your compost heap. Hot composting for 6 weeks makes it safe and stable</li><li><strong>Deep litter method:</strong> Allow bedding to build up in the coop over winter, turning occasionally. By spring it\'s rich, partly composted manure ready to spread</li><li>Apply composted manure in autumn or winter so nutrients integrate before spring planting</li></ul><div class="lesson-tip">💡 Chicken manure compost is particularly good for brassicas and corn — heavy feeders that love high nitrogen.</div>` },
+      { h: 'Getting Started', body: `<ul class="lesson-ul"><li><strong>Check local regulations</strong> — many urban areas permit hens but not roosters; some require permits</li><li><strong>Start with 3–6 hens</strong> — enough for a family\'s eggs and manageable for a beginner</li><li><strong>Best beginner breeds:</strong> Rhode Island Red, Plymouth Rock, Sussex — hardy, good layers, calm temperament</li><li><strong>Predator-proof the coop</strong> — hardware cloth (not chicken wire) buried 30cm underground on all sides</li><li><strong>Costs:</strong> Budget $200–500 for coop and setup, $20–40/month for feed for 4–6 hens</li></ul>` },
+    ]
+  },
+
+  'preserving': {
+    title: '🫙 Preserving & Fermenting Your Harvest',
+    intro: 'Every productive garden eventually faces the feast-or-famine problem — too much of everything at once. Preserving turns that glut into year-round food. Fermentation in particular has experienced a renaissance, with good reason: it\'s simple, requires no equipment, and produces food that\'s more nutritious than fresh.',
+    sections: [
+      { h: 'Fermentation — The Easiest Start', body: `<p class="lesson-p">Lacto-fermentation uses naturally occurring bacteria to preserve food and create probiotics. You need only vegetables, salt, and a jar. No vinegar, no heating, no special equipment.</p><ul class="lesson-ul"><li><strong>Basic ratio:</strong> 2% salt by weight (20g salt per 1kg vegetables)</li><li>Chop or shred vegetables, mix with salt, pack tightly into a jar</li><li>The salt draws out liquid — vegetables must stay submerged under their own brine</li><li>Cover with a cloth (not airtight) and leave at room temperature for 3–7 days</li><li>Taste daily — done when pleasantly sour. Move to the fridge to slow fermentation</li></ul><div class="lesson-tip">💡 Sauerkraut is the simplest start — just cabbage and salt. Master that before moving to more complex ferments.</div>` },
+      { h: 'What to Ferment from the Garden', body: `<ul class="lesson-ul"><li><strong>Sauerkraut:</strong> Cabbage — the classic. Keeps for months in the fridge</li><li><strong>Kimchi:</strong> Cabbage, radish, spring onions, chilli, ginger — endlessly customisable</li><li><strong>Fermented hot sauce:</strong> Blend chillis with 2% salt, ferment 5–7 days, blend smooth</li><li><strong>Dilly beans:</strong> Whole green beans fermented with dill and garlic</li><li><strong>Curtido:</strong> Central American fermented slaw — perfect for using up cabbage and carrots</li><li><strong>Fermented salsa:</strong> Tomatoes, peppers, onions, garlic, fermented for 2–3 days</li><li><strong>Kvass:</strong> Fermented beet drink — earthy, tangy, deeply nutritious</li></ul>` },
+      { h: 'Water Bath Canning', body: `<p class="lesson-p">Canning uses heat to create a vacuum seal, making food shelf-stable for 1–3 years. Water bath canning is safe for high-acid foods (pH below 4.6):</p><ul class="lesson-ul"><li>Jams and jellies</li><li>Pickles (vinegar raises acidity)</li><li>Tomato products (add lemon juice to ensure acidity)</li><li>Fruit preserves and chutneys</li></ul><div class="lesson-warning">⚠️ Never water-bath can low-acid foods (vegetables, meats, beans) — this requires a pressure canner to reach temperatures that kill botulism. Low-acid foods water-bathed can cause serious illness.</div>` },
+      { h: 'Dehydrating', body: `<ul class="lesson-ul"><li>A food dehydrator ($40–150) or a low oven (50–70°C with door ajar) works well</li><li><strong>Best dehydrated crops:</strong> Herbs, chillies, tomatoes, apple rings, berries, mushrooms, kale chips</li><li>Dried herbs concentrate flavour — use 1/3 the amount of fresh herb in recipes</li><li>Store in airtight jars away from light — most dried produce lasts 1–3 years</li><li>Rehydrate mushrooms in warm water for 20 minutes — the soaking liquid is flavour gold, use it in stocks and sauces</li></ul>` },
+      { h: 'Freezing', body: `<ul class="lesson-ul"><li>The simplest preservation method and best for retaining nutrition</li><li><strong>Blanch before freezing:</strong> Plunge vegetables into boiling water for 1–3 minutes, then ice water. This inactivates enzymes that cause deterioration</li><li>Spread on a tray to freeze individually before bagging — prevents clumping</li><li><strong>Best frozen crops:</strong> Beans, peas, courgette (shredded), corn, broccoli, herbs (in ice cube trays with water or oil)</li><li>Tomatoes: freeze whole — skin slips off when defrosted, perfect for sauces</li></ul>` },
+    ]
+  },
+
+  'season-extension': {
+    title: '🌡️ Season Extension',
+    intro: 'Season extension techniques let you start earlier in spring and continue harvesting later into autumn and winter — in some climates, year-round. The right structure can effectively move you one or two hardiness zones warmer.',
+    sections: [
+      { h: 'Cold Frames', body: `<p class="lesson-p">The simplest season extension tool — essentially a bottomless box with a transparent lid. A cold frame can be made from reclaimed timber and an old window for almost nothing.</p><ul class="lesson-ul"><li>Provides 2–4°C of frost protection</li><li>Position facing south, angled to catch maximum winter sun</li><li>Vent on warm days to prevent overheating — temperatures inside can exceed 40°C on a sunny winter day</li><li>Use to harden off seedlings, overwinter salad crops, and start spring seeds 4–6 weeks early</li><li>Add a layer of bubble wrap inside the lid for an extra 1–2°C of protection</li></ul>` },
+      { h: 'Row Covers & Cloches', body: `<ul class="lesson-ul"><li><strong>Horticultural fleece (Reemay):</strong> Lightweight spunbonded fabric that provides 2–4°C of frost protection while letting in light and water. Drape directly over plants or over hoops.</li><li><strong>Plastic cloches (individual):</strong> Traditional bell jars or cut plastic bottles — creates a warm microclimate around individual plants</li><li><strong>Polytunnel cloches:</strong> Wire hoops covered with polythene or fleece — quick to deploy over a whole bed row</li><li><strong>Perforated polythene:</strong> Allows some air and water movement — warmer than fleece but more condensation management needed</li></ul><div class="lesson-tip">💡 Keep fleece on loosely — plants need to move slightly in wind to develop strong stems.</div>` },
+      { h: 'Polytunnels', body: `<p class="lesson-p">A polytunnel provides the most dramatic season extension of any structure. In a cool temperate climate, it effectively gives you the growing conditions of a zone 1–2 warmer.</p><ul class="lesson-ul"><li><strong>Sizing:</strong> 10×14ft is the minimum useful size; 14×20ft starts to become seriously productive</li><li><strong>Cover life:</strong> Polythene covers typically last 4–6 years</li><li><strong>Ventilation:</strong> Critical — doors at both ends and side vents prevent overheating and disease</li><li><strong>Best crops:</strong> Tomatoes, peppers, cucumbers, aubergines — all benefit enormously. Also overwinter greens, early strawberries, autumn crops</li><li><strong>Soil health:</strong> Rain never enters so soil requires regular watering and compost additions to maintain health</li></ul>` },
+      { h: 'Grow Lights for Seed Starting', body: `<ul class="lesson-ul"><li>Full-spectrum LED grow lights allow seed starting weeks before natural light levels are sufficient on windowsills</li><li><strong>T5 fluorescent or LED bars:</strong> Adequate for seedlings and young plants — hang 5–10cm above leaf tips</li><li><strong>Light duration:</strong> 14–16 hours per day on a timer for seedlings</li><li><strong>Cost:</strong> A simple 2-bulb T5 fluorescent setup starts at $30–50 and uses modest electricity</li><li>Move seedlings to natural light or outside as soon as conditions allow — nothing replaces full sun</li></ul>` },
+      { h: 'Winter Harvest Planning', body: `<p class="lesson-p">With season extension, many crops can be harvested all winter in cool temperate climates without any heat — just protection from the hardest frosts:</p><ul class="lesson-ul"><li><strong>Kale, chard, spinach:</strong> Hardy to -10°C; fleece extends their season to -15°C</li><li><strong>Mâche/corn salad:</strong> Extremely cold-hardy, sweet after frost</li><li><strong>Winter lettuce varieties:</strong> Arctic King, Winter Density — bred for cold tolerance</li><li><strong>Overwintered onions and garlic:</strong> Plant in autumn, harvest the following summer — earlier than spring-planted crops</li><li><strong>Hardy herbs:</strong> Parsley, chives, sorrel — survive under fleece or in a cold frame all winter</li></ul><div class="lesson-tip">💡 The key to winter harvests is timing — sow in late summer so plants are well established before day length drops below 10 hours, after which most growth stops.</div>` },
+    ]
+  },
+
+};
+
+// Merge Pro lessons into LESSONS for openLesson to find them
+Object.assign(LESSONS, PRO_LESSONS);
+
 function openLesson(id) {
+  // Check lesson view limit for free users (free lessons only)
+  if (!IS_PRO && !PRO_LESSONS[id]) {
+    const views = getLessonViews();
+    const alreadySeen = views.seen.includes(id);
+    if (!alreadySeen) {
+      if (views.count >= FREE_LESSON_LIMIT) {
+        showLessonGate();
+        return;
+      }
+      views.count++;
+      views.seen.push(id);
+      saveLessonViews(views);
+    }
+    updateLessonBadge();
+  }
   const lesson = LESSONS[id];
   if (!lesson) return;
   const content = document.getElementById('lesson-content');
