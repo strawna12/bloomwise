@@ -944,6 +944,14 @@ async function handleSignup(req, res) {
         [cleanEmail]
       );
     }
+    // Migrate usage so they keep their remaining weekly allowance
+    await db.query(
+      `INSERT INTO usage (uid, usage_date, rec_count, feature)
+       SELECT $1, usage_date, rec_count, feature FROM usage WHERE uid=$2
+       ON CONFLICT (uid, usage_date, feature) DO UPDATE
+       SET rec_count = GREATEST(usage.rec_count, EXCLUDED.rec_count)`,
+      [cleanEmail, uid]
+    );
   }
 
   const token = await createSession(cleanEmail, cleanEmail);
