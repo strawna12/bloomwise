@@ -1661,12 +1661,14 @@ let USAGE_TODAY = 0;
 const FREE_LIMIT = 3;
 
 async function initProStatus() {
+  const uid = currentUser?.uid || USER_ID;
+
   // Check if we're returning from Stripe checkout
   const params = new URLSearchParams(window.location.search);
   const sessionId = params.get('session_id');
   if (sessionId) {
     try {
-      const data = await apiCall('/verify-session', { session_id: sessionId, uid: USER_ID });
+      const data = await apiCall('/verify-session', { session_id: sessionId, uid });
       if (data.pro) {
         IS_PRO = true;
         window.history.replaceState({}, '', '/');
@@ -1677,7 +1679,7 @@ async function initProStatus() {
   // Check pro status from server
   if (!IS_PRO) {
     try {
-      const data = await apiCall('/check-pro', { uid: USER_ID });
+      const data = await apiCall('/check-pro', { uid });
       IS_PRO = data.pro || false;
     } catch(e) { /* offline — assume free */ }
   }
@@ -1741,10 +1743,12 @@ async function startCheckout() {
 }
 
 async function apiCall(endpoint, body) {
+  // Always use the logged-in user's UID if available, fall back to anonymous UID
+  const activeUid = currentUser?.uid || USER_ID;
   const res = await fetch(BACKEND + endpoint, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ ...body, uid: USER_ID })
+    body: JSON.stringify({ ...body, uid: activeUid })
   });
   const text = await res.text();
   let data;
