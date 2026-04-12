@@ -836,7 +836,7 @@ async function handleCreateCheckout(req, res) {
   sendJSON(res, 200, { url: session.url });
 }
 
-async function handleVerifySession(req, res) {
+async function handleVerifyStripeSession(req, res) {
   if (!STRIPE_KEY) return sendJSON(res, 500, { error: "Stripe not configured" });
   const { session_id, uid } = await readBody(req);
   if (!session_id || !uid) return sendJSON(res, 400, { error: "session_id and uid required" });
@@ -1072,7 +1072,7 @@ const server = http.createServer(async (req, res) => {
       "/zone":                handleZone,
       "/check-pro":           handleCheckPro,
       "/create-checkout":     handleCreateCheckout,
-      "/verify-session":      handleVerifySession,
+      "/verify-session":      handleVerifyStripeSession,
       "/garden/get":          handleGetGarden,
       "/garden/save":         handleSaveGarden,
       "/shopping-list":       handleShoppingList,
