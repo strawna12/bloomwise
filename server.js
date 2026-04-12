@@ -882,7 +882,84 @@ async function handleStripeWebhook(req, res) {
   sendJSON(res, 200, { received: true });
 }
 
-// ── Auth — Email / Password ───────────────────────────────
+// ── Admin ─────────────────────────────────────────────────
+const ADMIN_EMAIL    = process.env.ADMIN_EMAIL;
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
+const adminTokens    = new Set(); // in-memory admin sessions (short lived)
+
+async function handleAdminLogin(req, res) {
+  const { email, password } = await readBody(req);
+  if (!ADMIN_EMAIL || !ADMIN_PASSWORD)
+    return sendJSON(res, 500, { error: "Admin credentials not configured in Railway env vars (ADMIN_EMAIL, ADMIN_PASSWORD)" });
+  if (email !== ADMIN_EMAIL || password !== ADMIN_PASSWORD)
+    return sendJSON(res, 401, { error: "Invalid admin credentials" });
+  const token = crypto.randomBytes(32).toString("hex");
+  adminTokens.add(token);
+  setTimeout(() => adminTokens.delete(token), 8 * 60 * 60 * 1000); // 8hr expiry
+  sendJSON(res, 200, { ok: true, token });
+}
+
+function requireAdmin(req) {
+  const token = req.headers["x-admin-token"] || "";
+  return adminTokens.has(token);
+}
+
+async function handleAdminStats(req, res) {
+  if (!requireAdmin(req)) return sendJSON(res, 401, { error: "Unauthorized" });
+  if (!db) return sendJSON(res, 500, { error: "No database" });
+
+  const [
+    totalAccounts,
+    proUsers,
+    recentSignups,
+    usageThisWeek,
+    gardenStats,
+    topUsers,
+  ] = await Promise.all([
+    db.query("SELECT COUNT(*) FROM accounts"),
+    db.query("SELECT COUNT(*) FROM users WHERE is_pro = TRUE"),
+    db.query(`SELECT email, name, created_at FROM accounts ORDER BY created_at DESC LIMIT 20`),
+    db.query(`SELECT feature, SUM(rec_count) as total FROM usage
+              WHERE usage_date >= date_trunc('week', CURRENT_DATE)
+              GROUP BY feature ORDER BY total DESC`),
+    db.query(`SELECT COUNT(*) as gardens, AVG(jsonb_array_length(plants)) as avg_plants
+              FROM gardens WHERE jsonb_array_length(plants) > 0`),
+    db.query(`SELECT a.email, a.name, a.created_at,
+                     COALESCE(u.is_pro, FALSE) as is_pro,
+                     COALESCE(SUM(us.rec_count), 0) as total_usage
+              FROM accounts a
+              LEFT JOIN users u ON u.uid = a.email
+              LEFT JOIN usage us ON us.uid = a.email
+              GROUP BY a.email, a.name, a.created_at, u.is_pro
+              ORDER BY a.created_at DESC LIMIT 50`),
+  ]);
+
+  sendJSON(res, 200, {
+    totals: {
+      accounts: parseInt(totalAccounts.rows[0].count),
+      pro: parseInt(proUsers.rows[0].count),
+      free: parseInt(totalAccounts.rows[0].count) - parseInt(proUsers.rows[0].count),
+      gardens: parseInt(gardenStats.rows[0]?.gardens || 0),
+      avg_plants: parseFloat(gardenStats.rows[0]?.avg_plants || 0).toFixed(1),
+    },
+    usage_this_week: usageThisWeek.rows,
+    users: topUsers.rows,
+  });
+}
+
+async function handleAdminTogglePro(req, res) {
+  if (!requireAdmin(req)) return sendJSON(res, 401, { error: "Unauthorized" });
+  const { email, is_pro } = await readBody(req);
+  if (!email) return sendJSON(res, 400, { error: "email required" });
+  await db.query(
+    `INSERT INTO users (uid, is_pro) VALUES ($1, $2)
+     ON CONFLICT (uid) DO UPDATE SET is_pro = $2`,
+    [email, !!is_pro]
+  );
+  sendJSON(res, 200, { ok: true, email, is_pro: !!is_pro });
+}
+
+
 
 function generateSessionToken() {
   return crypto.randomBytes(32).toString("hex");
@@ -1051,6 +1128,14 @@ const server = http.createServer(async (req, res) => {
   // GET
   if (req.method === "GET") {
     if (url === "/health") return sendJSON(res, 200, { status: "ok", model: MODEL, db: !!db });
+    if (url === "/admin" || url === "/admin/") {
+      const adminPath = path.join(__dirname, "admin.html");
+      return fs.readFile(adminPath, (err, data) => {
+        if (err) { res.writeHead(404); res.end("Admin dashboard not found"); return; }
+        res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
+        res.end(data);
+      });
+    }
     return sendHTML(res);
   }
 
@@ -1066,7 +1151,9 @@ const server = http.createServer(async (req, res) => {
 
     // Free routes — no Anthropic needed
     const FREE = {
-      "/map-image":           handleMapImage,
+      "/admin/login":         handleAdminLogin,
+      "/admin/stats":         handleAdminStats,
+      "/admin/toggle-pro":    handleAdminTogglePro,
       "/geocode":             handleGeocode,
       "/photos":              handlePhotos,
       "/zone":                handleZone,
