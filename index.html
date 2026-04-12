@@ -2053,6 +2053,17 @@ async function doLookup(){
     const tip=d.pro_tip?`<div class="pro-tip"><strong>💡 Pro tip:</strong> ${d.pro_tip}</div>`:'';
     const noCtx=!hasCtx?`<div style="font-size:12px;color:#7a4e00;padding:9px 14px;background:var(--gold-lt);border-radius:var(--r);border:1px solid var(--gold);margin-bottom:16px;">📋 Add your site profile in the Recommendations tab for personalized ✅ ⚠️ ❌ scoring</div>`:'';
 
+    // Store result for the Add to Garden button
+    window._lookupResult = {
+      name: d.name,
+      scientific: d.scientific || '',
+      sun:  (d.requirements||[]).find(r=>r.label==='Sun')?.value || '',
+      water:(d.requirements||[]).find(r=>r.label==='Water')?.value || '',
+      soil: (d.requirements||[]).find(r=>r.label==='Soil')?.value || '',
+      planting_season: d.planting_season || '',
+      description: d.summary || '',
+    };
+
     document.getElementById('lookup-results').innerHTML=`
       <div class="fit-card">
         ${strip}
@@ -2065,6 +2076,12 @@ async function doLookup(){
           <div class="fit-summary">${d.summary}</div>
           <div class="req-grid">${reqs}</div>
           ${specials}${tip}
+          <div style="margin-bottom:1rem;">
+            <button class="add-to-garden-btn" id="lookup-garden-btn"
+              onclick="addToGardenFromLookup(this)">
+              🌱 Add to My Garden
+            </button>
+          </div>
           <div class="care-guide">
             <div class="care-guide-title">🌿 Full Care Guide</div>
             <div id="care-guide-content">
@@ -2782,8 +2799,20 @@ async function identifyPlant() {
       plant.toxic_to_pets === false ? `<span class="id-flag safe">🐾 Pet safe</span>` : '',
     ].filter(Boolean).join('');
 
+    // Store for Add to Garden button
+    window._identifyResult = {
+      name: plant.common_name,
+      scientific: plant.scientific_name || '',
+      sun:  plant.care?.sun || '',
+      water: plant.care?.water || '',
+      soil:  plant.care?.soil || '',
+      planting_season: '',
+      description: plant.description || '',
+      mature_height: plant.mature_height || '',
+      mature_spread: plant.mature_spread || '',
+    };
+
     results.innerHTML = `
-      <div class="id-card">
         <div class="id-card-header">
           <div class="id-name">${plant.common_name}</div>
           <div class="id-sci">${plant.scientific_name}${plant.family ? ` · ${plant.family}` : ''}</div>
@@ -2800,7 +2829,10 @@ async function identifyPlant() {
           ${plant.similar_species ? `<div class="id-notes" style="background:var(--sky-lt);border-color:var(--sky);color:var(--sky);">⚠️ <strong>Could also be:</strong> ${plant.similar_species}</div>` : ''}
           ${plant.notes ? `<div class="id-notes">💡 ${plant.notes}</div>` : ''}
           <div class="id-actions">
-            <button class="btn btn-primary" onclick="lookupFromID('${plant.common_name.replace(/'/g,"\\'")}')">
+            <button class="add-to-garden-btn" id="identify-garden-btn" onclick="addToGardenFromIdentify(this)">
+              🌱 Add to My Garden
+            </button>
+            <button class="btn btn-primary" onclick="lookupFromID(window._identifyResult?.name||'')">
               🔍 Full plant lookup
             </button>
             <button class="btn btn-ghost" onclick="resetIdentify()">📸 Try another photo</button>
@@ -3407,6 +3439,30 @@ function exportLayoutImage() {
 }
 
 loadLayout();
+
+// ── Add to Garden from Lookup / Identify ──────────────────
+async function addToGardenFromLookup(btn) {
+  const plant = window._lookupResult;
+  if (!plant) return;
+  await addToGarden(plant, btn);
+  // Sync button state
+  if (garden.find(p => p.name === plant.name)) {
+    btn.classList.add('added');
+    btn.textContent = '✓ In garden';
+    btn.disabled = true;
+  }
+}
+
+async function addToGardenFromIdentify(btn) {
+  const plant = window._identifyResult;
+  if (!plant) return;
+  await addToGarden(plant, btn);
+  if (garden.find(p => p.name === plant.name)) {
+    btn.classList.add('added');
+    btn.textContent = '✓ In garden';
+    btn.disabled = true;
+  }
+}
 
 // ── Care Guide ────────────────────────────────────────────
 function switchCareTab(btn, panelId) {
