@@ -452,7 +452,89 @@ textarea { resize: vertical; min-height: 90px; }
 .special-box li { font-size: 12px; color: var(--lavender); line-height: 1.75; }
 .pro-tip { background: var(--petal-lt); border: 1px solid var(--petal2); border-radius: var(--r); padding: 14px 16px; font-size: 13px; color: var(--bloom); line-height: 1.65; }
 
-/* ── Care Guide ── */
+/* ── Garden Academy ────────────────────────────────────── */
+.academy-hero {
+  background: linear-gradient(135deg, #1a3a1f 0%, #2d6a35 50%, #4a9e55 100%);
+  border-radius: var(--r-xl); padding: 2.5rem; margin-bottom: 2rem;
+  box-shadow: var(--sh-md);
+}
+.academy-hero h2 { font-family:'Cormorant Garamond',serif; font-size:28px; color:#fff; font-weight:600; margin-bottom:6px; }
+.academy-hero p  { font-size:14px; color:rgba(255,255,255,.75); }
+
+.academy-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px,1fr)); gap: 16px; margin-bottom: 2.5rem; }
+.academy-card {
+  background: var(--white); border: 1.5px solid var(--border2);
+  border-radius: var(--r-xl); padding: 1.5rem; cursor: pointer;
+  transition: box-shadow .2s, transform .2s, border-color .2s;
+  display: flex; gap: 1rem; align-items: flex-start;
+}
+.academy-card:hover { box-shadow: var(--sh-md); transform: translateY(-2px); border-color: var(--sage); }
+.academy-icon { font-size: 32px; flex-shrink: 0; }
+.academy-card-title { font-size: 15px; font-weight: 600; color: var(--bloom); margin-bottom: 6px; }
+.academy-card-desc  { font-size: 12px; color: var(--stone); line-height: 1.6; margin-bottom: 10px; }
+.academy-tag-row { display: flex; gap: 6px; flex-wrap: wrap; }
+.academy-tag { font-size: 10px; font-weight: 600; padding: 2px 8px; border-radius: 50px; background: var(--sage-lt); color: var(--sage); border: 1px solid var(--sage); }
+.tag-veg { background: #fff8e6; color: #7a5200; border-color: #e8b84b; }
+
+/* Advisor */
+.advisor-section { background: var(--white); border: 1.5px solid var(--border2); border-radius: var(--r-xl); padding: 1.75rem; box-shadow: var(--sh); position: relative; }
+.advisor-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 1.25rem; }
+.advisor-title { font-family:'Cormorant Garamond',serif; font-size: 22px; font-weight: 600; color: var(--bloom); margin-bottom: 4px; }
+.advisor-sub   { font-size: 13px; color: var(--stone); }
+.pro-badge-inline { background: var(--gold-lt); border: 1px solid var(--gold); color: #7a4e00; font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 50px; white-space: nowrap; }
+
+.advisor-chat { min-height: 60px; margin-bottom: 1rem; display: flex; flex-direction: column; gap: 12px; }
+.chat-msg { max-width: 85%; }
+.chat-msg.user { align-self: flex-end; background: linear-gradient(135deg,var(--bloom),var(--petal)); color:#fff; border-radius: 18px 18px 4px 18px; padding: 10px 16px; font-size: 13px; line-height: 1.6; }
+.chat-msg.assistant { align-self: flex-start; background: var(--bg); border: 1px solid var(--border2); border-radius: 4px 18px 18px 18px; padding: 14px 16px; font-size: 13px; line-height: 1.7; color: var(--ink2); }
+.chat-msg.assistant strong { color: var(--bloom); }
+.chat-msg.assistant ul { padding-left: 18px; margin: 6px 0; }
+.chat-msg.assistant li { margin-bottom: 4px; }
+.chat-typing { align-self: flex-start; background: var(--bg); border: 1px solid var(--border2); border-radius: 4px 18px 18px 18px; padding: 12px 16px; }
+.typing-dots { display: flex; gap: 4px; }
+.typing-dots span { width: 7px; height: 7px; border-radius: 50%; background: var(--stone); animation: bounce .9s infinite; }
+.typing-dots span:nth-child(2) { animation-delay: .15s; }
+.typing-dots span:nth-child(3) { animation-delay: .3s; }
+@keyframes bounce { 0%,60%,100%{transform:translateY(0)} 30%{transform:translateY(-6px)} }
+
+.advisor-suggestions { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+.suggestion-chip { background: var(--petal-lt); border: 1px solid var(--petal2); border-radius: 50px; padding: 6px 14px; font-size: 12px; color: var(--bloom); cursor: pointer; font-family: inherit; transition: all .15s; }
+.suggestion-chip:hover { background: var(--petal2); color: #fff; }
+
+.advisor-row { display: flex; gap: 10px; align-items: flex-end; }
+.advisor-textarea { flex: 1; border: 1.5px solid var(--border); border-radius: var(--r-lg); padding: 12px 16px; font-size: 14px; font-family: inherit; background: var(--bg); color: var(--ink); outline: none; resize: none; transition: border-color .2s; }
+.advisor-textarea:focus { border-color: var(--petal2); background: var(--white); }
+.advisor-send-btn { background: linear-gradient(135deg,#8b3060,#c45080); color:#fff; border:none; border-radius: var(--r-lg); padding: 12px 20px; font-size:14px; font-weight:600; cursor:pointer; font-family:inherit; white-space:nowrap; }
+.advisor-send-btn:hover { opacity:.9; }
+.advisor-send-btn:disabled { opacity:.5; cursor:not-allowed; }
+
+.advisor-lock { position:absolute; inset:0; background:rgba(253,248,249,.95); border-radius:var(--r-xl); display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:2rem; gap:12px; }
+.lock-icon  { font-size:40px; }
+.lock-title { font-size:18px; font-weight:600; color:var(--bloom); font-family:'Cormorant Garamond',serif; }
+.lock-sub   { font-size:13px; color:var(--stone); max-width:300px; line-height:1.6; }
+
+/* Lesson modal */
+.lesson-modal { position:fixed; inset:0; background:rgba(46,31,42,.6); backdrop-filter:blur(4px); z-index:500; display:flex; align-items:center; justify-content:center; padding:1rem; }
+.lesson-inner { background:var(--white); border-radius:var(--r-xl); max-width:680px; width:100%; max-height:90vh; overflow-y:auto; padding:2.5rem; position:relative; box-shadow:0 20px 60px rgba(0,0,0,.3); }
+.lesson-close { position:absolute; top:16px; right:16px; background:var(--bg); border:1px solid var(--border); border-radius:50%; width:32px; height:32px; cursor:pointer; font-size:14px; display:flex; align-items:center; justify-content:center; }
+.lesson-close:hover { background:var(--petal-lt); border-color:var(--petal2); }
+.lesson-h1 { font-family:'Cormorant Garamond',serif; font-size:32px; color:var(--bloom); font-weight:600; margin-bottom:8px; }
+.lesson-intro { font-size:14px; color:var(--stone); margin-bottom:2rem; line-height:1.7; }
+.lesson-section { margin-bottom:1.75rem; }
+.lesson-h2 { font-size:14px; font-weight:700; color:var(--bloom); text-transform:uppercase; letter-spacing:.07em; margin-bottom:10px; padding-bottom:6px; border-bottom:2px solid var(--petal-lt); }
+.lesson-p  { font-size:13px; color:var(--ink2); line-height:1.8; margin-bottom:8px; }
+.lesson-ul { padding-left:20px; margin-bottom:8px; }
+.lesson-ul li { font-size:13px; color:var(--ink2); line-height:1.8; margin-bottom:4px; }
+.lesson-tip { background:var(--sage-lt); border-left:3px solid var(--sage); border-radius:0 var(--r) var(--r) 0; padding:12px 16px; font-size:13px; color:var(--sage); margin:12px 0; line-height:1.6; }
+.lesson-warning { background:var(--gold-lt); border-left:3px solid var(--gold); border-radius:0 var(--r) var(--r) 0; padding:12px 16px; font-size:13px; color:#7a5200; margin:12px 0; line-height:1.6; }
+.companion-table { width:100%; border-collapse:collapse; font-size:12px; margin:12px 0; }
+.companion-table th { background:var(--petal-lt); color:var(--bloom); padding:8px 12px; text-align:left; font-weight:700; border-bottom:2px solid var(--petal2); }
+.companion-table td { padding:8px 12px; border-bottom:1px solid var(--border2); vertical-align:top; }
+.companion-table tr:hover td { background:var(--bg); }
+.good { color:var(--sage); font-weight:600; }
+.bad  { color:var(--rust); font-weight:600; }
+
+
 .care-guide { margin-top: 1.5rem; border-top: 1px solid var(--border2); padding-top: 1.5rem; }
 .care-guide-title { font-family:'Cormorant Garamond',serif; font-size: 20px; font-weight: 600; color: var(--bloom); margin-bottom: 1rem; }
 .care-tabs { display: flex; gap: 4px; flex-wrap: wrap; margin-bottom: 1rem; }
@@ -1255,6 +1337,7 @@ textarea { resize: vertical; min-height: 90px; }
     <button class="tab" onclick="switchTab('layout')">🗺 Layout Planner</button>
     <button class="tab" onclick="switchTab('shop')">🛒 Shopping List</button>
     <button class="tab" onclick="switchTab('nurseries')">📍 Nurseries</button>
+    <button class="tab" onclick="switchTab('academy')">🎓 Garden Academy</button>
   </div>
 
   <!-- RECOMMENDATIONS -->
@@ -1640,6 +1723,142 @@ textarea { resize: vertical; min-height: 90px; }
     <div id="nursery-results"></div>
   </div>
 
+  <!-- GARDEN ACADEMY TAB -->
+  <div class="tab-panel" id="tab-academy">
+
+    <!-- Hero -->
+    <div class="academy-hero">
+      <div class="academy-hero-text">
+        <h2>🎓 Garden Academy</h2>
+        <p>Everything you need to grow like a pro — from soil to harvest</p>
+      </div>
+    </div>
+
+    <!-- Topic grid -->
+    <div class="academy-grid" id="academy-grid">
+
+      <div class="academy-card" onclick="openLesson('pest-control')">
+        <div class="academy-icon">🐛</div>
+        <div class="academy-card-body">
+          <div class="academy-card-title">Organic Pest Control</div>
+          <div class="academy-card-desc">Natural deterrents, companion planting shields, beneficial insects, and remedies for veggie gardens</div>
+          <div class="academy-tag-row"><span class="academy-tag">Free</span><span class="academy-tag tag-veg">🥦 Veggie focused</span></div>
+        </div>
+      </div>
+
+      <div class="academy-card" onclick="openLesson('companion-planting')">
+        <div class="academy-icon">🤝</div>
+        <div class="academy-card-body">
+          <div class="academy-card-title">Companion Planting</div>
+          <div class="academy-card-desc">Which plants protect each other, boost yields, and repel pests — with a full compatibility chart</div>
+          <div class="academy-tag-row"><span class="academy-tag">Free</span></div>
+        </div>
+      </div>
+
+      <div class="academy-card" onclick="openLesson('succession-planting')">
+        <div class="academy-icon">🔄</div>
+        <div class="academy-card-body">
+          <div class="academy-card-title">Succession Planting</div>
+          <div class="academy-card-desc">Stagger your harvests so you never have a glut or a gap — a complete scheduling guide</div>
+          <div class="academy-tag-row"><span class="academy-tag">Free</span><span class="academy-tag tag-veg">🥦 Veggie focused</span></div>
+        </div>
+      </div>
+
+      <div class="academy-card" onclick="openLesson('permaculture')">
+        <div class="academy-icon">🌍</div>
+        <div class="academy-card-body">
+          <div class="academy-card-title">Permaculture Principles</div>
+          <div class="academy-card-desc">Design a self-sustaining garden that works with nature — the 12 principles explained simply</div>
+          <div class="academy-tag-row"><span class="academy-tag">Free</span></div>
+        </div>
+      </div>
+
+      <div class="academy-card" onclick="openLesson('soil-health')">
+        <div class="academy-icon">🪱</div>
+        <div class="academy-card-body">
+          <div class="academy-card-title">Soil Health & Composting</div>
+          <div class="academy-card-desc">Build living soil from scratch — composting, worm castings, cover crops, and feeding your microbiome</div>
+          <div class="academy-tag-row"><span class="academy-tag">Free</span></div>
+        </div>
+      </div>
+
+      <div class="academy-card" onclick="openLesson('beneficial-insects')">
+        <div class="academy-icon">🐝</div>
+        <div class="academy-card-body">
+          <div class="academy-card-title">Beneficial Insects</div>
+          <div class="academy-card-desc">Attract ladybugs, lacewings, hoverflies and predatory wasps to do your pest control for free</div>
+          <div class="academy-tag-row"><span class="academy-tag">Free</span></div>
+        </div>
+      </div>
+
+      <div class="academy-card" onclick="openLesson('veggie-guide')">
+        <div class="academy-icon">🥬</div>
+        <div class="academy-card-body">
+          <div class="academy-card-title">Vegetable Growing Guide</div>
+          <div class="academy-card-desc">Tomatoes, peppers, cucumbers, beans, leafy greens — how to grow 20 common vegetables from seed to harvest</div>
+          <div class="academy-tag-row"><span class="academy-tag">Free</span><span class="academy-tag tag-veg">🥦 Veggie focused</span></div>
+        </div>
+      </div>
+
+      <div class="academy-card" onclick="openLesson('water-wise')">
+        <div class="academy-icon">💧</div>
+        <div class="academy-card-body">
+          <div class="academy-card-title">Water-Wise Gardening</div>
+          <div class="academy-card-desc">Mulching, drip systems, rainwater harvesting, and drought-proofing your garden</div>
+          <div class="academy-tag-row"><span class="academy-tag">Free</span></div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- AI Garden Advisor -->
+    <div class="advisor-section">
+      <div class="advisor-header">
+        <div>
+          <div class="advisor-title">🤖 AI Garden Advisor</div>
+          <div class="advisor-sub">Ask anything — pest problems, planting questions, design advice</div>
+        </div>
+        <span class="pro-badge-inline" id="advisor-pro-badge" style="display:none;">⚡ Pro</span>
+      </div>
+
+      <div id="advisor-chat" class="advisor-chat"></div>
+
+      <div class="advisor-input-wrap" id="advisor-input-wrap">
+        <div class="advisor-suggestions" id="advisor-suggestions">
+          <button class="suggestion-chip" onclick="askAdvisor('How do I stop aphids on my tomatoes without chemicals?')">🐛 Aphids on tomatoes</button>
+          <button class="suggestion-chip" onclick="askAdvisor('What should I plant next to my peppers to keep pests away?')">🫑 Pepper companions</button>
+          <button class="suggestion-chip" onclick="askAdvisor('How do I start a no-dig garden bed?')">🌱 No-dig bed</button>
+          <button class="suggestion-chip" onclick="askAdvisor('When should I start seeds indoors for a spring garden?')">📅 Seed starting timing</button>
+          <button class="suggestion-chip" onclick="askAdvisor('My zucchini leaves have white powder on them — what is it?')">🥒 Powdery mildew</button>
+          <button class="suggestion-chip" onclick="askAdvisor('How do I make compost tea to feed my plants?')">🍵 Compost tea</button>
+        </div>
+        <div class="advisor-row">
+          <textarea class="advisor-textarea" id="advisor-input" placeholder="Ask any gardening question…" rows="2"
+            onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendAdvisorMessage();}"></textarea>
+          <button class="advisor-send-btn" id="advisor-send-btn" onclick="sendAdvisorMessage()">Ask →</button>
+        </div>
+        <div style="font-size:11px;color:var(--stone);margin-top:6px;">Pro feature · <button style="background:none;border:none;color:var(--petal2);font-size:11px;cursor:pointer;font-family:inherit;" onclick="showPricingModal()">Upgrade to Pro</button> for unlimited questions</div>
+      </div>
+
+      <!-- Pro lock overlay -->
+      <div class="advisor-lock" id="advisor-lock" style="display:none;">
+        <div class="lock-icon">🔒</div>
+        <div class="lock-title">AI Garden Advisor is a Pro feature</div>
+        <div class="lock-sub">Get personalised expert answers to any gardening question, unlimited times</div>
+        <button class="btn btn-primary" onclick="showPricingModal()">Upgrade to Pro — $4.99</button>
+      </div>
+    </div>
+
+    <!-- Lesson modal -->
+    <div class="lesson-modal" id="lesson-modal" style="display:none;" onclick="if(event.target===this)closeLesson()">
+      <div class="lesson-inner">
+        <button class="lesson-close" onclick="closeLesson()">✕</button>
+        <div id="lesson-content"></div>
+      </div>
+    </div>
+
+  </div>
+
 </main>
 
 <footer class="footer">
@@ -1700,6 +1919,9 @@ function updateProUI() {
   // PDF buttons
   const pdfBtn = document.getElementById('pdf-btn');
   if (pdfBtn) pdfBtn.textContent = IS_PRO ? '⬇ Save PDF' : '🔒 Save PDF (Pro)';
+
+  // Academy advisor
+  if (document.getElementById('advisor-lock')) initAdvisorUI();
 
   updateUsageBar();
 }
@@ -1846,14 +2068,15 @@ function goStep(n){
 }
 
 function switchTab(t){
-  const tabs  =['rec','lookup','identify','planner','layout','shop','nurseries'];
-  const panels=['tab-rec','tab-lookup','tab-identify','tab-planner','tab-layout','tab-shop','tab-nurseries'];
+  const tabs  =['rec','lookup','identify','planner','layout','shop','nurseries','academy'];
+  const panels=['tab-rec','tab-lookup','tab-identify','tab-planner','tab-layout','tab-shop','tab-nurseries','tab-academy'];
   document.querySelectorAll('.tab').forEach((el,i)=>el.classList.toggle('active',tabs[i]===t));
   document.querySelectorAll('.tab-panel').forEach((el,i)=>el.classList.toggle('active',panels[i]==='tab-'+t));
   if(t==='lookup')updateCtx();
   if(t==='planner')renderPlanner();
   if(t==='nurseries')loadNurseries();
   if(t==='layout')initLayout();
+  if(t==='academy')initAdvisorUI();
 }
 
 function updateCtx(){
@@ -3462,6 +3685,213 @@ async function addToGardenFromIdentify(btn) {
     btn.textContent = '✓ In garden';
     btn.disabled = true;
   }
+}
+
+// ── Garden Academy ────────────────────────────────────────
+
+// Simple markdown → HTML converter for advisor responses
+function mdToHtml(text) {
+  return text
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\*(.+?)\*/g, '<em>$1</em>')
+    .replace(/^### (.+)$/gm, '<h4 style="color:var(--bloom);margin:12px 0 4px;font-size:13px;font-weight:700;">$1</h4>')
+    .replace(/^## (.+)$/gm,  '<h3 style="color:var(--bloom);margin:14px 0 6px;font-size:14px;font-weight:700;">$1</h3>')
+    .replace(/^- (.+)$/gm,   '<li>$1</li>')
+    .replace(/(<li>.*<\/li>)/gs, '<ul>$1</ul>')
+    .replace(/\n\n/g, '<br><br>')
+    .replace(/\n/g, '<br>');
+}
+
+// Advisor chat state
+let advisorHistory = [];
+
+function initAdvisorUI() {
+  if (IS_PRO) {
+    document.getElementById('advisor-lock').style.display = 'none';
+    document.getElementById('advisor-input-wrap').style.display = 'block';
+    const badge = document.getElementById('advisor-pro-badge');
+    if (badge) badge.style.display = 'inline-flex';
+  } else {
+    document.getElementById('advisor-lock').style.display = 'flex';
+    document.getElementById('advisor-input-wrap').style.display = 'none';
+  }
+}
+
+function askAdvisor(question) {
+  if (!IS_PRO) { showPricingModal(); return; }
+  document.getElementById('advisor-input').value = question;
+  document.getElementById('advisor-suggestions').style.display = 'none';
+  sendAdvisorMessage();
+}
+
+async function sendAdvisorMessage() {
+  if (!IS_PRO) { showPricingModal(); return; }
+  const input = document.getElementById('advisor-input');
+  const question = input.value.trim();
+  if (!question) return;
+
+  const chat = document.getElementById('advisor-chat');
+  const btn  = document.getElementById('advisor-send-btn');
+  input.value = '';
+  btn.disabled = true;
+  document.getElementById('advisor-suggestions').style.display = 'none';
+
+  // User bubble
+  const userMsg = document.createElement('div');
+  userMsg.className = 'chat-msg user';
+  userMsg.textContent = question;
+  chat.appendChild(userMsg);
+
+  // Typing indicator
+  const typing = document.createElement('div');
+  typing.className = 'chat-typing';
+  typing.innerHTML = '<div class="typing-dots"><span></span><span></span><span></span></div>';
+  chat.appendChild(typing);
+  chat.scrollTop = chat.scrollHeight;
+
+  // Build context from user's site profile
+  const p = prof();
+  const context = p.location !== 'Not specified'
+    ? `Gardener is in ${p.location} (${p.zone}), ${p.season} season. Soil: ${p.soil}. Sun: ${p.sun}. Water: ${p.water}. Style: ${p.style}. Priorities: ${p.priorities}.`
+    : '';
+
+  try {
+    const data = await apiCall('/garden-advisor', { question, context });
+    typing.remove();
+    const reply = document.createElement('div');
+    reply.className = 'chat-msg assistant';
+    reply.innerHTML = mdToHtml(data.answer || 'Sorry, I could not generate an answer.');
+    chat.appendChild(reply);
+    advisorHistory.push({ q: question, a: data.answer });
+  } catch(e) {
+    typing.remove();
+    const err = document.createElement('div');
+    err.className = 'chat-msg assistant';
+    err.textContent = 'Something went wrong: ' + e.message;
+    chat.appendChild(err);
+  } finally {
+    btn.disabled = false;
+    chat.scrollTop = chat.scrollHeight;
+  }
+}
+
+// ── Lesson content ────────────────────────────────────────
+const LESSONS = {
+
+  'pest-control': {
+    title: '🐛 Organic Pest Control',
+    intro: 'The best pest control strategy is prevention — a healthy, diverse garden rarely suffers serious pest damage. When problems do arise, organic solutions protect your food, your soil, and the beneficial insects that work for you.',
+    sections: [
+      { h: 'The 4-Layer Defence System', body: `<p class="lesson-p">Think of pest control as layers, not a single solution:</p><ul class="lesson-ul"><li><strong>Layer 1 — Prevention:</strong> Healthy soil = healthy plants = natural pest resistance. Feed your soil, not just your plants.</li><li><strong>Layer 2 — Physical barriers:</strong> Row covers, copper tape for slugs, sticky traps, netting.</li><li><strong>Layer 3 — Companion planting:</strong> Use plants that repel, confuse, or trap pests.</li><li><strong>Layer 4 — Biological controls:</strong> Encourage or introduce natural predators.</li></ul>` },
+      { h: 'Top Companion Plants for Pest Control', body: `<ul class="lesson-ul"><li><strong>Basil</strong> near tomatoes — repels aphids, whitefly, and tomato hornworm</li><li><strong>Marigolds</strong> everywhere — deter nematodes, aphids, and whiteflies; attract hoverflies</li><li><strong>Nasturtiums</strong> as trap crops — aphids love them, keeping them off your vegetables</li><li><strong>Dill & fennel</strong> — attract parasitic wasps that kill caterpillars and aphids</li><li><strong>Borage</strong> — deters tomato hornworm, attracts bees and predatory insects</li><li><strong>Lavender</strong> — repels moths, fleas, and flies; attracts pollinators</li><li><strong>Garlic & chives</strong> — repel aphids, Japanese beetles, and carrot flies</li></ul><div class="lesson-tip">💡 The "3-Sisters" — corn, beans, squash — is one of the oldest companion planting systems, also offering pest protection through diversity.</div>` },
+      { h: 'Common Veggie Pests & Organic Fixes', body: `<ul class="lesson-ul"><li><strong>Aphids:</strong> Blast with water, spray neem oil, release ladybugs, plant dill nearby</li><li><strong>Caterpillars/cabbage worms:</strong> Bt (Bacillus thuringiensis) spray, hand-pick, cover with fine netting</li><li><strong>Slugs & snails:</strong> Copper tape borders, beer traps, crushed eggshells, diatomaceous earth</li><li><strong>Whitefly:</strong> Yellow sticky traps, neem oil spray, reflective mulch, introduce Encarsia wasps</li><li><strong>Spider mites:</strong> Increase humidity, neem oil, predatory mites (Phytoseiidae)</li><li><strong>Cutworms:</strong> Cardboard collars around seedling stems, diatomaceous earth ring</li><li><strong>Squash vine borer:</strong> Row covers until flowering, wrap stems in foil, inject Bt</li></ul>` },
+      { h: 'Homemade Organic Sprays', body: `<ul class="lesson-ul"><li><strong>Neem oil spray:</strong> 2 tsp neem oil + 1 tsp dish soap + 1 litre water. Spray every 7 days.</li><li><strong>Garlic spray:</strong> Blend 10 garlic cloves + 1 litre water, strain, spray leaves. Repels most soft-bodied insects.</li><li><strong>Chilli spray:</strong> Simmer 10 hot chillies in 1L water for 15 min. Cool, strain, spray. Deters caterpillars and mammals.</li><li><strong>Compost tea:</strong> Soak compost in water 24–48 hrs, strain and spray. Boosts plant immunity.</li></ul><div class="lesson-warning">⚠️ Always spray in the evening to avoid burning leaves in sun and harming active pollinators.</div>` },
+      { h: 'Attracting Pest Predators', body: `<ul class="lesson-ul"><li>Plant <strong>umbellifer flowers</strong> (dill, fennel, coriander, carrot) to attract parasitic wasps and hoverflies</li><li>Leave some <strong>log piles and ground cover</strong> for ground beetles and hedgehogs</li><li>Install <strong>bird boxes and feeders</strong> — birds eat enormous quantities of caterpillars</li><li>Plant <strong>native wildflowers</strong> in or around the garden for year-round predator habitat</li></ul><div class="lesson-tip">💡 A single blue tit family consumes up to 10,000 caterpillars while raising chicks.</div>` },
+    ]
+  },
+
+  'companion-planting': {
+    title: '🤝 Companion Planting',
+    intro: 'Companion planting is the art of placing plants together so they benefit each other — through pest deterrence, nutrient sharing, pollinator attraction, or physical support. Get it right and your garden becomes a self-regulating ecosystem.',
+    sections: [
+      { h: 'How It Works', body: `<p class="lesson-p">Plants communicate through root exudates, volatile chemicals, and physical structure. Some combinations actively help each other; others compete or inhibit growth. Understanding these relationships lets you design a more productive and resilient garden.</p>` },
+      { h: 'Companion Planting Chart', body: `<table class="companion-table"><thead><tr><th>Plant</th><th class="good">Good companions</th><th class="bad">Avoid planting near</th></tr></thead><tbody><tr><td><strong>Tomatoes</strong></td><td class="good">Basil, marigolds, borage, carrots, parsley</td><td class="bad">Fennel, brassicas, corn</td></tr><tr><td><strong>Peppers</strong></td><td class="good">Basil, carrots, tomatoes, marjoram</td><td class="bad">Fennel, brassicas</td></tr><tr><td><strong>Cucumbers</strong></td><td class="good">Beans, peas, sunflowers, dill, nasturtiums</td><td class="bad">Potatoes, sage, melons (space them)</td></tr><tr><td><strong>Beans</strong></td><td class="good">Carrots, cucumber, squash, rosemary, strawberries</td><td class="bad">Onions, garlic, fennel, beets</td></tr><tr><td><strong>Carrots</strong></td><td class="good">Leeks, onions, rosemary, sage, tomatoes</td><td class="bad">Dill, anise, parsnips</td></tr><tr><td><strong>Brassicas</strong></td><td class="good">Dill, sage, rosemary, nasturtiums, onions</td><td class="bad">Tomatoes, strawberries, peppers</td></tr><tr><td><strong>Lettuce</strong></td><td class="good">Carrots, radishes, strawberries, chives</td><td class="bad">Fennel, celery</td></tr><tr><td><strong>Potatoes</strong></td><td class="good">Beans, cabbage, marigolds, horseradish</td><td class="bad">Tomatoes, cucumbers, squash, fennel</td></tr><tr><td><strong>Squash</strong></td><td class="good">Corn, beans, nasturtiums, borage</td><td class="bad">Potatoes, fennel</td></tr><tr><td><strong>Roses</strong></td><td class="good">Garlic, lavender, geraniums, parsley</td><td class="bad">Garlic (if too close), large trees</td></tr></tbody></table>` },
+      { h: 'The 3 Sisters', body: `<p class="lesson-p">The legendary Native American companion trio: <strong>corn, beans, and squash</strong>. Corn provides a trellis for beans. Beans fix nitrogen from the air into the soil, feeding the corn and squash. Squash leaves shade the soil, retaining moisture and suppressing weeds.</p><div class="lesson-tip">💡 Plant corn first, then beans 2 weeks later when corn is 15cm tall, then squash 2 weeks after that.</div>` },
+      { h: 'Trap Cropping', body: `<p class="lesson-p">Plant a "sacrifice" crop that pests prefer, drawing them away from your main plants. Then destroy the trap crop with its pest load.</p><ul class="lesson-ul"><li><strong>Nasturtiums</strong> trap aphids away from beans and brassicas</li><li><strong>Blue Hubbard squash</strong> traps cucumber beetles and squash vine borers</li><li><strong>Mustard greens</strong> trap flea beetles away from other brassicas</li></ul>` },
+    ]
+  },
+
+  'succession-planting': {
+    title: '🔄 Succession Planting',
+    intro: 'Succession planting means staggering your sowings so you harvest continuously rather than all at once. No more 50 lettuces ready on the same day — instead, a steady supply all season long.',
+    sections: [
+      { h: 'The 3 Methods', body: `<ul class="lesson-ul"><li><strong>Time-based succession:</strong> Sow the same crop every 2–3 weeks. Great for lettuce, radishes, carrots, beans.</li><li><strong>Variety-based succession:</strong> Sow early, mid, and late-season varieties at the same time. Harvests stagger naturally.</li><li><strong>Space-based succession:</strong> Follow a fast crop with a slow one in the same bed — radishes before squash, spinach before tomatoes.</li></ul>` },
+      { h: 'Quick-Succession Crops (sow every 2–3 weeks)', body: `<ul class="lesson-ul"><li>Lettuce, salad mix, spinach</li><li>Radishes (ready in 25 days)</li><li>Cilantro/coriander (bolts fast — keep re-sowing)</li><li>Bush beans and snap peas</li><li>Spring onions / scallions</li><li>Arugula / rocket</li></ul><div class="lesson-tip">💡 Keep a simple sowing calendar. Mark each sowing date and set a 2-week reminder to sow again.</div>` },
+      { h: 'Follow-On Planting Guide', body: `<ul class="lesson-ul"><li><strong>After spring peas:</strong> Plant beans, squash, or brassicas</li><li><strong>After garlic (harvested July):</strong> Plant carrots, leeks, or salads for autumn</li><li><strong>After early potatoes:</strong> Sow a green manure (buckwheat or phacelia) then plant brassicas</li><li><strong>After lettuce:</strong> Plant a heavy feeder like tomatoes or squash (add compost first)</li></ul>` },
+      { h: 'Soil Recovery Between Crops', body: `<p class="lesson-p">Every time you clear a bed, add a 2–3cm layer of compost before the next planting. This keeps the soil microbiology active and nutrients available. For longer gaps, sow a green manure — clover, phacelia, or mustard — to protect and improve the soil.</p><div class="lesson-warning">⚠️ Never leave bare soil. Exposed soil loses nutrients to rain, dries out, and grows weeds. Cover it — with plants, mulch, or cardboard.</div>` },
+    ]
+  },
+
+  'permaculture': {
+    title: '🌍 Permaculture Principles',
+    intro: 'Permaculture is a design philosophy for creating sustainable, self-sufficient systems that work with nature rather than against it. Developed by Bill Mollison and David Holmgren in the 1970s, its principles apply to gardens of any size.',
+    sections: [
+      { h: 'The 3 Core Ethics', body: `<ul class="lesson-ul"><li><strong>Earth Care:</strong> Protect and rebuild natural ecosystems</li><li><strong>People Care:</strong> Support individuals and communities to access what they need</li><li><strong>Fair Share:</strong> Redistribute surplus — share the abundance</li></ul>` },
+      { h: 'Key Design Principles for Your Garden', body: `<ul class="lesson-ul"><li><strong>Observe and interact:</strong> Spend a season watching before you plant. Where does water pool? Where is shade?</li><li><strong>Catch and store energy:</strong> Rainwater tanks, compost heaps, thermal mass walls.</li><li><strong>Obtain a yield:</strong> Every element should produce something — food, habitat, beauty, or nutrients.</li><li><strong>Apply self-regulation:</strong> Design systems that maintain themselves. Perennials over annuals where possible.</li><li><strong>Use and value diversity:</strong> Monocultures are fragile. Mix species, layers, and functions.</li><li><strong>Use edges:</strong> The most productive zones are where two systems meet — forest edges, pond margins, path borders.</li><li><strong>Stack functions:</strong> Every plant should do more than one job. A fruit tree provides food, shade, habitat, and fallen leaf mulch.</li></ul>` },
+      { h: 'Zones in Permaculture Design', body: `<ul class="lesson-ul"><li><strong>Zone 0:</strong> Your home — energy efficiency, passive solar design</li><li><strong>Zone 1:</strong> Intensive growing, visited daily — herbs, salads, seedlings</li><li><strong>Zone 2:</strong> Visited 2–3 times a week — main vegetable garden, fruit bushes</li><li><strong>Zone 3:</strong> Visited weekly — orchards, main crops</li><li><strong>Zone 4:</strong> Semi-wild — fuel wood, foraging</li><li><strong>Zone 5:</strong> Wilderness — left completely wild for biodiversity</li></ul><div class="lesson-tip">💡 Even a small garden has zones. Put your herbs by the back door (Zone 1) and let a corner go wild (Zone 5).</div>` },
+      { h: 'Practical Permaculture Techniques', body: `<ul class="lesson-ul"><li><strong>No-dig gardening:</strong> Layer cardboard + compost instead of digging. Preserves soil structure and fungi networks.</li><li><strong>Swales:</strong> Contour trenches that capture rainwater and direct it into the soil.</li><li><strong>Guilds:</strong> Plant communities designed to support a central plant (usually a fruit tree).</li><li><strong>Chop and drop mulching:</strong> Cut plant material and leave it on the soil surface as mulch.</li><li><strong>Food forests:</strong> Multi-layer edible landscapes mimicking natural woodland structure.</li></ul>` },
+    ]
+  },
+
+  'soil-health': {
+    title: '🪱 Soil Health & Composting',
+    intro: 'Healthy soil is alive — a single teaspoon contains more organisms than there are people on Earth. Your job as a gardener is not to feed your plants but to feed your soil, and let the soil feed your plants.',
+    sections: [
+      { h: 'Understanding Your Soil', body: `<ul class="lesson-ul"><li><strong>Sandy soil:</strong> Drains fast, low nutrients. Fix by adding compost and mulching heavily.</li><li><strong>Clay soil:</strong> Rich but compacts and waterloggs. Fix with compost, grit, and no-dig methods.</li><li><strong>Loam:</strong> The ideal — a balanced mix. Maintain with regular compost additions.</li></ul><p class="lesson-p">Test your soil pH — most vegetables prefer 6.0–7.0. Lime raises pH, sulfur lowers it.</p>` },
+      { h: 'Hot Composting in 4 Steps', body: `<ul class="lesson-ul"><li><strong>1. Layer:</strong> Alternate "browns" (cardboard, straw, dry leaves) and "greens" (kitchen scraps, grass clippings, plant material). Aim for 3:1 brown:green ratio.</li><li><strong>2. Moisture:</strong> Keep as damp as a wrung-out sponge. Too dry = slow. Too wet = smelly.</li><li><strong>3. Air:</strong> Turn the heap every 3–5 days to add oxygen. This heats it up and kills weed seeds.</li><li><strong>4. Time:</strong> Hot compost is ready in 4–8 weeks. Cold compost takes 6–12 months.</li></ul><div class="lesson-tip">💡 Comfrey leaves are a "compost activator" — chop and add to your heap or use as a liquid feed (ferment leaves in water for 4 weeks).</div>` },
+      { h: 'Worm Farming', body: `<p class="lesson-p">Worm castings (vermicompost) are the most nutrient-dense fertiliser you can make. Set up a simple worm bin with red wigglers (<em>Eisenia fetida</em>) and feed kitchen scraps. The liquid "worm tea" is a powerful liquid fertiliser — dilute 10:1 with water.</p><div class="lesson-warning">⚠️ Avoid adding citrus, onions, meat, dairy, or oily foods to worm bins.</div>` },
+      { h: 'Cover Crops & Green Manures', body: `<ul class="lesson-ul"><li><strong>Clover:</strong> Fixes nitrogen. Great winter cover. Mow into soil before planting.</li><li><strong>Phacelia:</strong> Fast-growing, beautiful purple flowers, great for pollinators, decomposes quickly.</li><li><strong>Buckwheat:</strong> Summer cover, smothers weeds, attracts beneficial insects.</li><li><strong>Winter rye:</strong> Hardy winter cover, deep roots break up compaction.</li><li><strong>Mustard:</strong> Biofumigant — suppresses soilborne pathogens when dug in.</li></ul>` },
+    ]
+  },
+
+  'beneficial-insects': {
+    title: '🐝 Beneficial Insects',
+    intro: 'Not all bugs are bad. A garden rich in beneficial insects provides free, year-round pest control, pollination, and soil health services. Your goal is to create habitat for these allies.',
+    sections: [
+      { h: 'Your Pest Control Army', body: `<ul class="lesson-ul"><li><strong>Ladybugs (ladybirds):</strong> Each eats up to 5,000 aphids in a lifetime. Attract with dill, fennel, and yarrow.</li><li><strong>Lacewings:</strong> Larvae are voracious aphid predators. Attract with fennel, dill, and angelica.</li><li><strong>Hoverflies:</strong> Larvae eat aphids; adults pollinate. Attract with umbellifers and native wildflowers.</li><li><strong>Ground beetles:</strong> Nocturnal hunters eating slugs, cutworms, and soil pests. Create habitat with log piles and stones.</li><li><strong>Parasitic wasps:</strong> Tiny wasps that lay eggs in aphids, caterpillars, and grubs, killing them. Attract with all umbellifers.</li><li><strong>Spiders:</strong> Catch a huge range of flying and crawling pests. Avoid disturbing their webs.</li></ul>` },
+      { h: 'How to Attract Them', body: `<ul class="lesson-ul"><li>Plant <strong>umbellifer flowers</strong> (dill, fennel, coriander, carrot, angelica) — the flat flower heads are insect landing pads</li><li>Leave <strong>patches of wildflowers</strong> — dandelions, nettles, and clover are valuable early-season food</li><li>Create <strong>insect hotels</strong> — bundles of hollow stems, stacked wood, and drilled wood blocks</li><li>Maintain <strong>undisturbed areas</strong> — leaf litter, log piles, and rough grass are overwintering habitat</li><li>Avoid <strong>all pesticides</strong> — even organic sprays like pyrethrin kill beneficial insects</li></ul>` },
+      { h: 'Pollinator Power', body: `<p class="lesson-p">Without pollinators, most of your fruiting vegetables won't set. Tomatoes, peppers, squash, beans, cucumbers, and berries all need insect pollination. A garden with 30%+ flowering plants alongside vegetables will have dramatically higher yields.</p><div class="lesson-tip">💡 Bumblebees "sonicate" tomato flowers — they vibrate at the exact frequency to release pollen. No bumblebees = poor tomato yield.</div>` },
+      { h: 'Insect Hotel Blueprint', body: `<ul class="lesson-ul"><li>Fill a wooden frame with bundles of hollow stems (bamboo, elderberry, hogweed)</li><li>Add drilled wood blocks with holes 2–10mm diameter for solitary bees</li><li>Include a section of pine cones for lacewings</li><li>Add a bundle of corrugated cardboard for earwigs (great pest controllers)</li><li>Place in a sunny, south-facing spot, 1–1.5m off the ground</li></ul>` },
+    ]
+  },
+
+  'veggie-guide': {
+    title: '🥬 Vegetable Growing Guide',
+    intro: 'A practical reference for the 12 most popular vegetables — from seed to harvest, including common problems and organic solutions.',
+    sections: [
+      { h: 'Tomatoes', body: `<ul class="lesson-ul"><li><strong>Start indoors:</strong> 6–8 weeks before last frost</li><li><strong>Plant out:</strong> After last frost, deeply (bury 2/3 of the stem)</li><li><strong>Feed:</strong> Weekly liquid tomato feed once flowers appear</li><li><strong>Key care:</strong> Remove side shoots (cordon types), stake well, water consistently to prevent blossom end rot</li><li><strong>Common problem:</strong> Blight (brown patches) — remove affected leaves, spray copper fungicide</li></ul>` },
+      { h: 'Courgettes / Zucchini', body: `<ul class="lesson-ul"><li><strong>Sow:</strong> Direct or indoors 3 weeks before last frost</li><li><strong>Space:</strong> 90cm apart — they get enormous</li><li><strong>Feed:</strong> High-potassium feed every 2 weeks once flowering</li><li><strong>Key care:</strong> Hand-pollinate early flowers if insects are scarce; harvest small (15–20cm) for best flavour</li><li><strong>Common problem:</strong> Powdery mildew — spray diluted milk (1:9 milk:water) or baking soda solution</li></ul>` },
+      { h: 'Beans (French & Runner)', body: `<ul class="lesson-ul"><li><strong>Sow:</strong> Direct after last frost — they hate cold soil</li><li><strong>Support:</strong> Runners need 2m poles; French beans need short pea sticks</li><li><strong>Feed:</strong> Little needed — they fix their own nitrogen</li><li><strong>Key care:</strong> Pick regularly to keep plants producing; let a few pods mature for next year's seeds</li><li><strong>Companion:</strong> Plant with squash and corn (3 Sisters)</li></ul>` },
+      { h: 'Brassicas (Kale, Cabbage, Broccoli)', body: `<ul class="lesson-ul"><li><strong>Sow:</strong> Spring for summer harvest; early summer for winter harvest</li><li><strong>Key care:</strong> Cover with fine netting immediately after planting — cabbage white butterflies are relentless</li><li><strong>Feed:</strong> High-nitrogen feed (comfrey liquid) every 2 weeks</li><li><strong>Companion:</strong> Plant with dill, rosemary, and nasturtiums</li><li><strong>Common problem:</strong> Cabbage worm — Bt spray or hand-pick eggs from leaf undersides</li></ul>` },
+      { h: 'Cucumbers', body: `<ul class="lesson-ul"><li><strong>Sow:</strong> Indoors 3 weeks before last frost; plant out when soil is warm (18°C+)</li><li><strong>Train:</strong> Up a trellis — vertical growing improves air circulation and prevents disease</li><li><strong>Water:</strong> Consistently — irregular watering causes bitter fruit</li><li><strong>Harvest:</strong> Daily when fruiting to keep plants productive</li><li><strong>Common problem:</strong> Cucumber mosaic virus (mottled leaves) — remove plant, control aphids that spread it</li></ul>` },
+      { h: 'Carrots', body: `<ul class="lesson-ul"><li><strong>Sow:</strong> Direct — they hate being transplanted</li><li><strong>Soil:</strong> Deep, loose, stone-free — stones cause forked roots</li><li><strong>Thin:</strong> To 5–8cm when 5cm tall — essential for good roots</li><li><strong>Companion:</strong> Interplant with spring onions — carrot fly and onion fly avoid each other's smell</li><li><strong>Cover:</strong> Use fleece (insect mesh) to prevent carrot fly damage</li></ul>` },
+    ]
+  },
+
+  'water-wise': {
+    title: '💧 Water-Wise Gardening',
+    intro: 'Water is the most precious resource in the garden. These techniques will dramatically reduce your water use while keeping plants healthier than conventional irrigation.',
+    sections: [
+      { h: 'The Mulch Revolution', body: `<p class="lesson-p">A 5–10cm layer of organic mulch (straw, wood chips, compost) on the soil surface is the single most effective water-saving technique. It reduces evaporation by up to 70%, suppresses weeds, regulates soil temperature, and feeds the soil as it breaks down.</p><div class="lesson-tip">💡 Apply mulch after watering, not before. And keep it 5cm away from plant stems to prevent rot.</div>` },
+      { h: 'Deep, Infrequent Watering', body: `<p class="lesson-p">Frequent shallow watering trains roots to stay near the surface — then plants suffer quickly in dry spells. Instead, water deeply once or twice a week. This encourages deep root growth that accesses moisture further down in the soil.</p><ul class="lesson-ul"><li>Vegetables generally need 2.5cm of water per week</li><li>Water at the base, not the leaves — wet leaves cause fungal disease</li><li>Morning watering is best — less evaporation, leaves dry before evening</li></ul>` },
+      { h: 'Drip Irrigation', body: `<p class="lesson-p">Drip irrigation delivers water directly to the root zone, eliminating evaporation and foliar wetting. Even a simple soaker hose system reduces water use by 30–50% compared to overhead sprinklers.</p><ul class="lesson-ul"><li>Use a timer to automate watering</li><li>Run drip lines before mulching — the mulch goes on top</li><li>Check drip emitters monthly for blockages</li></ul>` },
+      { h: 'Rainwater Harvesting', body: `<ul class="lesson-ul"><li>A 50m² roof can collect 35,000 litres of rainwater per year in a moderate climate</li><li>First-flush diverters keep the initial dirty water out of your tanks</li><li>Link water butts together to multiply storage capacity</li><li>Rainwater is slightly acidic — ideal for ericaceous plants (blueberries, rhododendrons)</li></ul>` },
+      { h: 'Drought-Resistant Techniques', body: `<ul class="lesson-ul"><li><strong>Wicking beds:</strong> Self-watering raised beds with a water reservoir beneath the soil</li><li><strong>Ollas:</strong> Buried terracotta pots that slowly seep water directly to roots — ancient technique, highly effective</li><li><strong>Zai pits:</strong> Small planting pits that collect rainwater and concentrate compost around plant roots</li><li><strong>Shade cloth:</strong> 30–40% shade cloth reduces plant water needs significantly in hot climates</li></ul>` },
+    ]
+  },
+
+};
+
+function openLesson(id) {
+  const lesson = LESSONS[id];
+  if (!lesson) return;
+  const content = document.getElementById('lesson-content');
+  content.innerHTML = `
+    <h1 class="lesson-h1">${lesson.title}</h1>
+    <p class="lesson-intro">${lesson.intro}</p>
+    ${lesson.sections.map(s => `
+      <div class="lesson-section">
+        <div class="lesson-h2">${s.h}</div>
+        ${s.body}
+      </div>`).join('')}
+  `;
+  document.getElementById('lesson-modal').style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+}
+
+function closeLesson() {
+  document.getElementById('lesson-modal').style.display = 'none';
+  document.body.style.overflow = '';
 }
 
 // ── Care Guide ────────────────────────────────────────────
