@@ -2965,6 +2965,7 @@ async function initAuth() {
   const saved = localStorage.getItem(SESSION_KEY);
   if (!saved) {
     setTimeout(() => { if (!currentUser) document.getElementById('signin-bar').style.display = 'block'; }, 3000);
+    initProStatus(); // check pro for anonymous user
     return;
   }
   try {
@@ -3494,7 +3495,6 @@ async function loadCareGuide(plantName, container) {
 
 renderTracker(0);
 loadGardenFromDB();
-initProStatus();
 initAuth();
 </script>
 </body>
