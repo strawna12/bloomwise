@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>BloomWise Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&family=DM+Mono:wght@400;500&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --bg:      #0a0f0d;
+  --bg2:     #111812;
+  --bg3:     #171f1a;
+  --border:  #243020;
+  --green:   #4ade80;
+  --green2:  #22c55e;
+  --green-lt:#052e16;
+  --gold:    #fbbf24;
+  --gold-lt: #1c1200;
+  --red:     #f87171;
+  --red-lt:  #2d0a0a;
+  --blue:    #60a5fa;
+  --blue-lt: #0a1628;
+  --text:    #e2e8d5;
+  --muted:   #6b7a6b;
+  --white:   #ffffff;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Jost', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  line-height: 1.6;
+}
+
+/* ── Login ── */
+.login-wrap {
+  min-height: 100vh;
+  display: flex; align-items: center; justify-content: center;
+  background: radial-gradient(ellipse at 50% 0%, #0d2010 0%, var(--bg) 70%);
+}
+.login-card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 3rem 2.5rem;
+  width: 100%; max-width: 380px;
+  box-shadow: 0 0 60px rgba(74,222,128,.05);
+}
+.login-logo {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 28px; color: var(--green);
+  text-align: center; margin-bottom: 6px;
+}
+.login-sub { text-align: center; font-size: 12px; color: var(--muted); margin-bottom: 2rem; letter-spacing: .1em; text-transform: uppercase; }
+.field { margin-bottom: 1rem; }
+.field label { display: block; font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; margin-bottom: 6px; }
+.field input {
+  width: 100%; background: var(--bg3); border: 1px solid var(--border);
+  border-radius: 10px; padding: 12px 14px; font-size: 14px;
+  font-family: 'DM Mono', monospace; color: var(--text); outline: none;
+  transition: border-color .2s;
+}
+.field input:focus { border-color: var(--green); }
+.btn-login {
+  width: 100%; padding: 13px; background: var(--green2); color: #000;
+  border: none; border-radius: 10px; font-size: 14px; font-weight: 700;
+  cursor: pointer; font-family: inherit; transition: background .15s; margin-top: .5rem;
+}
+.btn-login:hover { background: var(--green); }
+.btn-login:disabled { opacity: .5; cursor: not-allowed; }
+.login-error { font-size: 12px; color: var(--red); text-align: center; margin-top: 10px; min-height: 18px; }
+
+/* ── Dashboard ── */
+.dashboard { display: none; }
+.topbar {
+  background: var(--bg2); border-bottom: 1px solid var(--border);
+  padding: 0 2rem; height: 60px;
+  display: flex; align-items: center; justify-content: space-between;
+  position: sticky; top: 0; z-index: 10;
+}
+.topbar-logo { font-family: 'Cormorant Garamond', serif; font-size: 20px; color: var(--green); display: flex; align-items: center; gap: 10px; }
+.topbar-right { display: flex; align-items: center; gap: 16px; }
+.topbar-time { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--muted); }
+.btn-refresh { background: var(--bg3); border: 1px solid var(--border); color: var(--text); padding: 6px 14px; border-radius: 8px; font-size: 12px; cursor: pointer; font-family: inherit; transition: border-color .15s; }
+.btn-refresh:hover { border-color: var(--green); color: var(--green); }
+.btn-signout { background: none; border: 1px solid var(--border); color: var(--muted); padding: 6px 14px; border-radius: 8px; font-size: 12px; cursor: pointer; font-family: inherit; }
+.btn-signout:hover { border-color: var(--red); color: var(--red); }
+
+.content { padding: 2rem; max-width: 1200px; margin: 0 auto; }
+
+/* ── Stat cards ── */
+.stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 2rem; }
+.stat-card {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 16px; padding: 1.5rem; position: relative; overflow: hidden;
+  transition: border-color .2s;
+}
+.stat-card:hover { border-color: var(--green); }
+.stat-card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: var(--accent, var(--green));
+}
+.stat-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; margin-bottom: 10px; }
+.stat-value { font-family: 'Cormorant Garamond', serif; font-size: 42px; font-weight: 600; line-height: 1; color: var(--white); }
+.stat-sub { font-size: 11px; color: var(--muted); margin-top: 6px; }
+
+/* ── Usage bars ── */
+.section-title { font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .1em; margin-bottom: 1rem; }
+.usage-section { background: var(--bg2); border: 1px solid var(--border); border-radius: 16px; padding: 1.5rem; margin-bottom: 1.5rem; }
+.usage-row { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+.usage-row:last-child { margin-bottom: 0; }
+.usage-feature { font-size: 13px; width: 140px; flex-shrink: 0; text-transform: capitalize; }
+.usage-bar-wrap { flex: 1; background: var(--bg3); border-radius: 50px; height: 8px; overflow: hidden; }
+.usage-bar-fill { height: 100%; border-radius: 50px; background: linear-gradient(90deg, var(--green2), var(--green)); transition: width .6s ease; }
+.usage-count { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--muted); width: 60px; text-align: right; flex-shrink: 0; }
+
+/* ── Users table ── */
+.table-section { background: var(--bg2); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; margin-bottom: 1.5rem; }
+.table-header { padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+.table-header-title { font-size: 13px; font-weight: 600; color: var(--text); }
+.table-search { background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; padding: 6px 12px; font-size: 12px; color: var(--text); font-family: inherit; outline: none; width: 200px; }
+.table-search:focus { border-color: var(--green); }
+table { width: 100%; border-collapse: collapse; }
+th { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); padding: 10px 16px; text-align: left; border-bottom: 1px solid var(--border); }
+td { padding: 12px 16px; font-size: 13px; border-bottom: 1px solid var(--border); }
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: var(--bg3); }
+.badge { display: inline-flex; align-items: center; gap: 4px; padding: 3px 10px; border-radius: 50px; font-size: 11px; font-weight: 600; }
+.badge-pro { background: var(--green-lt); color: var(--green); border: 1px solid var(--green); }
+.badge-free { background: var(--bg3); color: var(--muted); border: 1px solid var(--border); }
+.toggle-btn {
+  padding: 4px 12px; border-radius: 6px; font-size: 11px; font-weight: 600;
+  cursor: pointer; border: 1px solid; font-family: inherit; transition: all .15s;
+}
+.toggle-btn.make-pro { background: var(--green-lt); color: var(--green); border-color: var(--green); }
+.toggle-btn.make-pro:hover { background: var(--green2); color: #000; border-color: var(--green2); }
+.toggle-btn.revoke-pro { background: var(--red-lt); color: var(--red); border-color: var(--red); }
+.toggle-btn.revoke-pro:hover { background: var(--red); color: #000; }
+.mono { font-family: 'DM Mono', monospace; font-size: 11px; }
+
+/* ── Loading state ── */
+.loading-state { text-align: center; padding: 4rem; color: var(--muted); }
+.spinner { width: 32px; height: 32px; border: 2px solid var(--border); border-top-color: var(--green); border-radius: 50%; animation: spin .8s linear infinite; margin: 0 auto 12px; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.toast { position: fixed; bottom: 24px; right: 24px; background: var(--bg2); border: 1px solid var(--green); color: var(--green); padding: 12px 20px; border-radius: 10px; font-size: 13px; z-index: 999; animation: slideIn .2s ease; }
+@keyframes slideIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+</style>
+</head>
+<body>
+
+<!-- Login -->
+<div class="login-wrap" id="login-wrap">
+  <div class="login-card">
+    <div class="login-logo">🌸 BloomWise</div>
+    <div class="login-sub">Admin Dashboard</div>
+    <div class="field">
+      <label>Email</label>
+      <input type="email" id="admin-email" placeholder="admin@example.com" autocomplete="email"/>
+    </div>
+    <div class="field">
+      <label>Password</label>
+      <input type="password" id="admin-password" placeholder="••••••••" autocomplete="current-password"
+        onkeydown="if(event.key==='Enter')doLogin()"/>
+    </div>
+    <button class="btn-login" id="login-btn" onclick="doLogin()">Sign in</button>
+    <div class="login-error" id="login-error"></div>
+  </div>
+</div>
+
+<!-- Dashboard -->
+<div class="dashboard" id="dashboard">
+  <div class="topbar">
+    <div class="topbar-logo">🌸 BloomWise <span style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);margin-left:8px;">Admin</span></div>
+    <div class="topbar-right">
+      <span class="topbar-time" id="topbar-time"></span>
+      <button class="btn-refresh" onclick="loadStats()">↻ Refresh</button>
+      <button class="btn-signout" onclick="signOut()">Sign out</button>
+    </div>
+  </div>
+
+  <div class="content">
+    <div id="dashboard-content">
+      <div class="loading-state"><div class="spinner"></div>Loading stats…</div>
+    </div>
+  </div>
+</div>
+
+<script>
+const BACKEND = '';
+let adminToken = sessionStorage.getItem('bw-admin-token') || '';
+let allUsers = [];
+
+// ── Auth ──────────────────────────────────────────────────
+async function doLogin() {
+  const email    = document.getElementById('admin-email').value.trim();
+  const password = document.getElementById('admin-password').value;
+  const btn      = document.getElementById('login-btn');
+  const errEl    = document.getElementById('login-error');
+  errEl.textContent = '';
+  if (!email || !password) { errEl.textContent = 'Enter email and password'; return; }
+  btn.disabled = true; btn.textContent = 'Signing in…';
+  try {
+    const r = await fetch(BACKEND + '/admin/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password }),
+    });
+    const d = await r.json();
+    if (!r.ok) { errEl.textContent = d.error || 'Login failed'; return; }
+    adminToken = d.token;
+    sessionStorage.setItem('bw-admin-token', adminToken);
+    showDashboard();
+  } catch(e) {
+    errEl.textContent = 'Connection error — is Railway running?';
+  } finally {
+    btn.disabled = false; btn.textContent = 'Sign in';
+  }
+}
+
+function signOut() {
+  adminToken = '';
+  sessionStorage.removeItem('bw-admin-token');
+  document.getElementById('dashboard').style.display = 'none';
+  document.getElementById('login-wrap').style.display = 'flex';
+}
+
+function showDashboard() {
+  document.getElementById('login-wrap').style.display = 'none';
+  document.getElementById('dashboard').style.display = 'block';
+  updateClock();
+  setInterval(updateClock, 1000);
+  loadStats();
+}
+
+function updateClock() {
+  document.getElementById('topbar-time').textContent =
+    new Date().toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' });
+}
+
+// ── Stats ─────────────────────────────────────────────────
+async function loadStats() {
+  document.getElementById('dashboard-content').innerHTML =
+    '<div class="loading-state"><div class="spinner"></div>Loading stats…</div>';
+  try {
+    const r = await fetch(BACKEND + '/admin/stats', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-admin-token': adminToken },
+      body: '{}',
+    });
+    if (r.status === 401) { signOut(); return; }
+    const d = await r.json();
+    allUsers = d.users || [];
+    renderDashboard(d);
+  } catch(e) {
+    document.getElementById('dashboard-content').innerHTML =
+      `<div class="loading-state" style="color:var(--red);">Failed to load stats: ${e.message}</div>`;
+  }
+}
+
+function renderDashboard(d) {
+  const t = d.totals;
+  const maxUsage = Math.max(...(d.usage_this_week||[]).map(u => parseInt(u.total)), 1);
+
+  const statsHtml = `
+    <div class="stats-grid">
+      <div class="stat-card" style="--accent:var(--green)">
+        <div class="stat-label">Total Users</div>
+        <div class="stat-value">${t.accounts}</div>
+        <div class="stat-sub">signed up accounts</div>
+      </div>
+      <div class="stat-card" style="--accent:var(--gold)">
+        <div class="stat-label">Pro Users</div>
+        <div class="stat-value">${t.pro}</div>
+        <div class="stat-sub">${t.accounts > 0 ? Math.round(t.pro/t.accounts*100) : 0}% conversion</div>
+      </div>
+      <div class="stat-card" style="--accent:var(--blue)">
+        <div class="stat-label">Free Users</div>
+        <div class="stat-value">${t.free}</div>
+        <div class="stat-sub">on free tier</div>
+      </div>
+      <div class="stat-card" style="--accent:var(--green)">
+        <div class="stat-label">Gardens Saved</div>
+        <div class="stat-value">${t.gardens}</div>
+        <div class="stat-sub">${t.avg_plants} plants avg</div>
+      </div>
+      <div class="stat-card" style="--accent:var(--gold)">
+        <div class="stat-label">Revenue (est.)</div>
+        <div class="stat-value">$${(t.pro * 4.99).toFixed(0)}</div>
+        <div class="stat-sub">$4.99 × ${t.pro} pro users</div>
+      </div>
+    </div>`;
+
+  const usageHtml = `
+    <div class="usage-section">
+      <div class="section-title">Feature usage this week</div>
+      ${d.usage_this_week.length === 0
+        ? '<div style="color:var(--muted);font-size:13px;">No usage recorded this week yet</div>'
+        : d.usage_this_week.map(u => `
+        <div class="usage-row">
+          <div class="usage-feature">${u.feature}</div>
+          <div class="usage-bar-wrap">
+            <div class="usage-bar-fill" style="width:${Math.round(parseInt(u.total)/maxUsage*100)}%"></div>
+          </div>
+          <div class="usage-count">${u.total}</div>
+        </div>`).join('')}
+    </div>`;
+
+  const usersHtml = `
+    <div class="table-section">
+      <div class="table-header">
+        <div class="table-header-title">Users <span style="color:var(--muted);font-weight:400;">(${allUsers.length})</span></div>
+        <input class="table-search" placeholder="Search by email or name…" oninput="filterUsers(this.value)"/>
+      </div>
+      <table id="users-table">
+        <thead>
+          <tr>
+            <th>User</th>
+            <th>Joined</th>
+            <th>Status</th>
+            <th>Usage</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody id="users-tbody">
+          ${renderUserRows(allUsers)}
+        </tbody>
+      </table>
+    </div>`;
+
+  document.getElementById('dashboard-content').innerHTML =
+    statsHtml + usageHtml + usersHtml;
+}
+
+function renderUserRows(users) {
+  if (!users.length) return '<tr><td colspan="5" style="text-align:center;color:var(--muted);padding:2rem;">No users found</td></tr>';
+  return users.map(u => `
+    <tr>
+      <td>
+        <div style="font-weight:500;">${u.name || '—'}</div>
+        <div class="mono" style="color:var(--muted);">${u.email}</div>
+      </td>
+      <td class="mono" style="color:var(--muted);">${new Date(u.created_at).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}</td>
+      <td>
+        ${u.is_pro
+          ? '<span class="badge badge-pro">⚡ Pro</span>'
+          : '<span class="badge badge-free">Free</span>'}
+      </td>
+      <td class="mono" style="color:var(--muted);">${u.total_usage} actions</td>
+      <td>
+        ${u.is_pro
+          ? `<button class="toggle-btn revoke-pro" onclick="togglePro('${u.email}', false, this)">Revoke Pro</button>`
+          : `<button class="toggle-btn make-pro" onclick="togglePro('${u.email}', true, this)">Grant Pro</button>`}
+      </td>
+    </tr>`).join('');
+}
+
+function filterUsers(query) {
+  const filtered = query
+    ? allUsers.filter(u =>
+        u.email.toLowerCase().includes(query.toLowerCase()) ||
+        (u.name||'').toLowerCase().includes(query.toLowerCase()))
+    : allUsers;
+  document.getElementById('users-tbody').innerHTML = renderUserRows(filtered);
+}
+
+async function togglePro(email, isPro, btn) {
+  btn.disabled = true;
+  try {
+    const r = await fetch(BACKEND + '/admin/toggle-pro', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-admin-token': adminToken },
+      body: JSON.stringify({ email, is_pro: isPro }),
+    });
+    if (!r.ok) throw new Error('Failed');
+    // Update local data and re-render row
+    const user = allUsers.find(u => u.email === email);
+    if (user) user.is_pro = isPro;
+    document.getElementById('users-tbody').innerHTML = renderUserRows(allUsers);
+    showToast(`${isPro ? '⚡ Pro granted' : 'Pro revoked'} for ${email}`);
+  } catch(e) {
+    btn.disabled = false;
+    showToast('Error: ' + e.message);
+  }
+}
+
+function showToast(msg) {
+  const t = document.createElement('div');
+  t.className = 'toast';
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 3000);
+}
+
+// ── Init ──────────────────────────────────────────────────
+if (adminToken) {
+  showDashboard();
+}
+</script>
+</body>
+</html>
