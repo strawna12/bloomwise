@@ -438,6 +438,46 @@ Write in a warm, knowledgeable tone — like advice from an experienced gardenin
   sendJSON(res, 200, { answer: text });
 }
 
+async function handlePlantingCalendar(req, res) {
+  const { location, zone, climate, sun, soil, water, style, priorities, notes } = await readBody(req);
+
+  const prompt = `You are an expert horticulturist. Create a month-by-month planting calendar for this gardener. Return ONLY a valid JSON object, nothing else — no introduction, no explanation, no markdown.
+
+Gardener profile:
+Location: ${location || 'Not specified'} | Zone: ${zone || 'unknown'} | Climate: ${climate || 'not specified'}
+Sun: ${sun || 'not specified'} | Soil: ${soil || 'not specified'} | Water: ${water || 'not specified'}
+Style: ${style || 'not specified'} | Priorities: ${priorities || 'none'} | Notes: ${notes || 'none'}
+
+Return this exact JSON structure with all 12 months:
+{
+  "title": "Planting Calendar for ${location || 'Your Garden'}",
+  "zone": "${zone || 'your zone'}",
+  "months": [
+    {
+      "month": "January",
+      "emoji": "❄️",
+      "season": "Winter",
+      "sow_indoors": ["item 1", "item 2"],
+      "sow_outdoors": ["item 1"],
+      "plant_out": ["item 1"],
+      "harvest": ["item 1", "item 2"],
+      "tasks": ["task 1", "task 2"],
+      "tip": "one practical tip for this month and location"
+    }
+  ]
+}
+
+Tailor specifically to their zone and priorities. If edibles are a priority focus on vegetables. Be specific. Return JSON only.`;
+
+  const text = await ai(prompt, 2500);
+  const clean = text.replace(/```json|```/gi, '').trim();
+  const s = clean.indexOf('{');
+  const e = clean.lastIndexOf('}');
+  if (s === -1 || e === -1) throw new Error('Could not parse calendar response');
+  const calendar = JSON.parse(clean.slice(s, e + 1));
+  sendJSON(res, 200, { calendar });
+}
+
 async function handleLookupCare(req, res) {
   const { plant } = await readBody(req);
   if (!plant) return sendJSON(res, 400, { error: "plant name required" });
@@ -1211,11 +1251,12 @@ const server = http.createServer(async (req, res) => {
     }
 
     const AI = {
-      "/recommendations":  handleRecommendations,
-      "/lookup":           handleLookup,
-      "/lookup-care":      handleLookupCare,
-      "/identify-plant":   handleIdentifyPlant,
-      "/garden-advisor":   handleGardenAdvisor,
+      "/recommendations":   handleRecommendations,
+      "/lookup":            handleLookup,
+      "/lookup-care":       handleLookupCare,
+      "/identify-plant":    handleIdentifyPlant,
+      "/garden-advisor":    handleGardenAdvisor,
+      "/planting-calendar": handlePlantingCalendar,
     };
 
     if (AI[url]) {
