@@ -4085,44 +4085,25 @@ async function generateCalendar() {
   document.getElementById('calendar-output').innerHTML =
     '<div class="loading"><div class="loader"></div><div class="loading-text">Creating your personalised planting calendar…</div><div class="loading-sub">This takes about 15 seconds</div></div>';
 
-  const prompt = `You are an expert horticulturist. Create a detailed month-by-month planting calendar for this gardener.
-
-Gardener profile:
-Location: ${p.location} | Zone: ${p.zone} | Climate: ${p.climate}
-Sun: ${p.sun} | Soil: ${p.soil} | Water: ${p.water}
-Style: ${p.style} | Priorities: ${p.priorities}
-Notes: ${p.notes}
-
-Return ONLY a valid JSON object, nothing else:
-{
-  "title": "Personalised Planting Calendar for [location]",
-  "zone": "${p.zone}",
-  "months": [
-    {
-      "month": "January",
-      "emoji": "❄️",
-      "season": "Winter",
-      "sow_indoors": ["list of what to sow indoors this month"],
-      "sow_outdoors": ["list of what to direct sow outdoors"],
-      "plant_out": ["what to plant out/transplant"],
-      "harvest": ["what is ready to harvest"],
-      "tasks": ["2-3 key garden tasks for this month"],
-      "tip": "one practical tip specific to this month and their location"
-    }
-  ]
-}
-Include all 12 months. Tailor specifically to their zone, climate, and priorities. If they prefer edibles, focus on vegetables. If ornamental, focus on flowers. Be specific with variety suggestions where helpful.`;
-
   try {
-    const data = await apiCall('/garden-advisor', { question: prompt, context: '' });
-    const cal = JSON.parse(data.answer.replace(/```json|```/gi, '').trim());
-    renderCalendar(cal);
+    const data = await apiCall('/planting-calendar', {
+      location:   p.location,
+      zone:       p.zone,
+      climate:    p.climate,
+      sun:        p.sun,
+      soil:       p.soil,
+      water:      p.water,
+      style:      p.style,
+      priorities: p.priorities,
+      notes:      p.notes,
+    });
+    renderCalendar(data.calendar);
   } catch(e) {
     document.getElementById('calendar-output').innerHTML =
       `<div class="error-box"><strong>Could not generate calendar:</strong> ${e.message}</div>`;
   } finally {
     btn.disabled = false;
-    btn.textContent = '📅 Generate my planting calendar';
+    btn.textContent = '📅 Regenerate calendar';
   }
 }
 
